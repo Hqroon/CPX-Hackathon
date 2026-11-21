@@ -111,26 +111,42 @@ export async function generateQuestions(slides, requested = 10) {
   const target = Math.max(1, Math.min(MAX_QUESTIONS, Number(requested) || 10, pages.length * 2 || 10));
 
   let questions = [];
+  const seen = new Set();
   const providersUsed = new Set();
-  if (pages.length > 0) {
+
+  // One pass over all pages, split into batches; keeps only new (non-duplicate) questions.
+  async function pass(wanted) {
     const batches = chunk(pages, PAGES_PER_BATCH);
-    const perBatch = Math.ceil(target / batches.length);
+    const perBatch = Math.max(1, Math.ceil(wanted / batches.length));
     const results = await Promise.allSettled(batches.map((b) => generateBatch(b, perBatch)));
     for (const r of results) {
-      if (r.status === 'fulfilled') {
-        questions.push(...r.value.questions);
-        providersUsed.add(r.value.provider);
-      } else {
+      if (r.status !== 'fulfilled') {
         console.warn('[questions] batch failed:', r.reason?.message);
+        continue;
+      }
+      providersUsed.add(r.value.provider);
+      for (const q of r.value.questions) {
+        const key = norm(q.question);
+        if (!seen.has(key)) {
+          seen.add(key);
+          questions.push(q);
+        }
       }
     }
   }
 
+  if (pages.length > 0) {
+    await pass(target);
+    // Short on valid questions? Ask again for the gap instead of mixing in unrelated ones.
+    if (questions.length < target) await pass(target - questions.length);
+  }
+
+  // Only when the slides produced nothing at all do we use the generic bank,
+  // and every such question is marked `sample` so the UI can label it.
   let usedFallback = false;
-  if (questions.length < Math.min(3, target)) {
+  if (questions.length === 0) {
     usedFallback = true;
-    const fallback = await loadFallback();
-    questions = questions.concat(fallback).slice(0, Math.max(target, 3));
+    questions = (await loadFallback()).map((q) => ({ ...q, sample: true }));
   }
 
   questions = questions.slice(0, target).map((q, i) => ({ id: `q${i + 1}`, ...q }));
