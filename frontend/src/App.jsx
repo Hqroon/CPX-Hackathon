@@ -15,7 +15,7 @@ import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
 import { BrandMark, Wordmark, BRAND } from './components/Brand.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
-import { fetchReels, fetchQuestions, logEvent } from './api.js';
+import { fetchReels, fetchQuestions, logEvent, SAMPLE_QUESTIONS } from './api.js';
 import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
@@ -23,7 +23,6 @@ import {
   pointsForReel, isFreeReel, paidNumber, asksQuestion, nextQuestion, audioForReel,
   transitionMsInto, isSlowFrom, visualDecay, decayFilter, indexOfReel,
 } from './rules/frustration.js';
-import mockQuestions from './mock/questions.json';
 
 const newSessionId = () => Math.random().toString(36).slice(2, 10);
 const emptyStats = () => ({ totalReels: 0, reelsAfterLine: 0, asked: 0, right: 0, wrong: 0 });
@@ -70,6 +69,7 @@ export default function App() {
   const [stats, setStats] = useState(emptyStats());
   const [points, setPoints] = useState(0);
   const [questions, setQuestions] = useState([]);
+  const [questionsReady, setQuestionsReady] = useState(false); // false while the backend writes them
   const [provider, setProvider] = useState('');
   const qPointerRef = useRef(0);
   const [quiz, setQuiz] = useState(null); // { q, k, phase: ask|right|wrong, picked, wait }
@@ -188,7 +188,7 @@ export default function App() {
   }, [reels, sessionId]);
 
   // ---- Question toll -------------------------------------------------------
-  const questionPool = () => (questions.length ? questions : mockQuestions);
+  const questionPool = () => (questions.length ? questions : SAMPLE_QUESTIONS);
 
   function drawQuestion(avoidId = null) {
     const { question, pointer } = nextQuestion(questionPool(), qPointerRef.current, avoidId);
@@ -199,23 +199,24 @@ export default function App() {
     return question;
   }
 
-  const pendingQuizRef = useRef(false);
-  useEffect(() => {
-    if (questions.length && pendingQuizRef.current) {
-      pendingQuizRef.current = false;
-      openQuiz();
-    }
-  }, [questions]);
 
   function openQuiz() {
-    if (!questions.length) {
-      pendingQuizRef.current = true;
-      showToast('Questions are still being generated. Please try again shortly.');
+    // Questions from the user's slides aren't back yet: hold the reel paused on a
+    // "writing your question" card rather than showing an unrelated sample question.
+    if (!questionsReady) {
+      setQuiz({ q: null, k: statsRef.current.asked + 1, phase: 'loading', picked: null, wait: 0 });
       return;
     }
     const q = drawQuestion();
     if (q) setQuiz({ q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 });
   }
+
+  // As soon as the questions arrive, fill in a quiz that was waiting for them.
+  useEffect(() => {
+    if (!questionsReady || quiz?.phase !== 'loading') return;
+    const q = drawQuestion();
+    setQuiz(q ? { q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 } : null);
+  }, [questionsReady, quiz]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function answer(choice) {
     if (!quiz || quiz.phase !== 'ask') return;
@@ -293,17 +294,25 @@ export default function App() {
 
   // ---- Session lifecycle -----------------------------------------------------
   function startSession(slides) {
-    pendingQuizRef.current = false;
     feedRef.current?.unlockAudio(); // must happen inside the click
     setPhase('feed');
     logEvent(sessionId, 'session_start', { slides: slides.length });
     onNewItem(0);
     setQuestions([]);
+    setQuestionsReady(false);
     setProvider('generating…');
+    // With several PDFs, remember which file (and its own page number) each deck page came from.
+    const bySlide = new Map(slides.map((s) => [Number(s.page), s]));
+    const multiFile = new Set(slides.map((s) => s.file).filter(Boolean)).size > 1;
     showToast('Generating questions from your slides…');
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
-      setQuestions(r.questions);
-      syncGuard({ questions: r.questions }); // no-op outside the Android app
+      const mapped = r.questions.map((q) => {
+        const src = multiFile && bySlide.get(Number(q.sourcePage));
+        return src ? { ...q, sourceFile: src.file, sourceFilePage: src.filePage } : q;
+      });
+      setQuestions(mapped);
+      setQuestionsReady(true);
+      syncGuard({ questions: mapped }); // no-op outside the Android app
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
       showToast(r.usedFallback
@@ -331,6 +340,7 @@ export default function App() {
     setIndex(0);
     setQuiz(null);
     setQuestions([]);
+    setQuestionsReady(false);
     setProvider('');
     setSessionId(newSessionId());
     setPhase('gate'); // stay logged in: back to the slide screen

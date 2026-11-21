@@ -1,6 +1,9 @@
 // PDF -> clean page text, entirely in the browser. Owner: M4.
 import * as pdfjsLib from 'pdfjs-dist';
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+// `?worker&url` makes Vite build the worker as its own .js file. A raw `.mjs` asset is
+// served with the wrong MIME type by some hosts and Android WebViews, and the browser then
+// refuses to run it ("Setting up fake worker failed: Failed to fetch dynamically imported module").
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?worker&url';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
@@ -100,6 +103,39 @@ function toSlideExtractionError(error) {
   });
 }
 
+// PDF.js caches a failed worker start for the whole page session, so we check the worker
+// ourselves first. Its script sends a "ready" message as soon as it loads; if that doesn't
+// arrive (script blocked, wrong MIME type, old WebView), we load the worker code into the
+// page instead (PDF.js's "fake worker": slower, but it always works).
+let workerCheck = null;
+function ensureWorker() {
+  if (!workerCheck) {
+    workerCheck = new Promise((resolve) => {
+      let worker;
+      const done = (ok) => { clearTimeout(timer); try { worker?.terminate(); } catch {} resolve(ok); };
+      const timer = setTimeout(() => done(false), 8000);
+      try {
+        worker = new Worker(workerUrl, { type: 'module' });
+        worker.onmessage = () => done(true);
+        worker.onerror = () => done(false);
+      } catch {
+        done(false);
+      }
+    }).then(async (ok) => {
+      if (ok) return;
+      console.warn('[slides] PDF.js worker unavailable here; reading PDFs on the main thread instead.');
+      globalThis.pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs');
+    });
+  }
+  return workerCheck;
+}
+
+// Fresh bytes each time: PDF.js may transfer (detach) the buffer it is given.
+async function openPdf(file) {
+  const data = new Uint8Array(await file.arrayBuffer());
+  return pdfjsLib.getDocument({ data }).promise;
+}
+
 /**
  * Extract a PDF and return both usable slides and lightweight diagnostics.
  * onProgress receives { processedPages, totalPages, page, error }.
@@ -110,8 +146,8 @@ export async function extractSlidesWithDiagnostics(file, onProgress = () => {}) 
 
   let pdf;
   try {
-    const data = new Uint8Array(await file.arrayBuffer());
-    pdf = await pdfjsLib.getDocument({ data }).promise;
+    await ensureWorker();
+    pdf = await openPdf(file);
   } catch (error) {
     throw toSlideExtractionError(error);
   }

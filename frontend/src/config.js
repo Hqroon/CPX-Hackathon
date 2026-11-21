@@ -16,7 +16,8 @@ export const CONFIG = {
   questionEvery: 5,          // a question after every N paid reels (reels 10, 15, 20…)
   wrongWaitSeconds: 5,       // wrong answer: wait this long, then a NEW question appears
   questionCount: 12,         // questions requested from the backend per session
-  minSlides: 5,              // slide gate: pages with text needed before scrolling
+  maxPdfFiles: 5,            // slide gate: PDFs that can be uploaded together
+  minSlides: 1,              // slide gate: any 1-5 PDFs work as long as at least one page has text
 
   // --- Volume roulette -------------------------------------------------------
   // After the free reels, sound alternates: on, muted, on, muted…

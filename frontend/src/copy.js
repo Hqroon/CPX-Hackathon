@@ -9,8 +9,9 @@ export const COPY = {
     start: 'Start scrolling',
     reading: (n) => `Reading your slides… ${n} pages found.`,
     ready: (n) => `${n} slides ready. Your first 5 reels are free while we write your questions.`,
-    tooFew: (n) =>
-      `We could only read ${n} slides. Upload at least 5 slides with text. Image-only slides don't count.`,
+    tooFew: () =>
+      "We couldn't read any text from these files. Upload PDFs with selectable text (image-only or scanned slides don't count).",
+    tooManyFiles: (max, n) => `You picked ${n} files. Choose up to ${max} PDFs at a time.`,
     notPdf: 'Export your slides to PDF first, then upload them here.',
     failed: "We couldn't read that file. Try another PDF or use the sample slides.",
   },
