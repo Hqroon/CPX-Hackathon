@@ -434,3 +434,30 @@ html[data-theme="dark"] .rs-foot { margin-top: 24px !important; font-size: 13px;
    Uses the solid brand green (--green is the bright text green here; a white arrow needs the darker one). */
 html[data-theme="dark"] .dialog-back:hover,
 html[data-theme="dark"] .dialog-back:focus-visible { background: var(--dk-accent-strong); color: #fff; outline: none; }
+
+/* ===================================================================================
+   Background logo (components/BackgroundLogo.jsx): the live 3D logo from the welcome page,
+   large and faint, behind every black non-reel page. Each page root renders <BackgroundLogo />
+   as its first child; z-index:-1 inside the page's stacking context puts it above the black +
+   green glow and behind all cards, text and buttons. Reduced motion / low-end devices get the
+   flat mark automatically (Logo3D's own fallback).
+   =================================================================================== */
+html[data-theme="dark"] {
+  --bg-logo-opacity: 0.35;            /* watermark strength */
+  --bg-logo-top-start: 13%;           /* upload pages: logo sits in the space above the popup */
+  --bg-logo-fit: 0.9;                 /* logo size as a share of the page width (whole logo stays visible) */
+  --bg-logo-max-h: 0.6;               /* ...but never taller than this share of the page height */
+}
+html[data-theme="dark"] .bg-logo {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden;
+  display: grid; place-items: center;
+  opacity: var(--bg-logo-opacity);
+  pointer-events: none; user-select: none; -webkit-user-select: none;
+}
+/* The quiz paints its glow on the backdrop, so the logo shows through its scroll area. */
+html[data-theme="dark"] .quiz { background: transparent; }
+/* Loading screen: its own stacking context so the logo stays behind its content. */
+html[data-theme="dark"] .loading { position: relative; isolation: isolate; }
+/* Upload pages ("Upload your slides", "Slides ready", "Where do you want to scroll?"): the popup is
+   centred, so a centred logo would hide behind it. Lift the logo into the empty space above. */
+html[data-theme="dark"] .screen.start .bg-logo { place-items: start center; padding-top: var(--bg-logo-top-start); }

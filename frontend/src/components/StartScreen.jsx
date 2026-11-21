@@ -6,6 +6,7 @@ import { useSlideUpload } from '../rules/useSlideUpload.js';
 import presets from '../mock/course-slides.json';
 import { HomeLogo } from './Brand.jsx';
 import { IconLayers, IconShare, IconChevron, IconUpload, IconDoc, IconBack, IconCheck } from './Icons.jsx';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp, deck, onDeckChange = () => {} }) {
   // `deck` is the user's confirmed upload, kept by App: coming back here (from results,
@@ -36,6 +37,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
 
   return (
     <div className="screen start">
+      <BackgroundLogo />
       <div className="screen-scroll start-scroll">
         <div className="start-header">
           <HomeLogo />

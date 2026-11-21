@@ -6,6 +6,7 @@ import { useSlideUpload } from '../rules/useSlideUpload.js';
 import Explain from './Explain.jsx';
 import { IconUpload, IconDoc, IconChevron, IconArrow } from './Icons.jsx';
 import TopBar from './Brand.jsx';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -49,6 +50,7 @@ export default function SlideGate({ onStart, explain, onBack, startLabel }) {
 
   return (
     <div className="screen gate">
+      <BackgroundLogo />
       <TopBar right={onBack && <button type="button" className="btn small back-btn" onClick={onBack}>← Back</button>} />
       <div className="screen-scroll">
         <p className="eyebrow">Step 1 of 2</p>

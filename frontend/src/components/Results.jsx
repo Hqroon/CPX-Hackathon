@@ -8,6 +8,7 @@ import { CONFIG } from '../config.js';
 import { BrandMark, Wordmark } from './Brand.jsx';
 import { IconCircleCheck, IconRotate, IconLayers, IconCheck } from './Icons.jsx';
 import { IS_DARK_THEME } from '../theme.js';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 export default function Results(props) {
   return IS_DARK_THEME ? <ResultsMinimal {...props} /> : <ResultsOriginal {...props} />;
@@ -98,6 +99,7 @@ function ResultsMinimal({ stats, points, onRestart, onHome }) {
 
   return (
     <div className={`screen results results-min ${owing ? 'is-owing' : 'is-clear'}`}>
+      <BackgroundLogo />
       <div className="top-bar centered-brand">
         <div className="brand"><BrandMark size={26} /><Wordmark size="sm" /></div>
       </div>

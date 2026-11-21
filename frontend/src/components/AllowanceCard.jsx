@@ -4,10 +4,12 @@ import { COPY } from '../copy.js';
 import { CONFIG } from '../config.js';
 import Explain from './Explain.jsx';
 import { IconCircleCheck } from './Icons.jsx';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 export default function AllowanceCard({ freeReels, onClose, onKeep, explain }) {
   return (
     <div className="screen allowance">
+      <BackgroundLogo />
       <div className="screen-scroll centered">
         <span className="complete-icon" aria-hidden="true"><IconCircleCheck size={30} /></span>
         <h2 className="title">{COPY.allowance.title(freeReels)}</h2>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { CONFIG } from '../config.js';
 import TopBar from './Brand.jsx';
 import { openGuardSettings, openGuardAppInfo, resetGuard } from '../native/reelGuard.js';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 function Step({ done, n, title, children }) {
   return (
@@ -44,6 +45,7 @@ export default function GuardHome({ status, nativeApp, onRefresh, onStart, onSto
 
   return (
     <div className="screen guard">
+      <BackgroundLogo />
       <TopBar right={<button type="button" className="btn small back-btn" onClick={onBack}>← Back</button>} />
       <div className="screen-scroll">
         <p className="eyebrow">Continue on other apps</p>

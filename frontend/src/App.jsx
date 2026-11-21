@@ -22,6 +22,7 @@ import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
 import { Capacitor } from '@capacitor/core';
+import BackgroundLogo from './components/BackgroundLogo.jsx';
 
 // Demo rule: every launch of the Android app starts at 0 points, so each judge
 // gets a clean phone. (The browser keeps its saved points.)
@@ -424,6 +425,7 @@ export default function App() {
         <Backdrop />
         <div className="phone">
           <div className="loading">
+            <BackgroundLogo />
             <span className="loading-mark"><BrandMark size={56} /></span>
             <span>Loading…</span>
           </div>
@@ -471,7 +473,6 @@ export default function App() {
           </button>
           {phase === 'feed' && (
             <div className="topbar-right">
-              <span role="status" title="Question source">{provider === 'generating…' ? 'AI generating…' : /mock|fallback/.test(provider) ? 'Practice bank' : questions.length ? `AI · ${questions.length}` : ''}</span>
               {/* Sound state is only revealed in explain mode; otherwise the volume fade stays silent. */}
               {explain && afterLine && current?.type === 'reel' && (
                 <span

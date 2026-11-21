@@ -6,6 +6,7 @@ import { COPY } from '../copy.js';
 import { CONFIG } from '../config.js';
 import Explain from './Explain.jsx';
 import { IconCheck, IconClose, IconRotate } from './Icons.jsx';
+import BackgroundLogo from './BackgroundLogo.jsx';
 
 export default function QuizModal({ quiz, onAnswer, explain }) {
   const { q, k, phase, picked, wait } = quiz;
@@ -15,6 +16,7 @@ export default function QuizModal({ quiz, onAnswer, explain }) {
 
   return (
     <div className="modal-backdrop">
+      <BackgroundLogo />
       <div className={`quiz phase-${phase}`} role="dialog" aria-modal="true" aria-labelledby="quiz-question" aria-busy={loading}>
         <div className="quiz-top">
           <span className="quiz-paused">Reel paused</span>
