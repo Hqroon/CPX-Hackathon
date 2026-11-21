@@ -21,6 +21,12 @@ export default function GuardStart({ status, nativeApp, onStart, onBack, onNote 
       openGuardSettings();
       return;
     }
+    if (status.running === false) {
+      // Switched on in Settings, but Android hasn't started (or has paused) the service.
+      onNote('看看 is paused by the phone. In Accessibility, turn 看看 off and on again, then tap Start.');
+      openGuardSettings();
+      return;
+    }
     setBusy(true);
     try {
       await onStart();

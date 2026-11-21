@@ -154,7 +154,10 @@ public class ReelGuardPlugin extends Plugin {
             call.reject("No activity");
             return;
         }
-        getActivity().runOnUiThread(() -> getActivity().moveTaskToBack(true));
+        getActivity().runOnUiThread(() -> {
+            getActivity().moveTaskToBack(true);
+            ReelGuardService.onMinimized(); // show the bubble straight away
+        });
         call.resolve();
     }
 
