@@ -2,8 +2,8 @@
 
 export const COPY = {
   gate: {
-    title: 'Pay before you scroll.',
-    body: "Upload at least 5 slides from a course you're taking. We'll quiz you on them while you watch.",
+    title: 'Course slides',
+    body: '',
     upload: 'Upload PDF',
     sample: 'Use sample slides',
     start: 'Start scrolling',

@@ -16,6 +16,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import { CONFIG } from '../config.js';
 import { COPY } from '../copy.js';
 import Explain from './Explain.jsx';
+import { IconHeart, IconComment, IconShare } from './Icons.jsx';
 
 const DOUBLE_TAP_MS = 300;
 const TAP_SLOP_PX = 10;
@@ -25,13 +26,18 @@ const formatLikes = (n) =>
 
 function ReelOverlay({ reel, item, freeReels, liked, onToggleLike, explain }) {
   const [expanded, setExpanded] = useState(false);
+  const initial = reel.author?.[0]?.toUpperCase() || '?';
   return (
     <div className="reel-overlay">
       <div className="reel-meta">
         <div className="reel-author">
-          <span className="avatar" aria-hidden="true">{reel.author?.[0]?.toUpperCase() || '?'}</span>
-          @{reel.author}
-          {item.free && <span className="free-chip">{COPY.freeChip(item.freeNumber, freeReels)}</span>}
+          <span className={`avatar ${item.free ? 'friend' : ''}`} aria-hidden="true">{initial}</span>
+          <span className="handle">@{reel.author}</span>
+          {item.free ? (
+            <span className="tag tag-free">{COPY.freeChip(item.freeNumber, freeReels)}</span>
+          ) : (
+            <span className="tag tag-paid">Paid · −1</span>
+          )}
         </div>
         <button
           type="button"
@@ -46,16 +52,16 @@ function ReelOverlay({ reel, item, freeReels, liked, onToggleLike, explain }) {
       <div className="reel-side">
         <button
           type="button"
-          className={`like ${liked ? 'on' : ''}`}
+          className={`rail-btn like ${liked ? 'on' : ''}`}
           onClick={onToggleLike}
           aria-label={liked ? 'Unlike' : 'Like'}
           aria-pressed={liked}
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.7 0 5.7 4.1 4.2 7.4C19.5 16.4 12 21 12 21z" />
-          </svg>
+          <IconHeart filled={liked} size={28} />
         </button>
-        <span>{formatLikes((reel.likes || 0) + (liked ? 1 : 0))}</span>
+        <span className="rail-count">{formatLikes((reel.likes || 0) + (liked ? 1 : 0))}</span>
+        <span className="rail-btn ghosted" aria-hidden="true"><IconComment size={26} /></span>
+        <span className="rail-btn ghosted" aria-hidden="true"><IconShare size={24} /></span>
       </div>
     </div>
   );
@@ -297,8 +303,8 @@ const Feed = forwardRef(function Feed(
             )}
             {reel && !reel.src && (
               <div className="placeholder" style={{ background: reel.color || '#333' }}>
-                <span>{reel.id}</span>
-                <small>Mock reel. Put {reel.id}.mp4 in backend/media/reels and run npm run manifest.</small>
+                <span className="placeholder-id">{reel.id}</span>
+                <small>Mock reel · put {reel.id}.mp4 in backend/media/reels and run npm run manifest</small>
               </div>
             )}
             {reel && burst?.id === reel.id && (
@@ -325,8 +331,17 @@ const Feed = forwardRef(function Feed(
       })}
       {moving && transitionMs >= 1000 && (
         <div className="slow-overlay" role="status">
-          <div className="spinner" />
-          <span>Loading next reel…</span>
+          <div className="slow-card">
+            <span className="slow-title">Loading next reel</span>
+            <span className="slow-note">Slow scroll · on purpose</span>
+            <div className="slow-track">
+              <div className="slow-fill" style={{ animationDuration: `${transitionMs}ms` }} />
+            </div>
+            <div className="slow-times">
+              <span>0:00</span>
+              <span>0:{String(Math.round(transitionMs / 1000)).padStart(2, '0')}</span>
+            </div>
+          </div>
           <Explain show={explain} text={COPY.explain.slow} />
         </div>
       )}
