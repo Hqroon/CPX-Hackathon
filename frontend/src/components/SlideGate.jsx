@@ -84,12 +84,10 @@ export default function SlideGate({ onStart, explain, onBack, startLabel }) {
               <div className="deck-info">
                 <p className="deck-title">{deckTitle}</p>
                 <p className="muted">{status.files?.length > 1 ? `${status.files.length} PDFs combined` : 'Your slides'}</p>
-                <p className="muted deck-count"><IconDoc size={14} /> {status.slides.length} slides read</p>
               </div>
             </div>
 
-            <div className="stat-row">
-              <div className="card stat"><strong>{status.slides.length}</strong><span>Slides</span></div>
+            <div className="stat-row two">
               <div className="card stat"><strong>{CONFIG.freeReels}</strong><span>Free reels</span></div>
               <div className="card stat"><strong>{CONFIG.questionEvery}</strong><span>Reels per question</span></div>
             </div>
@@ -102,7 +100,6 @@ export default function SlideGate({ onStart, explain, onBack, startLabel }) {
                     <span className="row-icon">{i + 1}</span>
                     <span className="row-text">
                       <span className="row-title">{f.name}</span>
-                      <span className="row-sub">{f.count} slides</span>
                     </span>
                   </div>
                 ))

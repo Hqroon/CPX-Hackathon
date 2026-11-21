@@ -51,20 +51,7 @@ function ReelOverlay({ reel, item, freeReels, liked, onToggleLike, explain }) {
         </button>
         {item.free && item.freeNumber === 1 && <Explain show={explain} text={COPY.explain.free} />}
       </div>
-      <div className="reel-side">
-        <button
-          type="button"
-          className={`rail-btn like ${liked ? 'on' : ''}`}
-          onClick={onToggleLike}
-          aria-label={liked ? 'Unlike' : 'Like'}
-          aria-pressed={liked}
-        >
-          <IconHeart filled={liked} size={28} />
-        </button>
-        <span className="rail-count">{formatLikes((reel.likes || 0) + (liked ? 1 : 0))}</span>
-        <span className="rail-btn ghosted" aria-hidden="true"><IconComment size={26} /></span>
-        <span className="rail-btn ghosted" aria-hidden="true"><IconShare size={24} /></span>
-      </div>
+      {/* Side column (like button + count) no longer rendered; like state and double-tap logic are kept. */}
     </div>
   );
 }

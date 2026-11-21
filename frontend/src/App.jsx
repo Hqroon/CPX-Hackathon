@@ -335,9 +335,8 @@ export default function App() {
       syncGuard({ questions: mapped }); // no-op outside the Android app
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
-      showToast(r.usedFallback
-        ? 'AI unavailable: using clearly labelled practice questions.'
-        : `${r.questions.length} AI questions ready from your slides.`);
+      // Questions are generated in the background; only the fallback notice is still shown.
+      if (r.usedFallback) showToast('AI unavailable: using clearly labelled practice questions.');
     });
   }
 
@@ -488,7 +487,6 @@ export default function App() {
                 <span className="meter-label">Owed</span>
                 <span className="meter-value" key={points}>{points > 0 ? `−${points}` : '0'}</span>
               </span>
-              <button className={`icon-btn ${explain ? 'on' : ''}`} onClick={() => setExplain((e) => !e)} aria-label="Explain mode" aria-pressed={explain}>?</button>
               <button className="icon-btn" onClick={endSession} aria-label="End session"><IconClose size={16} /></button>
             </div>
           )}
