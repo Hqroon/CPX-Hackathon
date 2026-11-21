@@ -103,6 +103,8 @@ public class ReelGuardService extends AccessibilityService {
         GuardStore st = new GuardStore(ctx);
         st.setArmed(false);
         st.resetAll();
+        ReelGuardService s = instance;
+        if (s != null) s.sawOwnTask = false;
         reload();
     }
 
@@ -252,14 +254,40 @@ public class ReelGuardService extends AccessibilityService {
         return result;
     }
 
-    /** True when 看看 has no task any more (the user swiped it away from recent apps). */
+    /** Set once we have actually seen 看看's task while the bubble is on. */
+    private boolean sawOwnTask = false;
+
+    /**
+     * True when 看看 had a task while the bubble was on and now has none (the user swiped
+     * it away from recent apps). Some phones never report our task to this service; then
+     * this stays false and ExitWatchService (onTaskRemoved) handles the swipe instead, so
+     * starting the bubble can never switch itself off.
+     */
     private boolean appWasClosed() {
         try {
             ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-            return am != null && am.getAppTasks().isEmpty();
+            if (am == null) return false;
+            boolean hasTask = !am.getAppTasks().isEmpty();
+            if (hasTask) {
+                sawOwnTask = true;
+                return false;
+            }
+            return sawOwnTask;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /** Called right after 看看 goes to the background with the bubble on: show it now. */
+    public static void onMinimized() {
+        ReelGuardService s = instance;
+        if (s != null) s.handler.post(() -> {
+            if (!s.active()) return;
+            s.ownAppForeground = false;
+            s.appWasClosed(); // remember that our task exists
+            s.ui.showBubble(s.store.points());
+            s.log("minimized: bubble shown");
+        });
     }
 
     // Apps where every vertical swipe is a new short video.
