@@ -143,6 +143,7 @@ export default function App() {
     return question;
   }
 
+
   function openQuiz() {
     // Questions from the user's slides aren't back yet: hold the reel paused on a
     // "writing your question" card rather than showing an unrelated sample question.
@@ -247,6 +248,7 @@ export default function App() {
     // With several PDFs, remember which file (and its own page number) each deck page came from.
     const bySlide = new Map(slides.map((s) => [Number(s.page), s]));
     const multiFile = new Set(slides.map((s) => s.file).filter(Boolean)).size > 1;
+    showToast('Generating questions from your slides…');
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
       setQuestions(r.questions.map((q) => {
         const src = multiFile && bySlide.get(Number(q.sourcePage));
@@ -255,6 +257,9 @@ export default function App() {
       setQuestionsReady(true);
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
+      showToast(r.usedFallback
+        ? 'AI unavailable: using clearly labelled practice questions.'
+        : `${r.questions.length} AI questions ready from your slides.`);
     });
   }
 
@@ -388,6 +393,7 @@ export default function App() {
           </button>
           {phase === 'feed' && (
             <div className="topbar-right">
+              <span role="status" title="Question source">{provider === 'generating…' ? 'AI generating…' : /mock|fallback/.test(provider) ? 'Practice bank' : questions.length ? `AI · ${questions.length}` : ''}</span>
               {/* Sound state is only revealed in explain mode; otherwise the volume fade stays silent. */}
               {explain && afterLine && current?.type === 'reel' && (
                 <span

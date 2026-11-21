@@ -8,9 +8,12 @@ import {
   validatePdfFile,
 } from '../rules/slides.js';
 import Explain from './Explain.jsx';
-import { IconUpload, IconLayers, IconChevron, IconArrow, IconDoc } from './Icons.jsx';
+import {
+  IconUpload, IconDoc,
+  IconLayers, IconChevron, IconArrow,
+} from './Icons.jsx';
 import TopBar from './Brand.jsx';
-import sample from '../mock/sample-slides.json';
+import samples from '../mock/course-slides.json';
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -129,8 +132,18 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
   }
 
   function useSample() {
+    // Mix courses automatically, with globally unique source-page identifiers.
+    // Include the original lecture/page in the text so explanations retain context.
+    const pool = samples.decks.flatMap((deck) => deck.pages.map((slide) => ({
+      text: `[${deck.title}, original PDF page ${slide.page}] ${slide.text}`,
+    })));
+    for (let i = pool.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const pages = pool.slice(0, 12).map((slide, index) => ({ page: index + 1, text: slide.text }));
     setDiagnostics(null);
-    setStatus({ kind: 'ready', slides: sample.pages, name: sample.title });
+    setStatus({ kind: 'ready', slides: pages, name: 'Mixed course samples · 随机跨学科课件' });
   }
 
   const fileNote = status.fileCount > 1 ? `File ${status.fileIndex} of ${status.fileCount}: ` : '';
@@ -172,7 +185,7 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
               <span className="row-icon"><IconLayers size={16} /></span>
               <span className="row-text">
                 <span className="row-title">{COPY.gate.sample}</span>
-                <span className="row-sub">Data Structures &amp; Algorithms, week 3</span>
+                <span className="row-sub">A random mix of real lecture slides from several courses</span>
               </span>
               <IconChevron size={18} className="row-chevron" />
             </button>
