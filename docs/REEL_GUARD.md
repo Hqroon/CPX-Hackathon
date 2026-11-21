@@ -19,7 +19,7 @@ Same rules as the in-app feed (`frontend/src/rules/frustration.js`). The Java co
 |---|---|
 | 1–5 | Free. A floating bubble shows points owed (tap it to come back to Reel Guard). |
 | 6+ | −1 point per reel. The phone's **media volume** alternates on / muted and drops 2% per reel, **without showing the volume slider**. |
-| 10, 15, 20… | A **question card covers the reel** and silences it. Right = card closes. Wrong = 5 s, then a **new** question. Leaving the app doesn't dodge it: the card is back when you return. |
+| 6, 11, 16… | A **question card covers the reel** and silences it. Right = card closes. Wrong = 5 s, then a **new** question. Leaving the app doesn't dodge it: the card is back when you return. |
 | 11+ | After every swipe, a **3-second "Loading next reel…" cover** blocks the screen, and a **grey layer** dims the feed more each reel. |
 | Away | 15 minutes away from all guarded apps clears 1 point. 10 minutes away starts a new session (5 free reels again). Your normal volume is restored when you leave. |
 
@@ -55,8 +55,8 @@ These kill background services aggressively. On the demo phone:
 
 - [ ] Open Xiaohongshu: toast "Reel Guard is on: your first 5 reels are free", and the bubble shows 0
 - [ ] Swipe 5 reels: still 0
-- [ ] Swipe 6: bubble −1, and sound alternates from here
-- [ ] Reel 10: question card appears, the reel is silent, swiping is blocked
+- [ ] Swipe 6: bubble −1, sound alternates from here, and the first question card appears
+- [ ] Reel 6 (then 11, 16…): question card appears, the reel is silent, swiping is blocked
 - [ ] Wrong answer: "A new question in 5s", then a different question
 - [ ] Right answer: card closes, sound returns
 - [ ] Reel 11+: 3 s "Loading next reel…" after every swipe, the screen greys more each reel
