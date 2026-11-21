@@ -60,8 +60,9 @@ export default function InfoPage({ onBack }) {
             </li>
             <li>
               <strong>Scroll Instagram or Xiaohongshu as usual.</strong> 看看 uses Android's accessibility service to
-              notice which app is open and each time you swipe to a new reel. That's how it counts reels. It never
-              reads what's on your screen.
+              notice which app is open and each time you swipe to a new reel. Only swipes in the reels player count;
+              scrolling the normal feed doesn't. It checks which part of the app is scrolling, never what's on your
+              screen.
             </li>
             <li>
               <strong>The rules run on top of their reels.</strong> Question cards, the loading cover, the grey layer
