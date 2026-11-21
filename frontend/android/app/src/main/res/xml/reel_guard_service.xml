@@ -3,12 +3,12 @@
   Reel Guard accessibility service configuration.
   - typeWindowStateChanged: which app is on screen (enter / leave Instagram, Xiaohongshu…)
   - typeViewScrolled: a swipe inside that app = one reel
-  canRetrieveWindowContent is false: the service never reads what is on screen.
+  Window content is used only to tell the reels player from the normal feed (view class + resource id); the service never reads text or images.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/guard_service_description"
     android:accessibilityEventTypes="typeWindowStateChanged|typeViewScrolled"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews"
-    android:canRetrieveWindowContent="false"
+    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews|flagReportViewIds"
+    android:canRetrieveWindowContent="true"
     android:notificationTimeout="100" />

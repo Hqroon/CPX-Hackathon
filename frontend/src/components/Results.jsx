@@ -30,7 +30,7 @@ function ResultsOriginal({ stats, points, onRestart, onHome }) {
 
         <div className="total">
           <span className={`total-number ${points > 0 ? 'owing' : ''}`}>{points > 0 ? `−${points}` : '0'}</span>
-          <p className="muted strong">{points === 1 ? 'point owed' : 'points owed'}</p>
+          <p className="muted strong">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
         </div>
 
         <div className="card breakdown">
@@ -112,7 +112,7 @@ function ResultsMinimal({ stats, points, onRestart, onHome }) {
             {owing && <span className="total-sign" aria-hidden="true">−</span>}
             <span aria-hidden="true">{shown}</span>
           </span>
-          <p className="muted strong">{points === 1 ? 'point owed' : 'points owed'}</p>
+          <p className="muted strong">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
           {owing && <p className="muted clear-note">Clears after {formatMinutes(mins)} away</p>}
         </div>
 

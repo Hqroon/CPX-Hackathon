@@ -32,7 +32,7 @@ public final class GuardRules {
 
     public static boolean asksQuestion(int n, GuardConfig c) {
         int k = paidNumber(n, c);
-        return k > 0 && (k - 1) % c.questionEvery == 0; // same as frustration.js: reels 6, 11, 16…
+        return k > 0 && k % c.questionEvery == 0; // same as frustration.js: reels 10, 15, 20…
     }
 
     /** Paid reels alternate: 1st on, 2nd muted, 3rd on… */

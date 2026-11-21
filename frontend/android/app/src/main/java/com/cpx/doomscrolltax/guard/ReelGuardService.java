@@ -1,6 +1,8 @@
 package com.cpx.doomscrolltax.guard;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.ActivityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -150,6 +152,14 @@ public class ReelGuardService extends AccessibilityService {
             } else if (event.getClassName() != null && event.getClassName().toString().endsWith("MainActivity")) {
                 ownAppForeground = true;
             }
+            // Swiped away from recent apps? Then 看看 has no task left: switch everything off.
+            // (On many phones the app's process survives the swipe because of this service,
+            // so the activity's own exit hooks never run.)
+            if (store.isArmed() && appWasClosed()) {
+                log("看看 was closed: bubble off, Loan Points reset");
+                resetForExit(this);
+                return;
+            }
         }
 
         if (!active()) {
@@ -204,7 +214,7 @@ public class ReelGuardService extends AccessibilityService {
                     ownAppForeground = false;
                     enterTarget();
                 }
-                onSwipe();
+                if (isReelScroll(event, pkg)) onSwipe();
                 break;
             default:
                 break;
@@ -240,6 +250,59 @@ public class ReelGuardService extends AccessibilityService {
         }
         screenCache.put(key, result);
         return result;
+    }
+
+    /** True when 看看 has no task any more (the user swiped it away from recent apps). */
+    private boolean appWasClosed() {
+        try {
+            ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            return am != null && am.getAppTasks().isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Apps where every vertical swipe is a new short video.
+    private static final Set<String> ALL_VIDEO = new HashSet<>(Arrays.asList(
+            "com.ss.android.ugc.aweme", "com.ss.android.ugc.aweme.lite", "com.zhiliaoapp.musically",
+            "com.ss.android.ugc.trill", "com.smile.gifmaker"));
+
+    /**
+     * Only swipes in the reels / video player count, not scrolling the normal feed.
+     * We look at what kind of view scrolled (its class and resource id, e.g. Instagram's
+     * "clips_viewer…" pager), never at the content.
+     */
+    private boolean isReelScroll(AccessibilityEvent event, String pkg) {
+        if (ALL_VIDEO.contains(pkg)) return true;
+        String cls = event.getClassName() == null ? "" : event.getClassName().toString();
+        StringBuilder ids = new StringBuilder();
+        AccessibilityNodeInfo node = null;
+        try {
+            node = event.getSource();
+            AccessibilityNodeInfo n = node;
+            for (int depth = 0; n != null && depth < 8; depth++) {
+                String id = n.getViewIdResourceName();
+                if (id != null) ids.append(id).append(' ');
+                AccessibilityNodeInfo parent = n.getParent();
+                if (n != node) n.recycle();
+                n = parent;
+            }
+        } catch (Exception ignored) {
+        } finally {
+            if (node != null) try { node.recycle(); } catch (Exception ignored) { }
+        }
+        String id = ids.toString().toLowerCase();
+        boolean pager = cls.contains("ViewPager") || cls.contains("Pager");
+        boolean reel;
+        if (pkg.equals("com.instagram.android")) {
+            // Instagram calls reels "clips": clips_viewer_view_pager, clips_viewer_container…
+            reel = id.contains("clips") || id.contains("reel") || (pager && id.isEmpty());
+        } else {
+            // Xiaohongshu and others: the video player is a vertical pager; the home feed is a grid.
+            reel = pager || id.contains("video") || id.contains("reel") || id.contains("clips");
+        }
+        log("scroll " + (reel ? "REEL " : "feed ") + cls + " ids=" + id.trim());
+        return reel;
     }
 
     private static void log(String msg) {

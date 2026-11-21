@@ -63,7 +63,7 @@ export const pointsCleared = (minutesAway, cfg = CONFIG) =>
  */
 export function asksQuestion(n, cfg = CONFIG) {
   const k = paidNumber(n, cfg);
-  return k > 0 && (k - 1) % cfg.questionEvery === 0;
+  return k > 0 && k % cfg.questionEvery === 0; // reels 10, 15, 20…
 }
 
 /**
