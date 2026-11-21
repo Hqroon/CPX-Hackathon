@@ -539,6 +539,7 @@ export default function App() {
             onStart={startBubble}
             onBack={() => setPhase('start')}
             onNote={showToast}
+            onRefresh={refreshGuard}
           />
         )}
         {phase === 'info' && <InfoPage onBack={() => setPhase('start')} />}

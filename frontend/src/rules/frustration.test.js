@@ -32,10 +32,10 @@ test('5 minutes away clears 1 Loan Point', () => {
   assert.equal(pointsCleared(11), 2);
 });
 
-test('a question every 5 paid reels: 10, 15, 20…', () => {
+test('a question every 5 reels: 5, 10, 15, 20…', () => {
   const asked = range(1, 30).filter((n) => asksQuestion(n));
-  assert.deepEqual(asked, [10, 15, 20, 25, 30]);
-  for (const n of range(1, 5)) assert.equal(asksQuestion(n), false); // free reels never ask
+  assert.deepEqual(asked, [5, 10, 15, 20, 25, 30]);
+  for (const n of range(1, 4)) assert.equal(asksQuestion(n), false); // first question on reel 5
 });
 
 test('wrong answer leads to a different next question', () => {
@@ -108,7 +108,7 @@ test('rulesForReel summarises one reel', () => {
 
 test('demo overrides still give a sensible sequence', () => {
   const demo = { ...CONFIG, questionEvery: 2, slowAfterReels: 8, decayFullAfterReels: 5 };
-  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [7, 9, 11]);
+  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [2, 4, 6, 8, 10, 12]);
   assert.equal(transitionMsInto(9, demo), 3000);
   assert.equal(visualDecay(13, demo), 1);
 });

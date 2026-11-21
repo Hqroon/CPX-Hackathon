@@ -240,14 +240,15 @@ final class GuardOverlays {
     void showBlocker() {
         if (blocker != null) return;
         FrameLayout root = new FrameLayout(service);
-        root.setBackgroundColor(Color.argb(150, 3, 23, 76));
+        root.setBackgroundColor(Color.argb(150, 0, 0, 0));
         root.setClickable(true); // swallow touches
 
         LinearLayout box = new LinearLayout(service);
         box.setOrientation(LinearLayout.VERTICAL);
         box.setGravity(Gravity.CENTER_HORIZONTAL);
-        box.setPadding(dp(24), dp(20), dp(24), dp(20));
-        box.setBackground(rounded(Color.argb(220, 3, 23, 76), dp(20)));
+        box.setPadding(dp(28), dp(22), dp(28), dp(22));
+        box.setMinimumWidth(dp(220)); // room for the whole "Loading next reel…" line
+        box.setBackground(rounded(Color.argb(235, 20, 96, 63), dp(20))); // logo green
 
         ProgressBar spinner = new ProgressBar(service);
         box.addView(spinner, new LinearLayout.LayoutParams(dp(44), dp(44)));
@@ -255,9 +256,13 @@ final class GuardOverlays {
         TextView label = new TextView(service);
         label.setText("Loading next reel…");
         label.setTextColor(Color.WHITE);
-        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        label.setPadding(0, dp(10), 0, 0);
-        box.addView(label);
+        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        label.setTypeface(Typeface.DEFAULT_BOLD);
+        label.setGravity(Gravity.CENTER);
+        label.setSingleLine(true);
+        label.setPadding(0, dp(12), 0, 0);
+        box.addView(label, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);

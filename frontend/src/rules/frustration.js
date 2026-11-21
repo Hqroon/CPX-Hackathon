@@ -62,8 +62,7 @@ export const pointsCleared = (minutesAway, cfg = CONFIG) =>
  * every `questionEvery` further reels: with 5 free and every 5 -> reels 6, 11, 16, 21…
  */
 export function asksQuestion(n, cfg = CONFIG) {
-  const k = paidNumber(n, cfg);
-  return k > 0 && k % cfg.questionEvery === 0; // reels 10, 15, 20…
+  return n != null && n > 0 && n % cfg.questionEvery === 0; // reels 5, 10, 15, 20…
 }
 
 /**

@@ -8,7 +8,7 @@ import BackgroundLogo from './BackgroundLogo.jsx';
 export default function InfoPage({ onBack }) {
   const free = CONFIG.freeReels;
   const every = CONFIG.questionEvery;
-  const firstQ = free + every;
+  const firstQ = every;
   const qReels = [firstQ, firstQ + every, firstQ + 2 * every].join(', ');
 
   return (

@@ -13,7 +13,7 @@ export const CONFIG = {
   minutesPerPoint: 5,        // minutes away from the app that clear 1 Loan Point
 
   // --- Question toll ---------------------------------------------------------
-  questionEvery: 5,          // a question every N paid reels (reels 10, 15, 20…)
+  questionEvery: 5,          // a question every N reels (reels 5, 10, 15, 20…)
   wrongWaitSeconds: 5,       // wrong answer: wait this long, then a NEW question appears
   questionCount: 12,         // questions requested from the backend per session
   maxPdfFiles: 5,            // slide gate: PDFs that can be uploaded together
