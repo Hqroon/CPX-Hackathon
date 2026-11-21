@@ -20,8 +20,10 @@ export function extractionMessage(error, diagnostics) {
  * status: idle | reading { fileIndex, fileCount, processedPages, totalPages }
  *       | ready { slides, name, files, skipped } | error { msg }
  */
-export function useSlideUpload() {
-  const [status, setStatus] = useState({ kind: 'idle' });
+export function useSlideUpload(savedDeck = null) {
+  // savedDeck: { slides, name, files, skipped } from an earlier upload, so the user
+  // isn't asked to upload the same files again when they come back to this screen.
+  const [status, setStatus] = useState(() => (savedDeck ? { kind: 'ready', ...savedDeck } : { kind: 'idle' }));
   const [diagnostics, setDiagnostics] = useState(null);
   const inputRef = useRef(null);
 

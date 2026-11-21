@@ -61,7 +61,7 @@ export default function App() {
   const [reelSource, setReelSource] = useState('');
   // start -> (in the app) gate -> feed -> results, or start -> (other apps) guard / bubble
   // Dark theme opens on the welcome screen; VITE_UI_THEME=original opens on 'start' as before.
-  const [phase, setPhase] = useState(IS_DARK_THEME ? 'welcome' : 'start'); // welcome | start | gate | feed | results | guard | guard-slides
+  const [phase, setPhase] = useState(IS_DARK_THEME ? 'welcome' : 'start'); // welcome | start | gate | feed | results | guard
   // Android app (Reel Guard available)? null = still checking.
   const [nativeApp, setNativeApp] = useState(null);
   const [guardStatus, setGuardStatus] = useState(null);
@@ -72,6 +72,7 @@ export default function App() {
   const [stats, setStats] = useState(emptyStats());
   const [points, setPoints] = useState(0);
   const [questions, setQuestions] = useState([]);
+  const [deck, setDeck] = useState(null); // slides confirmed on the home popup, reused until the user changes them
   const [questionsReady, setQuestionsReady] = useState(false); // false while the backend writes them
   const [provider, setProvider] = useState('');
   const qPointerRef = useRef(0);
@@ -144,16 +145,6 @@ export default function App() {
     continueWithOtherApps();
   }
 
-  // Reel Guard: slides chosen on the guard screen -> questions -> native service.
-  function chooseGuardSlides(slides) {
-    setPhase('guard');
-    showToast('Writing questions from your slides…');
-    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
-      await syncGuard({ questions: r.questions });
-      await refreshGuard();
-      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
-    });
-  }
 
   // Load reels once.
   useEffect(() => {
@@ -358,7 +349,8 @@ export default function App() {
     setQuestionsReady(false);
     setProvider('');
     setSessionId(newSessionId());
-    setPhase('gate'); // stay logged in: back to the slide screen
+    // Back to the home popup: it reopens on the choices with the files already uploaded.
+    setPhase(deck ? 'start' : 'gate');
   }
 
   // ---- Demo controls ---------------------------------------------------------
@@ -504,6 +496,8 @@ export default function App() {
             guardStatus={guardStatus}
             onThisApp={startSession}
             onOtherApps={otherAppsWithSlides}
+            deck={deck}
+            onDeckChange={setDeck}
           />
         )}
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} onBack={() => setPhase('start')} />}
@@ -513,18 +507,9 @@ export default function App() {
             status={guardStatus}
             nativeApp={nativeApp}
             onRefresh={refreshGuard}
-            onChooseSlides={() => setPhase('guard-slides')}
             onStart={startBubble}
             onStop={stopBubble}
             onBack={() => setPhase('start')}
-          />
-        )}
-        {phase === 'guard-slides' && (
-          <SlideGate
-            onStart={chooseGuardSlides}
-            explain={explain}
-            onBack={() => setPhase('guard')}
-            startLabel="Use these slides for questions"
           />
         )}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}

@@ -6,11 +6,18 @@ import { useSlideUpload } from '../rules/useSlideUpload.js';
 import { HomeLogo } from './Brand.jsx';
 import { IconLayers, IconShare, IconChevron, IconUpload, IconDoc, IconBack, IconCheck } from './Icons.jsx';
 
-export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp }) {
-  const { status, inputRef, onFile, readingLabel, reading, ready, choose, reset } = useSlideUpload();
+export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp, deck, onDeckChange = () => {} }) {
+  // `deck` is the user's confirmed upload, kept by App: coming back here (from results,
+  // from Reel Guard, …) reopens on the choices with the same files instead of asking again.
+  const { status, inputRef, onFile, readingLabel, reading, ready, choose, reset } = useSlideUpload(deck);
   // Steps once slides are read: review the files (Confirm / back to change them), then choose where to scroll.
-  const [confirmed, setConfirmed] = useState(false);
-  const changeFiles = () => { setConfirmed(false); reset(); };
+  const [confirmed, setConfirmed] = useState(!!deck);
+  const changeFiles = () => { setConfirmed(false); onDeckChange(null); reset(); };
+  const confirm = () => {
+    const { slides, name, files, skipped } = status;
+    onDeckChange({ slides, name, files, skipped });
+    setConfirmed(true);
+  };
   const owed = guardStatus?.points || 0;
   const armed = !!guardStatus?.armed;
   const otherSub = !nativeApp
@@ -66,7 +73,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
               {status.skipped?.length > 0 && (
                 <p className="form-error" role="status">Skipped: {status.skipped.join('; ')}.</p>
               )}
-              <button className="btn primary" onClick={() => setConfirmed(true)}>
+              <button className="btn primary" onClick={confirm}>
                 <IconCheck size={18} /><span>Confirm</span>
               </button>
             </>
