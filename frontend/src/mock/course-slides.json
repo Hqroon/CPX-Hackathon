@@ -1,0 +1,1072 @@
+{
+  "decks": [
+    {
+      "title": "Gravitation",
+      "fileName": "PHYS121 W3T2 Gravitation.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "PHYS121 Integrated Science - Physics W3D2 Gravitation References: [1] David Halliday, Jearl Walker, Resnick Jearl , ‘Fundamentals of Physics’, (Wiley, 2018) [2] Doug Giancoli , ‘Physics for Scientists and Engineers with modern physics’, (Pearson, 2009) [3] Hugh D. Young, Roger A. Freedman, ‘University Physics with Modern Physics’, (Pearson, 2012) And others specified when needed."
+        },
+        {
+          "page": 2,
+          "text": "8.7.2. A rubber ball is dropped from rest from a height h . The ball bounces off the floor and reaches a height of 2 h /3. How can we use the principle of the conservation of mechanical energy to interpret this observation? a) During the collision with the floor, the floor did not push hard enough on the ball for it to reach its original height. b) Some of the ball’s potential energy was lost in accelerating it toward the floor. c) The force of the earth’s gravity on the ball prevented it from returning to its original height. d) Work was done on the ball by the gravitational force that reduced the ball’s kinetic energy. e) Work was done on the ball by non - conservative forces that resulted in the ball having less total mechanical energy after the bounce."
+        },
+        {
+          "page": 3,
+          "text": "Learning outcomes • Calculate the gravitation from Newton ’ s law • Compare the gravitation near the surface of Earth (gravity), inside/outside of Earth. • Analyze the work done by gravitation. • Explain and apply Kepler ’ s laws of planetary motions. • Describe Einstein ’ s theory of gravitation."
+        },
+        {
+          "page": 4,
+          "text": "Newton's Law of Gravitation • The gravitational force o Holds us to the Earth o Holds Earth in orbit around the Sun o Holds the Sun together with the stars in our galaxy o Reaches out across intergalactic space to hold together the Local Group of galaxies o Holds together the Local Supercluster of galaxies o Pulls the supercluster toward the Great Attractor o Attempts to slow the expansion of the universe o Is responsible for black holes • Gravity is far - reaching and very important! Slide based on Ref. [1]"
+        },
+        {
+          "page": 5,
+          "text": "• Gravitational attraction depends on the amount of “stuff” an object is made of • Earth has lots of “stuff” and produces a large attraction • The force is always attractive , never repulsive • Gravitation is the tendency for bodies to attract each other • Newton realized this attraction was responsible for maintaining the orbits of celestial bodies • Newton's law of gravitation defines ( from reasoning ) the strength of this attractive force between particles • For apple & Earth: 0.8 N; for 2 people:  1  N"
+        },
+        {
+          "page": 6,
+          "text": "• The magnitude of the force is given by: m m 1 2 Equation (13 - 1) F = G ( Newton's law of gravitation . ) r • Where G is the gravitational constant : − 11 2 2 G = 6.67  10 N m /kg  Equation (13 - 2) • The force always points from one particle to the other, so this equation can be written in vector form: r m m 1 2 F = G r ˆ . Equation (13 - 3) r"
+        },
+        {
+          "page": 7,
+          "text": "A uniform spherical shell of matter attracts a particle that is outside the shell as if all the shell’s mass were concentrated at its center ( proved from calculus ). • The shell theorem describes gravitational attraction for objects • Earth is a nesting of shells, so we feel Earth's mass as if it were all located at its center • Gravitational force forms third - law force pairs • E.g., Earth - apple and apple - Earth forces are both 0.8 N Figure 13 - 2"
+        },
+        {
+          "page": 8,
+          "text": "The difference in mass causes the difference in accelerations of the apple and Earth (Newton’s rd 3 law of motion): 2 − 25 2 ~ 10 m/s vs. ~ 10 m/s Figure 13 - 3"
+        },
+        {
+          "page": 9,
+          "text": "Checkpoint 1 A particle is to be placed, in turn, outside four objects, each of mass m : (1) a large uniform solid sphere, (2) a large uniform spherical shell, (3) a small uniform solid sphere, and (4) a small uniform shell. In each situation, the distance between the particle and the center of the object is d . Rank the objects according to the magnitude of the gravitational force they exert on the particle, greatest first."
+        },
+        {
+          "page": 10,
+          "text": "the Principle of Superposition • Find the net gravitational force by the principle of superposition : the net is the sum of individual effects • Add the individual forces as vectors: n r r Equation (13 - 5) F = F .  1, net 1 i i = 2 • For a real (extended) object, this becomes an integral: r r F = dF , Equation (13 - 6) 1  • If the object is a uniform sphere or shell we can treat its mass as being at its center instead ( prove from calculus )."
+        },
+        {
+          "page": 11,
+          "text": "Example Summing two forces: Figure 13 - 4 Copyright ©2018 John Wiley & Sons, Inc 11"
+        },
+        {
+          "page": 12,
+          "text": "Checkpoint 2 (1) The figure shows four arrangements of three particles of equal masses. (a) Rank the arrangements according to the (2) magnitude of the net gravitational force on the particle labeled m , greatest first. (b) In arrangement 2, is the direction of the net force closer to the line of length d or to the (3) line of length D ? (4)"
+        },
+        {
+          "page": 13,
+          "text": "Gravitation Near Earth's Surface (gravity) GMm • Combine F = and F = ma : g r GM Equation (13 - 11) a = . g r • This gives the magnitude of the gravitational acceleration at a given distance from the center of the Earth. Altitude (km) Altitude Example 0 9.83 Mean Earth surface 8.8 9.80 Mt. Everest 36.6 9.71 Highest crewed balloon 400 8.70 Space shuttle orbit 35 700 0.225 Communications satellite"
+        },
+        {
+          "page": 14,
+          "text": "• The calculated a will differ g slightly from the measured g at any location • Therefore the calculated gravitational force on an object will not match its weight for the same 3 reasons: 1. Earth's mass is not uniformly distributed, Figure 13 - 5 2. Earth is not a sphere 3. Earth rotates Figure 13 - 5"
+        },
+        {
+          "page": 15,
+          "text": "Example Difference in gravitational force and weight due to rotation at the equator: Equation (13 - 12) F − ma = m ( −  R ) . N g Figure 13 - 6"
+        },
+        {
+          "page": 16,
+          "text": "Gravitational Potential Energy • Note that gravitational potential energy is a property of a pair of particles/objects • We cannot divide it up to say how much of it “belongs” to each particle in the pair • We often speak as of the “gravitational potential energy of an baseball” in the ball - Earth system • We get away with this because the energy change appears almost entirely as kinetic energy of the ball • This is only true for systems where one object is much less massive than the other"
+        },
+        {
+          "page": 17,
+          "text": "• Gravitational potential energy for a two - particle system is written (negative of the work done by gravitation): GMm Equation (13 - 21) U = − ( gravitational potential energy . ) r • Note this value is negative and approaches 0 for r →  • The gravitational potential energy of a system is the sum of potential energies for all pairs of particles  Gm m Gm m Gm m  1 2 1 3 2 3 U = − + + .   r r r  12 13 23  Equation (13 - 22) Figure 13 - 8"
+        },
+        {
+          "page": 18,
+          "text": "• The gravitational force is conservative • The work done by this force does not depend on the path followed by the particles, only the difference in the initial and final positions of the particles • Since the work done is independent of path, so is the gravitational potential energy change Figure 13 - 10  U = U − U = − W . Equation (13 - 26) f i"
+        },
+        {
+          "page": 19,
+          "text": "• Newton's law of gravitation can be derived from the potential energy formula by taking the derivative ( or vise versa ) • For a projectile to escape the gravitational pull of a body, it must come to rest only at infinity, if at all • (if) At rest at infinity: K = 0 and U = 0 (because r → ∞ ) ‘reference point’ • So K + U must be at least 0 at the surface of the body ( why? ): 1  GMm  K + U = mv + − = 0.   Equation (13 - 28) 2 R   2 GM v = . R • Rockets launch eastward to take advantage of Earth's rotational speed, to reach v more easily"
+        },
+        {
+          "page": 20,
+          "text": "Table 13 - 2 Some Escape Speeds Body Mass (kg) Radius (m) Escape Speed (km/s) a 5 1.17  10 Ceres 3.8  10 0.64 a 7.36  10 6 Earth's moon 1.74  10 2.38 24 6 5.98  10 6.37  10 Earth 11.2 27 7 1.90  10 7.15  10 Jupiter 59.5 30 8 6.96  10 Sun 1.99  10 618 b 30 7 Sirius B 2  10 1  10 5200 c 30 4 5 Neutron star 2  10 1  10 2  10 Copyright © 2018 John Wiley & Sons, Inc. All rights reserved. Table 13 - 2"
+        },
+        {
+          "page": 21,
+          "text": "Planets and Satellites: Kepler's Laws • The motion of planets in the solar system was a puzzle for astronomers, especially curious motions such as in Figure 13 - 11 • Johannes Kepler (1571 - 1630) derived laws of motion using Tycho Brahe's (1546 - 1601) measurements Figure 13 - 12 Figure 13 - 11"
+        },
+        {
+          "page": 22,
+          "text": "1. The Law of Orbits: All planets move in elliptical orbits, with the Sun at one focus. • The orbit is defined by its semimajor axis a and its eccentricity e • An eccentricity of zero corresponds to a circle • Eccentricity of Earth's orbit is 0.0167 2. The Law of Areas: A line that connects a planet to the Sun sweeps out equal areas in the plane of the planet’s orbit in dA equal time intervals; that is, the rate at which it sweeps out dt area A is constant. • Equivalent to the law of conservation of angular momentum 3. The Law of Periods: The square of the period of any planet is proportional to the cube of the semimajor axis of its orbit."
+        },
+        {
+          "page": 23,
+          "text": "Figure 13 - 13 • The law of periods can be written mathematically as: 4    2 3 T = r ( law of periods . ) Equation (13 - 34)   GM   • Holds for elliptical orbits if we replace r with a"
+        },
+        {
+          "page": 24,
+          "text": "Table 13 - 3 Kepler's Law of Periods for the Solar System 2 2 T  y  − 34 Semimajor Axis   Planet Period T ( y ) 3 3 10 a m   a ( 10 m ) Mercury 5.79 0.241 2.99 Venus 10.8 0.615 3.00 Earth 15.0 1.00 2.96 Mars 22.8 1.88 2.98 Jupiter 77.8 11.9 3.01 Saturn 143 29.5 2.98 Uranus 287 84.0 2.98 Neptune 450 165 2.99 Pluto 590 248 2.99"
+        },
+        {
+          "page": 25,
+          "text": "Satellites: Orbits and Energy • Relating the centripetal acceleration of a satellite to the gravitational force, we can rewrite as energies: 1 GMm 2 Equation (13 - 38) K = mv = , 2 2 r • Meaning that: U Equation (13 - 39) K = − ( circular orbit . ) • Therefore the total mechanical energy is: GMm GMm E = K + U = − 2 r r GMm Equation (13 - 40) E = − ( circular orbit . ) 2 r"
+        },
+        {
+          "page": 26,
+          "text": "• Total energy E is the negative of the kinetic energy • For an ellipse, we substitute a for r • Therefore the energy of an orbit depends only on its semimajor axis, not its eccentricity • All orbits in Figure 13 - 15 have the same energy"
+        },
+        {
+          "page": 27,
+          "text": "Figure 13 - 15 Figure 13 - 16 Copyright ©2018 John Wiley & Sons, Inc 27"
+        },
+        {
+          "page": 28,
+          "text": "Checkpoint 5 In the figure here, a space shuttle is initially in a circular orbit of radius r about Earth. At point P , the pilot briefly fires a forward - pointing thruster to decrease the shuttle’s kinetic energy K and mechanical energy E . (a) Which of the dashed elliptical orbits shown in the figure will the shuttle then take? (b) Is the orbital period T of the shuttle (the time to return to P ) then greater than, less than, or the same as in the circular orbit?"
+        },
+        {
+          "page": 29,
+          "text": "Einstein and Gravitation • The general theory of relativity describes gravitation • Its fundamental postulate is the principle of equivalence • Gravitation and acceleration are equivalent • The experimenter inside this box is unable to tell whether he is on Earth experiencing g = 9.8 m/s , or in free space accelerating at 9.8 m/s . Figure 13 - 18"
+        },
+        {
+          "page": 30,
+          "text": "• Space (space - time) is curved • Analogies: In (a) and (b), paths that appear to be parallel, along the surface of the Earth or falling toward the Earth's center, actually converge • We can see why by stepping “outside” the curved Earth, but we can't step “outside” of curved space Figure 13 - 19"
+        },
+        {
+          "page": 31,
+          "text": "• But we can observe the curvature of space • Light bends as it passes by massive objects: an effect called gravitational lensing • In extreme cases we observe the light coming from multiple places, or Figure 13 - 20 bent into an Einstein ring"
+        },
+        {
+          "page": 32,
+          "text": "Learning outcomes ✓ Calculate the gravitation from Newton ’ s law ✓ Compare the gravitation near the surface of Earth (gravity), inside/outside of Earth. ✓ Analyze the work done by gravitation. ✓ Explain and apply Kepler ’ s laws of planetary motions. ✓ Describe Einstein ’ s theory of gravitation. r m m 1 2 F = G r ˆ . r GMm U = − ( gravitational potential energy . ) r GMm GMm E = K + U = − 2 r r"
+        },
+        {
+          "page": 33,
+          "text": "CHAPTER REVIEW AND EXAMPLES, DEMOS https://openstax.org/books/university - physics - volume - 1/pages/13 - summary Note two important items with this definition. First, U→0 as r→∞ . The potential energy is zero when the two masses are infinitely far apart. Only the difference in U is important, so the choice of U=0 for r=∞ is merely one of convenience. (Recall that in earlier gravity problems, you were free to take U=0 at the top or bottom of a building, or anywhere.) Second, note that U becomes increasingly more negative as the masses get closer. That is consistent with what you learned about potential energy in Potential Energy and Conservation of Energy . As the two masses are separated, positive work must be done against the force of gravity, and hence, U increases (becomes less negative). All masses naturally fall together under the influence of gravity, falling from a higher to a lower potential energy. https://openstax.org/books/university - physics - volume - 1/pages/13 - 3 - gravitational - potential - energy - and - total - energy"
+        },
+        {
+          "page": 34,
+          "text": "FIGURE 13.8 A three - dimensional representation of the gravitational field created by mass M . Note that the lines are uniformly distributed in all directions. (The box has been added only to aid in visualization.)"
+        },
+        {
+          "page": 35,
+          "text": "FIGURE 13.9 For a person standing at the equator, the centripetal acceleration ( a ) is in the c same direction as the force of gravity. At latitude λ , the angle the between a and c the force of gravity is λ and the magnitude of a decreases with cos λ . c"
+        },
+        {
+          "page": 36,
+          "text": "FIGURE 13.19 The transfer ellipse has its perihelion at Earth’s orbit and aphelion at Mars’ orbit."
+        },
+        {
+          "page": 37,
+          "text": "EXAMPLE 13.6 Lifting a Payload How much energy is required to lift the 9000 - kg Soyuz vehicle from Earth’s surface to the height of the ISS, 400 km above the surface? EXAMPLE 13 . 12 Energy Required to Orbit In Example 13.6 , we calculated the energy required to simply lift the 9000 - kg Soyuz vehicle from Earth’s surface to the height of the ISS, 400 km above the surface. In other words, we found its change in potential energy. We now ask, what total energy change in the Soyuz vehicle is required to take it from Earth’s surface and put it in orbit with the ISS for a rendezvous ( Figure 13.15 )? How much of that total energy is kinetic energy?"
+        }
+      ]
+    },
+    {
+      "title": "Linear Momentum",
+      "fileName": "PHYS121 W3T1 Linear Momentum.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "PHYS121 Integrated Science - Physics W2T4 Linear Momentum References: [1] David Halliday, Jearl Walker, Resnick Jearl , ‘Fundamentals of Physics’, (Wiley, 2018) [2] Doug Giancoli , ‘Physics for Scientists and Engineers with modern physics’, (Pearson, 2009) [3] Hugh D. Young, Roger A. Freedman, ‘University Physics with Modern Physics’, (Pearson, 2012) And others specified when needed."
+        },
+        {
+          "page": 2,
+          "text": "Learning Outcomes • Calculate the center of mass ( CoM ) of an object/a system (of objects) • Analyze the motion of the CoM. • Find the linear momentum/impulse of a particle/an object. • Apply conservation of linear momentum in 1 - and 2 - D. • Solve problems of variable mass system."
+        },
+        {
+          "page": 3,
+          "text": "https://www.youtube.com/watch?v=DY3LYQv22qY&list=PL860B 6886A47E5490&index=14&t=0s"
+        },
+        {
+          "page": 4,
+          "text": "Center of Mass • The motion of rotating objects can be complicated (imagine flipping a baseball bat into the air) • But there is a special point on the object for which the motion is simple • The center of mass of the bat traces out a parabola, just as a tossed ball does Figure 9 - 1 • All other points rotate around this point Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 4"
+        },
+        {
+          "page": 5,
+          "text": "• The center of mass (com) of a system of particles: The center of mass of a system of particles is the point that moves as though (1) all of the system’s mass were concentrated there and (2) all external forces were applied there. m 2 m x + m x 1 1 2 2 x = d . Figure 9 - 2 com x = . com m + m m + m 1 2 1 2 • The center of mass is in the same location regardless of the coordinate system used • It is a property of the particles, not the coordinates Copyright ©2018 John Wiley & Sons, Inc 5"
+        },
+        {
+          "page": 6,
+          "text": "• For many particles, we can generalize the equation, where M = m + m + . . . + m : 1 n m x + m x + m x + L + m x 1 1 2 2 3 3 n n x = com M n = m x .  i i Equation (9 - 4) M i = 1 • In three dimensions, we find the center of mass along each axis separately : n n n 1 1 1 x = m x , y = m y , z = m z .    com i i com i i com i i M M M i = 1 i = 1 i = 1 Equation (9 - 5) Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 6"
+        },
+        {
+          "page": 7,
+          "text": "• More concisely, we can write in terms of vectors: n r 1 r r = m r , Equation (9 - 8)  com i i M i = 1 • For solid bodies, we take the limit of an infinite sum of infinitely small particles → integration! • Coordinate - by - coordinate, we write: 1 1 1 x = x dm , y = y dm , z = z dm , Equation (9 - 9) com  com  com  M M M • Here M is the mass of the object Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 7"
+        },
+        {
+          "page": 8,
+          "text": "• We limit ourselves to objects of uniform density , ρ , for the sake of simplicity dm M  = = , Equation (9 - 10) dV V • Substituting, we find the center of mass simplifies: 1 1 1 x = x dV , y = y dV , z = z dV . Equation (9 - 11) com  com  com  V V V • You can bypass one or more of these integrals if the object has symmetry Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 8"
+        },
+        {
+          "page": 9,
+          "text": "Example Subtracting • Task: find CoM of a disk with another disk taken out of it: • Find the CoM of each individual disk (start from the bottom and work up) • Find the CoM of the two individual CoM s (one for each disk), treating the cutout as having negative mass • On the diagram, CoM is the center of C mass for Plate P and Disk S combined • CoM is the center of mass for the P composite plate with Disk S removed Figure 9 - 4 Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 9"
+        },
+        {
+          "page": 10,
+          "text": "Checkpoint 1 The figure shows a uniform square plate from which four identical squares at the corners will be removed. (a) Where is the center of mass of the plate originally? Where is it after the removal of (b) square 1; (c) squares 1 and 2; (d) squares 1 and 3; (e) squares 1, 2, and 3; (f) all four squares? Answer in terms of quadrants, axes, or points (without calculation, of course). Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 10"
+        },
+        {
+          "page": 11,
+          "text": "https://www.youtube.com/watch?v=gPDjaMsG_rg&list=PL860B6886 A47E5490&index=18"
+        },
+        {
+          "page": 12,
+          "text": "Newton's Second Law for a System of Particles • Center of mass motion continues unaffected by forces internal to a system (collisions between billiard balls) [ why? ] • Motion of a system's center of mass: r r Equation (9 - 14) F = Ma ( system of particles . ) net com F = Ma F = Ma F = Ma . Equation (9 - 15) net, x com, x net, y com, y net, z com, z • Reminders: 1. F is the sum of all external forces net 2. M is the total, constant, mass of the closed system 3. a is the center of mass acceleration com Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 12"
+        },
+        {
+          "page": 13,
+          "text": "Examples Using the c enter o f m ass motion equation: • Billiard collision: forces are only internal, F = 0 so a = 0 • Baseball bat: a = g , so com follows gravitational trajectory • Exploding rocket: explosion forces are internal, so only the gravitational force acts on the system, and the CoM follows a Figure 9 - 5 gravitational trajectory as long as air resistance can be ignored for the fragments. Picture from ref. [2] Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 13"
+        },
+        {
+          "page": 14,
+          "text": "Checkpoint 2 Two skaters on frictionless ice hold opposite ends of a pole of negligible mass. An axis runs along it, with the origin at the center of mass of the two - skater system. One skater, Fred, weighs twice as much as the other skater, Ethel. Where do the skaters meet if (a) Fred pulls hand over hand along the pole so as to draw himself to Ethel, (b) Ethel pulls hand over hand to draw herself to Fred, and (c) both skaters pull hand over hand? Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 14"
+        },
+        {
+          "page": 15,
+          "text": "Linear Momentum • The linear momentum is defined as: r r p = mv Equation (9 - 22) • The momentum: o Points in the same direction as the velocity o Can only be changed by a net external force The time rate of change of the momentum of a particle is equal to the net force acting on the particle and is in the direction of that force. • We can write Newton's second law thus: r r dp Equation (9 - 23) F = . net dt Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 15"
+        },
+        {
+          "page": 16,
+          "text": "Checkpoint 3 The figure gives the magnitude p of the linear momentum versus time t for a particle moving along an axis. A force directed along the axis acts on the particle. (a) Rank the four regions indicated according to the magnitude of the force, greatest first. (b) In which region is the particle slowing? Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 16"
+        },
+        {
+          "page": 17,
+          "text": "• We can sum momenta for a system of particles to find: r r P = Mv ( linear momentum, system of particles , ) Equation (9 - 25) com The linear momentum of a system of particles is equal to the product of the total mass M of the system and the velocity of the center of mass . • Taking the time derivative we can write Newton's second law for a system of particles as: r r dP r r F = ( system of particles , ) F = Ma system of particles . ( ) net net com dt Equation (9 - 27) • The net external force on a system changes linear momentum • Without a net external force, the total linear momentum of a system of particles cannot change Slide based on ref. [1] Copyright ©2018 John Wiley & Sons, Inc 17"
+        },
+        {
+          "page": 18,
+          "text": "Collisions and Impulse During a collision, objects are deformed due to the large forces involved. Since , we can write Integrating, Slide based on ref. [2] Copyright © 2009 Pearson Education, Inc."
+        },
+        {
+          "page": 19,
+          "text": "This quantity is defined as the impulse 冲量 , J: The impulse is equal to the change in momentum ( for one particle/object ): Slide based on ref. [2] Copyright © 2009 Pearson Education, Inc."
+        },
+        {
+          "page": 20,
+          "text": "Collision and Impulse • Given F and duration: avg J = F  t . Equation (9 - 35) avg • We are integrating: we only need to know the area under the force curve Figure 9 - 9 Copyright ©2018 John Wiley & Sons, Inc 20"
+        },
+        {
+          "page": 21,
+          "text": "Checkpoint 4 A paratrooper whose chute fails to open lands in snow; he is hurt slightly. Had he landed on bare ground, the stopping time would have been 10 times shorter and the collision lethal. Does the presence of the snow increase, decrease, or leave unchanged the values of (a) the paratrooper’s change in momentum, (b) the impulse stopping the paratrooper, and (c) the force stopping the paratrooper? Copyright ©2018 John Wiley & Sons, Inc 21"
+        },
+        {
+          "page": 22,
+          "text": "Checkpoint 5 The figure shows an overhead view of a ball bouncing from a vertical wall without any change in its speed. Consider the change r  p in the ball’s linear momentum. (a) Is  p positive, negative, or x zero? (b) Is  p positive, negative, or zero? (c) What is the y r direction of  p ? Copyright ©2018 John Wiley & Sons, Inc 22"
+        },
+        {
+          "page": 23,
+          "text": "Conservation of Linear Momentum • For an impulse of zero we find: r P = constant ( closed, isolated system . ) Equation (9 - 42) • Which says that: If no net external force acts on a system of particles, the r total linear momentum of the system cannot change. P • This is called the law of conservation of linear momentum • Check the components of the net external force to know if you should apply this Copyright ©2018 John Wiley & Sons, Inc 23"
+        },
+        {
+          "page": 24,
+          "text": "Checkpoint 6 An initially stationary device lying on a frictionless floor explodes into two pieces, which then slide across the floor, one of them in the positive x direction. (a) What is the sum of the momenta of the two pieces after the explosion? (b) Can the second piece move at an angle to the x axis? (c) What is the direction of the momentum of the second piece? Copyright ©2018 John Wiley & Sons, Inc 24"
+        },
+        {
+          "page": 25,
+          "text": "Momentum and Kinetic Energy in Collisions • Types of collisions: • Elastic collisions : o Total kinetic energy is unchanged (conserved) o A useful approximation for common situations o In real collisions, some energy is always transferred • Inelastic collisions : some energy is transferred • Completely inelastic collisions : o The objects stick together o Greatest loss of kinetic energy Copyright ©2018 John Wiley & Sons, Inc 25"
+        },
+        {
+          "page": 26,
+          "text": "• For one dimension: m v + m v = m v + m v . • Inelastic collision 1 1 i 2 2 i 1 1 f 2 2 f • Completely inelastic collision, for target at rest: m v = m + m V ( ) 1 1 i 1 2 Copyright ©2018 John Wiley & Sons, Inc 26 Figure 9 - 14 Figure 9 - 15"
+        },
+        {
+          "page": 27,
+          "text": "• The center of mass velocity remains unchanged: r r r r P p + p 1 i 2 i v = = . com m + m m + m 1 2 1 2 Equation (9 - 56) • Figure 9 - 16 shows freeze frames of a completely inelastic collision, showing center of mass velocity Figure 9 - 16 Copyright ©2018 John Wiley & Sons, Inc 27"
+        },
+        {
+          "page": 28,
+          "text": "Example: Rifle recoil. Calculate the recoil velocity of a 5.0 - kg rifle that shoots a 0.020 - kg bullet at a speed of 620 m/s. Copyright © 2009 Pearson Education, Inc."
+        },
+        {
+          "page": 29,
+          "text": "Elastic Collisions in One Dimension • Total kinetic energy is conserved in elastic collisions In an elastic collision, the kinetic energy of each colliding body may change, but the total kinetic energy of the system does not change. • For a stationary target in 1D , conservation laws give: Equation (9 - 63) m v = m v + m v ( linear momentum . ) 1 1 i 1 1 f 2 2 f 1 1 1 2 2 2 Equation (9 - 64) m v = m v + m v ( kinetic energy . ) 1 1 i 1 1 f 2 2 f 2 2 2 • With some algebra we get: m − m 2 m 1 2 1 v = v v = v . 1 f 1 i 2 f 1 i m + m m + m 1 2 1 2 Copyright ©2018 John Wiley & Sons, Inc 29"
+        },
+        {
+          "page": 30,
+          "text": "Collisions in Two Dimensions • Apply the conservation of momentum along each axis • Apply conservation of energy for elastic collisions Example For Figure 9 - 21 for a stationary target: • Along x : m v = m v cos  + m v cos  , 1 1 i 1 1 f 1 2 2 f 2 • Along y : 0 = − m v sin  + m v sin  . 1 1 f 1 2 2 f 2 1 1 1 2 2 2 • Energy: m v = m v + m v 1 1 i 1 1 f 2 2 f Figure 9 - 21 2 2 2 Copyright ©2018 John Wiley & Sons, Inc 30"
+        },
+        {
+          "page": 31,
+          "text": "• These 3 equations for a stationary target have 7 unknowns (since v = 0) : if we know 4 of them we can solve for the 2 i remaining ones. Checkpoint 9 In Fig. 9 - 21, suppose that the projectile has an initial momentum of 6 kg m/s,  a final x component of momentum of 4 kg m/s,  and a final y component of momentum of − 3 kg m/s.  For the target, what then are (a) the final x component of momentum and (b) the final y component of momentum? Copyright ©2018 John Wiley & Sons, Inc 31"
+        },
+        {
+          "page": 32,
+          "text": "Systems of Variable Mass; Rocket Propulsion Applying Newton’s second law to the system shown gives: Therefore, or Copyright © 2009 Pearson Education, Inc."
+        },
+        {
+          "page": 33,
+          "text": "Learning Outcomes ✓ Calculate the center of mass of an object/a system (of objects) ✓ Analyze the motion of the CoM. ✓ Find the linear momentum/impulse of a particle/an object. ✓ Apply conservation of linear momentum in 1 - and 2 - D. ✓ Solve problems of variable mass system."
+        },
+        {
+          "page": 34,
+          "text": "CHAPTER REVIEW AND EXAMPLES, DEMOS https://openstax.org/books/university - physics - volume - 1/pages/9 - summary"
+        },
+        {
+          "page": 35,
+          "text": "FIGURE 9.21 The Thomson and Rutherford models of the atom. The Thomson model predicted that nearly all of the incident alpha - particles would be scattered and at small angles. Rutherford and Geiger found that nearly none of the alpha particles were scattered, but those few that were deflected did so through very large angles. The results of Rutherford’s experiments were inconsistent with the Thomson model. Rutherford used conservation of momentum and energy to develop a new, and better model of the atom — the nuclear model."
+        },
+        {
+          "page": 36,
+          "text": "FIGURE 9.31 These exploding fireworks are a vivid example of conservation of momentum and the motion of the center of mass."
+        }
+      ]
+    },
+    {
+      "title": "Global Challenges · W2 S2",
+      "fileName": "CC2_W2S2.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Global Challenges of Science, Technology, and Health Puyang Li W2 - S2"
+        },
+        {
+          "page": 2,
+          "text": "Climate Change & Governance From a “diabolical” policy problem to carbon markets TODAY’S CENTRAL QUESTION What makes climate policy hard — and what does that imply for the design of carbon markets?"
+        },
+        {
+          "page": 3,
+          "text": "Why is climate change a “diabolical” policy problem? Steffen: the problem is not linear, local, or short - term."
+        },
+        {
+          "page": 4,
+          "text": "The climate system and political systems operate differently Governance must make decisions despite uncertainty, scale mismatches, and delayed outcomes."
+        },
+        {
+          "page": 5,
+          "text": "Design the first and foremost principle of a global climate agreement Prepare a 60 - sec statement : 1) make your case 2) use one idea/example from Steffen 3) anticipate criticism from other groups."
+        },
+        {
+          "page": 6,
+          "text": "What is a carbon market? A policy - created system that gives carbon emissions or reductions a tradable value ."
+        },
+        {
+          "page": 7,
+          "text": "A market works only if the governance works The assigned materials emphasize that carbon pricing is an institutional design problem — not simply a price problem. Government creates the market, sets the rules, and enforces them."
+        },
+        {
+          "page": 8,
+          "text": "Policy instruments inherit the complexity of the problem"
+        },
+        {
+          "page": 9,
+          "text": "Strategic Analysis for a Multinational Corporation in Carbon Market Scenario: As a sustainability consultant for Global Manufacturing Inc., you are asked to assess the financial and strategic implications of the EU ETS and the proposed CBAM for the company’s two equally carbon - intensive factories, one in the EU (Factory A) and one in a country with a weak voluntary carbon market (Factory B). Your Task: Part 1 : Current EU ETS cost calculation Part 2 : Strategic decision - making & CBAM analysis Part 3 : Long - term policy synthesis * Prepare your answers on the Google Slides and deliver them in a 3 - minute presentation"
+        }
+      ]
+    },
+    {
+      "title": "Calculus · Continuity",
+      "fileName": "CalculusWeek2Slides2.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Introductory Calculus Pascal Grange Continuity Duke Kunshan University"
+        },
+        {
+          "page": 2,
+          "text": "Outline Definition of continuity Examples Polynomials and Rational Fractions Intermediate Value Theorem"
+        },
+        {
+          "page": 3,
+          "text": "Notion of continuity Intuitively , a function is continuous at a point if the graph can be drawn through the point without lifting your pencil (there are no holes or jumps in the graph at that point). Definition. A function y = f ( x ) is continuous at a if f ( a ) is defined and lim f ( x ) = f ( a ) . x → a"
+        },
+        {
+          "page": 4,
+          "text": "Continuity checklist We will use the following checklist to determine if a given function y = f ( x ) is continuous at a given point x = a : ( i ) Is f ( a ) defined? ( ii ) Does lim x → a f ( x ) exist? ( iii ) Does lim x → a f ( x ) = f ( a ) ? If the answer to each of these is YES, then f is continuous at x = a . If the answer to any of these is NO, then f is not continuous at x = a ."
+        },
+        {
+          "page": 5,
+          "text": "Outline Definition of continuity Examples Polynomials and Rational Fractions Intermediate Value Theorem"
+        },
+        {
+          "page": 6,
+          "text": "Example Determine whether the function x − 4 f ( x ) = x − 2 is continuous at x = 2 and justify your answer. Notice that when x = 2, the denominator of the function is 0 . Therefore f (2) is not defined, and so f is NOT continuous at x = 2. ( x − 2)( x +2) Note: Even though f ( x ) = , we cannot ”cancel” the x − 2 x − 2 factors in this situation. The function f ( x ) is undefined at x = 2 (and has a hole in its graph at x = 2 ), but the function g ( x ) = x + 2 has g (2) = 4. Cancelling changes the function; f ( x ) ̸ = g ( x )."
+        },
+        {
+          "page": 7,
+          "text": "Exercise Determine whether the function ( x − 4 if x ̸ = 2 x − 2 f ( x ) = 3 if x = 2 is continuous at x = 2."
+        },
+        {
+          "page": 8,
+          "text": "Solution (1) By the definition of the function, f (2) = 3, so f is defined at x = 2. (2) We have x − 4 lim f ( x ) = lim , since x ̸ = 2 x → 2 x → 2 x − 2 ( x − 2)( x + 2) = lim x → 2 x − 2 = lim ( x + 2) , since x ̸ = 2 x → 2 = 2 + 2 = 4 and so lim x → 2 f ( x ) exists. (3) Since f (2) = 3 ̸ = 4 = lim x → 2 f ( x ), we have lim x → 2 f ( x ) ̸ = f (2), and so f is NOT continuous at x = 2."
+        },
+        {
+          "page": 9,
+          "text": "Outline Definition of continuity Examples Polynomials and Rational Fractions Intermediate Value Theorem"
+        },
+        {
+          "page": 10,
+          "text": "Direct Substitution Property If f is a polynomial or rational function and a is in the domain of f , then lim f ( x ) = f ( a ) . x → a Notice that this condition is precisely the definition of continuity at the point x = a , and so we have Theorem. If f is a polynomial or rational function and a is in the domain of f , then f is continuous at x = a ."
+        },
+        {
+          "page": 11,
+          "text": "Example Determine the values of x at which the function x + x − 6 f ( x ) = x + 2 x − 3 is not continuous."
+        },
+        {
+          "page": 12,
+          "text": "Solution Since f is a rational function, it is discontinuous precisely at the values of x for which the denominator is 0 . The denominator is x + 2 x − 3 = ( x + 3)( x − 1) and so is 0 when x = − 3 or x = 1. Therefore, f is discontinuous at x = − 3 and at x = 1 and continuous at every other real number."
+        },
+        {
+          "page": 13,
+          "text": "Outline Definition of continuity Examples Polynomials and Rational Fractions Intermediate Value Theorem"
+        },
+        {
+          "page": 14,
+          "text": "Intermediate Value Theorem The Intermediate Value Theorem says that if a continuous function has two different y -values, then it takes on every y -value between those two values. The precise statement of the theorem is the following. Theorem. If y = f ( x ) is continuous on the interval [ a , b ] and m is any number in ( f ( a ) , f ( b )) , then there is a number c , with a < c < b , such that f ( c ) = m ."
+        },
+        {
+          "page": 15,
+          "text": "Intermediate Value Theorem (geometric interpretation) Alternatively, suppose we have two points in the xy -plane and we draw a horizontal line between them at y = m . In order to draw the graph of a continuous function y = f ( x ) between the points, we must cross the line y = m somewhere. The x -coordinate of the intersection point is the number c in the theorem."
+        },
+        {
+          "page": 16,
+          "text": "Summary • A function f ( x ) is continuous at x = a if f ( a ) is defined, and equal to the limit of f ( x ) when x goes to a . • Polynomial functions are continuous at every point in the real line, rational fractions are continuous at every point of their domain (meaning at every point where the denominator is not zero). • The intermediate value theorem can yield insights on the location of solutions to an equation (see Tutorial Sheet, Exercises 5 and 6)."
+        }
+      ]
+    },
+    {
+      "title": "Calculus · Logarithms and Exponentials",
+      "fileName": "CalculusWeek4Slides1.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "Introductory Calculus Pascal Grange The Natural Logarithm and the Natural Exponential Duke Kunshan University"
+        },
+        {
+          "page": 2,
+          "text": "Outline The Natural Logarithm Function Laws of Logarithms The Natural Exponential"
+        },
+        {
+          "page": 3,
+          "text": "The natural logarithm − 1 1 The function f ( x ) = x = is continuous on the interval (0 , ∞ ). x But it does not appear as a derivative in any of our differentiation formulas. Let us fill this gap (the existence of such a function will be justified when we study integration). Definition. The natural logarithm function is the function ln x , with domain (0 , ∞ ) , such that d 1 ln x = , and ln(1) = 0 . dx x"
+        },
+        {
+          "page": 4,
+          "text": "Some properties of the Natural Logarithm (I) Basic properties of the Natural Logarithm include: • The domain of ln x is (0 , ∞ ), i.e., all x > 0. d 1 • ln x = by definition. dx x • The natural logarithm function is strictly increasing on its domain (meaning ln( x ) > ln( y ) if 0 < x < y )."
+        },
+        {
+          "page": 5,
+          "text": "Some properties of the natural logarithm (II) • For x > 1, ln x > 0. • For 0 < x < 1, ln x < 0. • Because ln x is strictly increasing, there is a unique real number e such that ln e = 1 (the number e is irrational and e ≈ 2 . 718281828459045)."
+        },
+        {
+          "page": 6,
+          "text": "Outline The Natural Logarithm Function Laws of Logarithms The Natural Exponential"
+        },
+        {
+          "page": 7,
+          "text": "Lemma (to be justified in Week 6) If a continuous function f defined on an interval is ′ such that f ( x ) = 0 for all x in this interval, then f is constant."
+        },
+        {
+          "page": 8,
+          "text": "The natural logarithm maps products to sums Let a and b be positive real numbers and let r be any real number. (1) ln( ab ) = ln a + ln b (2) ln = − ln b b a (3) ln = ln a − ln b b r (4) ln ( a ) = r ln a"
+        },
+        {
+          "page": 9,
+          "text": "Proof (1) Let f ( x ) = ln( ax ), for a positive constant a . d 1 Since ln x = , by the chain rule dx x 1 1 ′ f ( x ) = · a = . ax x Hence f ( x ) and ln x have the same derivative, and so f ( x ) = ln x + C for some constant C , i.e., ln( ax ) = ln x + C . But this holds for all x > 0, in particular for x = 1, so ln a = ln( a · 1) = ln 1 + C = 0 + C = C . Hence C = ln a , and so ln( ax ) = ln x + ln a = ln a + ln x . Substituting b for x gives ln( ab ) = ln a + ln b ."
+        },
+        {
+          "page": 10,
+          "text": "Proof (II) (2) We have (︃ )︃ 1 1 0 = ln 1 = ln b · = ln b + ln b b by (1), so ln = − ln b . b (3) We have a 1 1 ln = ln a · = ln a + ln = ln a − ln b b b b by (1) and (2)."
+        },
+        {
+          "page": 11,
+          "text": "Proof (III) r (4) Let f ( x ) = ln ( x ) for x > 0. As before, 1 1 d ′ r − 1 f ( x ) = · rx = r · = ( r ln x ) , r x x dx r and so r ln x = f ( x ) + C = ln ( x ) + C for a constant C . r If x = 1 this becomes r ln 1 = ln (1 ) + C , or 0 = C . r Hence ln ( x ) = r ln x , and substituting a for x gives r ln ( a ) = r ln a ."
+        },
+        {
+          "page": 12,
+          "text": "Examples: Logarithms and derivatives Find the domains and the derivatives of the functions (︁ )︁ f ( x ) = ln x + 7 , [︄(︃ ]︄ )︃ 1 2 2 x + 1 h ( x ) = ln . x + 1 [See Tutorial Sheet]. For h , using the properties of the logarithm before differentiating eases the calculation."
+        },
+        {
+          "page": 13,
+          "text": "Example: Logarithms and the chain rule By the chain rule, if u ( x ) is positive and differentiable, ′ d u ( x ) (ln( u ( x ))) = . dx u ( x )"
+        },
+        {
+          "page": 14,
+          "text": "The story of ln | x | We defined the natural logarithm on − 1 as an antiderivative of x . − 1 But x is also continuous on ( −∞ , 0), so there is an − 1 antiderivative of x defined on the interval ( −∞ , 0). Consider the function f ( x ) = ln | x | . {︄ ln x if x > 0 f ( x ) = ln | x | = ln( − x ) if x < 0 Therefore, {︄ {︄ 1 1 if x > 0 if x > 0 1 ′ x x f ( x ) = = = . 1 1 ( − 1) if x < 0 if x < 0 x − x x"
+        },
+        {
+          "page": 15,
+          "text": "The story of ln | x | (II) We now have the more general differentiation formula, for all x ̸ = 0, d 1 ln | x | = dx x For example, if ⃓⃓ ⃓⃓ f ( x ) = ln x − 7 x + 4 , The function f is a composite function with outside function ln | x | and inside function x − 7 x + 4."
+        },
+        {
+          "page": 16,
+          "text": "Therefore, by the chain rule 1 d (︁ )︁ ′ 3 f ( x ) = · x − 7 x + 4 x − 7 x + 4 dx 1 (︁ )︁ = · 3 x − 7 x − 7 x + 4 3 x − 7 = . x − 7 x + 4"
+        },
+        {
+          "page": 17,
+          "text": "′ d u ( x ) (ln | u ( x ) | ) = . dx u ( x )"
+        },
+        {
+          "page": 18,
+          "text": "Outline The Natural Logarithm Function Laws of Logarithms The Natural Exponential"
+        },
+        {
+          "page": 19,
+          "text": "Definition of the Natural Exponential as the inverse function of the Natural Logarithm The natural logarithm f ( x ) = ln x is strictly increasing on its domain ( 0 , ∞ ). Therefore, its has an inverse, which for now we call − 1 will f ( x ) = exp x . By definition of inverses, ln(exp x ) = x for all x ."
+        },
+        {
+          "page": 20,
+          "text": "Expression of the Natural Exponential We defined the number e by the property ln e = 1. By the Laws of Logarithms, if x is any real number, then x ln ( e ) = x ln e = x · 1 = x x Hence for any real number x , we have ln(exp x ) = ln ( e ). x Since ln x is one-to-one, this implies exp x = e for all x . In particular, x ln ( e ) = x for all x ln x e = x for all x > 0 ."
+        },
+        {
+          "page": 21,
+          "text": "x The derivative of e x The natural exponential function e is the inverse of ln x . x Hence we have ln ( e ) = x , and taking derivatives of both sides, we have 1 d x · e = 1 . x e dx x Multiplying both sides of the equation by e yields d x x e = e . dx"
+        },
+        {
+          "page": 22,
+          "text": "Applications If u ( x ) is a differentiable function, the chain rule implies d u ( x ) ′ u ( x ) ( e ) = u ( x ) × e . dx"
+        },
+        {
+          "page": 23,
+          "text": "Summary − 1 • The natural logarithm ln is the antiderivative of x defined on (0 , ∞ ) such that ln(1) = 0. • The number e is the number such that ln( e ) = 1. • Functional property of the natural logarithm: ln( ab ) = ln( a ) + ln( b ), for any positive a and b . x • The natural exponential function exp( x ) = e satisfies exp(ln( x )) = x for any x > 0, and ln(exp( x )) = x , for any real x . • The derivative of the exponential function is the exponential d x x function: ( e ) = e . dx • Functional property of the exponential function: exp( a + b ) = exp( a ) × exp( b ), for any real a and b ."
+        }
+      ]
+    },
+    {
+      "title": "Biology · Lecture 6",
+      "fileName": "BIOL110+Lecture6.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "BIOL 110: Integrated Science- Biology Lecture 6. Cell Structure and Function II & Cell Membranes"
+        },
+        {
+          "page": 2,
+          "text": "Chapter 8. Cell Membranes © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 3,
+          "text": "Membrane properties Eukaryotic cells contain internal membranes that Functions of cell membranes: enclose intracellular compartments and -Receptor proteins enable the cells to receive information forms various organelles with di ffee rent protein -Exchange of nutrients and wastes through highly specific and lipid compositions as well as di ffee rent pH channels and pumps -Flexible membrane allows cell growth and movement"
+        },
+        {
+          "page": 4,
+          "text": "Concepts today in Chapter 8: Cell Membranes 1. Cellular membranes are fluid mosaics of lipids and proteins 2. Membrane structure results in selective permeability 3. Passive transport is diffusion of a substance across a membrane with no energy investment 4. Active transport uses energy to move solutes against their gradients 4. Bulk transport across the plasma membrane occurs by exocytosis and endocytosis"
+        },
+        {
+          "page": 5,
+          "text": "Life at the Edge  The plasma membrane is the boundary that separates the living cell from its surroundings  The plasma membrane exhibits selective permeability , allowing some substances to cross it more easily than others  Transport proteins are o ftee n responsible for controlling passage across cellular membranes"
+        },
+        {
+          "page": 6,
+          "text": "Phospholip i ds  In a phospholipid , two fa ttyy acids and a phosphate group are a ttya ched to glycerol  The two fa ttyy acid tails are hydrophobic, but the phosphate group and its attachments form a hydrophilic head"
+        },
+        {
+          "page": 7,
+          "text": "Concept 8.1: Cellular membranes are fluid mosaics of lipids and proteins  Phospholipids are the most abundant lipid in the plasma membrane  Phospholipids are amphipathic molecules, containing hydrophobic (“water-fearing”) and hydrophilic (“water- loving”) regions  The hydrophobic tails of the phospholipids are sheltered inside the membrane, while the hydrophilic heads are exposed to water on either side"
+        },
+        {
+          "page": 8,
+          "text": "Phospholipids spontaneously form liposomes The phospholipid bilay r clos s in on its lf to form s al d compartm nts Avoid dg s wh r hydrophobic tails ar xpos d to wat r The s wat r fill l d compartm nts ar call d: Liposomes"
+        },
+        {
+          "page": 9,
+          "text": "Fibers of extra-  In the fluid mosaic cellular matrix (ECM) model , the membrane is a mosaic Carbo- of protein molecules Glyco- h y d rates Gl y c o li p id p r o tein bobbing in a fluid EX TR A C E LLU L A R SIDE OF bilayer of MEMBRANE phospholipids Phospholipid Cholesterol  Proteins are not Microfilaments Peri ph eral randomly distributed of cytoskeleton proteins I n te g ral C Y T OP L A S M I in the membrane protein C SIDE OF MEMBRANE"
+        },
+        {
+          "page": 10,
+          "text": "The Fluidity of Membranes  Membranes are held together mainly by weak hydrophobic interactions  Most of the lipids and some proteins can move sideways within the membrane  Rarely, a lipid may flii p- flio p across the membrane, from one phospholipid layer to the other (Maintenance of sidedness)"
+        },
+        {
+          "page": 11,
+          "text": "Movement of Phospholipids • Phospholipids continuously exchange places with their neighbors ( lateral diffusion ) • They rotate freely around their axis • Rarely change from one half of the bilayer to the other (“flip-flop”) • Specialized transporters help to translocate phospholipids"
+        },
+        {
+          "page": 12,
+          "text": "Fluidity depends on lipid composition • Fluidity is important for function and has to be maintained • Depends on lipid composition and temperature • Melting point T : m – T<T : semi-solid gel state (para-crystalline) m – T>T : fluid state (liquid-disordered state) m • Long chained fatty acid decrease fluidity • Double bonds make it more difficult for the tails to pack against one another → increase of fluidity"
+        },
+        {
+          "page": 13,
+          "text": "Figure 8.4_1 Do membrane proteins move? Membrane proteins Mouse cell Human cell Data from L. D. Frye and M. Edidin, The rapid intermixing of cell surface antigens after formation of mouse-human heterokaryons, Journal of Cell Science 7:319 (1970)."
+        },
+        {
+          "page": 14,
+          "text": "Figure 8.4_2 Do membrane proteins move? Results Membrane proteins Mouse cell Human cell Hybrid cell Data from L. D. Frye and M. Edidin, The rapid intermixing of cell surface antigens after formation of mouse-human heterokaryons, Journal of Cell Science 7:319 (1970)."
+        },
+        {
+          "page": 15,
+          "text": "Figure 8.4_3 Do membrane proteins move? R e sults Membrane proteins Mixed proteins after 1 hour Mouse cell Human cell Hybrid cell Data from L. D. Frye and M. Edidin, The rapid intermixing of cell surface antigens after formation of mouse-human heterokaryons, Journal of Cell Science 7:319 (1970). https://www.youtube.com/watch?v=S7Z0u6uGIT4 https://www.youtube.com/watch?v=ipyGVh7JKvw Detailed explanation of FRAP and FLIP; https://www.youtube.co m/watch?v=4c5ILWQmqRY"
+        },
+        {
+          "page": 16,
+          "text": "(a) Unsaturated versus saturated hydrocarbon tails  As temperatures cool, membranes switch from a fluid More fluid Viscous state to a solid state  Thee temperature at which a membrane solidif i i es depends on the types of lipids  Unsaturated tails Saturated tails pack Membranes rich in unsaturated prevent together. fa ttyy acids are more fluid than packing. those rich in saturated fa ttyy acids M mbran s must b fluu id to work prop rly"
+        },
+        {
+          "page": 17,
+          "text": " The steroid cholesterol has di ffee rent effects on the membrane fluidity of animal cells at di ffee rent M mbran s must b fluid to work prop rly temperatures  At warm temperatures (such as (b) Cholesterol within the animal cell membrane 37ºC), cholesterol prevents movement of phospholipids  At cool temperatures, it maintains fliu idity by preventing tight packing, and prevent solidif i i cation: bene fitt s in plants Cholesterol"
+        },
+        {
+          "page": 18,
+          "text": "Membrane Proteins and Their Functions  Phospholipids form the main fabric of the membrane.  Proteins determine most of the membrane’s functions. How do membrane proteins look?"
+        },
+        {
+          "page": 19,
+          "text": "Lipid bilayer  Peripheral proteins are bound to the surface of the membrane  Integral proteins penetrate the hydrophobic core  Integral proteins that span the membrane are called transmembrane proteins  The hydrophobic regions of an integral protein consist of one or more stretches of nonpolar amino acids, often coiled into α helices"
+        },
+        {
+          "page": 20,
+          "text": "Figure 8.6 N-terminus E X T R A C EL L U L AR SIDE The structure of a transmembrane protein α helix C-terminus CYTOPLASMIC SIDE"
+        },
+        {
+          "page": 21,
+          "text": "Cell-surface membranes can carry out several functions: a. Transport b. Enzymatic activity c. Signal transduction Signaling molecule Enz y mes Rece p t o r A T Signal transduction P (a) Transport (b) Enzymatic (c) Signal activity transduction"
+        },
+        {
+          "page": 22,
+          "text": "Cell-surface membranes can carry out several functions: d. Cell-cell recognition d. Intercellular joining d. A ttya chment to the cytoskeleton and extracellular matrix (ECM) Glyco- pro t ein (d) Cell-cell (e) Intercellular (f) Attachment to the r e cog n it i on joining cytoskeleton and extracellular matrix (ECM)"
+        },
+        {
+          "page": 23,
+          "text": "Synthesis and Sidedness of Membranes  Membranes have distinct inside and outside faces  Cells recognize each other by binding to molecules, o ftee n containing carbohydrates, on the extracellular surface of the plasma membrane  Membrane carbohydrates may be covalently bonded to lipids (forming glycolipids ) or, more commonly, to proteins (forming glycoproteins )  The asymmetrical distribution of proteins, lipids, and associated carbohydrates in the plasma membrane is determined when the membrane is built by the ER and Golgi apparatus"
+        },
+        {
+          "page": 24,
+          "text": "Lipid b il a y er Sidedness of Secr etor y T r a nsme m b r a n protein e glycoproteins Membrane Proteins Golgi appar atus V es i c le Attached ca rb oh y dr a te Glycolipid ER lumen Plasma membrane: Cytoplasmic T r a nsme m b r a n e glycoprotein face Secr e t ed protein Extracellular face Mem b r a ne glycolipid"
+        },
+        {
+          "page": 25,
+          "text": "Concept 8.5: Bulk transport across the plasma membrane occurs by exocytosis and endocytosis  Small molecules and water enter or leave the cell through the lipid bilayer or via transport proteins (Concept 8.2)  Large molecules, such as polysaccharides and proteins, cross the membrane- how? In bulk via vesicles - sending outside of the cell: exocytosis - taking inside of the cell: endocytosis"
+        },
+        {
+          "page": 26,
+          "text": "Exocytosis  In exocytosis , transport vesicles migrate to the membrane, fuse with exocytosis it, and release their contents outside the cell  Many secretory cells use exocytosis to export their products"
+        },
+        {
+          "page": 27,
+          "text": "Endocytosis  In endocytosis , the cell takes in macromolecules by forming vesicles from the plasma Endocytosis membrane :opposite  Endocytosis is a reversal of direction of exocytosis, involving different exocytosis proteins  There are three types of endocytosis  Phagocytosis (“cellular eating”)  Pinocytosis (“cellular drinking”) "
+        },
+        {
+          "page": 28,
+          "text": "Figure 8.19a EXTRACELLULAR Endocytosis FLUID S o l utes Pseudopod i um - In phagocytosis , a cell engulfs a particle or food - Thee food vesicle fuses with a lysosome to digest the particle Food or other partic l e CY T OPLASM"
+        },
+        {
+          "page": 29,
+          "text": "Endocytosis Solutes  In pinocytosis , molecules Plasma dissolved in droplets are membr a ne taken up when extracellular Coat fluid is “gulped” into tiny protein vesicles C o ated pit C o ated vesicle"
+        },
+        {
+          "page": 30,
+          "text": "Endocytosis  In receptor-mediated endocytosis , binding of speci fitc solutes to receptors Recep t or triggers vesicle formation  Receptor proteins, receptors, and other Coated vesicle molecules from the with specific solutes extracellular fliu id are (purple) bound transported in the vesicles to receptors (red)  Emptied receptors are recycled to the plasma membrane"
+        },
+        {
+          "page": 31,
+          "text": "Concept 8.2: Membrane structure results in selective permeability  A cell must exchange materials with its surroundings, a process controlled by the plasma membrane"
+        },
+        {
+          "page": 32,
+          "text": "The Permeability of the Lipid Bilayer  Hydrophobic (nonpolar) molecules , such as hydrocarbons (CH , C H ..), can dissolve in the lipid bilayer and pass through the 2 6 membrane rapidly  Hydrophilic molecules including ions and polar molecules do not cross the membrane easily  Proteins built into the membrane play key roles in regulating transport (transmembrane proteins: transporters and channels)"
+        },
+        {
+          "page": 33,
+          "text": "Transport Proteins  Transport proteins allow passage of hydrophilic substances across the membrane  Some transport proteins, called channel proteins, have a hydrophilic channel that certain molecules or ions can use as a tunnel  Channel proteins called aquaporins greatly facilitate the passage of water molecules  Other transport proteins, called carrier proteins, bind to molecules and change shape to shuttle them across the membrane"
+        },
+        {
+          "page": 34,
+          "text": "Concept 8.3: Passive transport is diffusion of a substance across a membrane with no energy investment  Diffusion is the tendency for molecules to spread out evenly into the available space  Substances diffuse down their concentration gradient , the region along which the density of a chemical substance increases or decreases  The diffusion of a substance across a biological membrane is passive transport because no energy is expended by the cell to make it happen Small dye molecule Membrane (cross section) W A TE R Net diffusion Net diffusion Eq u i l i b rium (a) Diffusion of one solute"
+        },
+        {
+          "page": 35,
+          "text": "Figure 8.10 Small dye molecule Membrane (cross section) W A TE R Net diffusion Net diffusion Eq u i l i b rium (a) Diffusion of one solute Net diffusion Net diffusion Eq u i l i b rium Net diffusion Net Eq u i l i b rium diffusion (b) Diffusion of two solutes"
+        },
+        {
+          "page": 36,
+          "text": "Lower concentration Higher concentration More similar Effects of Osmosis of solute (sugar) of solute concentrations of solute on Water Balance  Osmosis is th di ffuu sion of Sugar wat r across a s l ctiv ly H O mole c u l e 2 p rm abl m mbran  Wat r di ffuu s s across a m mbran S e le c ti v ely from th r gion of low r solut permeable conc ntration to th r gion of high r solut conc ntration until membrane th solut conc ntration is qual on both sid s Glucose Osmosis"
+        },
+        {
+          "page": 37,
+          "text": "Water Balance of Cells Without Cell Walls H y p o to n ic Isot o n i c Hypertonic H O H O H O 2 2 2  Isotonic solution : Solut cell H O conc ntration is th sam as that insid th c ll; no net wat r mov m nt across th plasma Animal m mbran (a) L y s e d Nor m al Shriveled  Hypotonic solution : Solut C e ll Plasma conc ntration is l ss than that H O Plasma H O 2 2 membrane insid th c ll ; c ll gains wat r w all m e mbr a ne H O H O 2  Hypertonic solution : Solut conc ntration is gr at r than that cell insid th c ll ; c ll los s wat r  Plant C lls without c ll walls will shriv l in hyp rtonic solution and lys (b) (burst) in a hypotonic solution Turgid (normal) F l a c cid Plasmolyzed"
+        },
+        {
+          "page": 38,
+          "text": "Water Balance of Cells with Cell Walls H y p o to n ic Isot o n i c Hypertonic  C ll walls h lp maintain wat r H O H O H O H O 2 2 2 2 balanc cell  A plant c ll in a hypotonic solution sw lls until th wall oppos s uptak ; Animal th c ll is now turgid ( filr m) (a) L y s e d Nor m al S h ri v eled  If a plant c ll and its surroundings ar Cell isotonic, th r is no n t mov m nt of Plasma w a ll wat r into th c ll; th c ll b com s H O Plasma H O 2 2 membrane m e mbr a ne flaccid (limp) H O H O 2  The m mbran pulls away from th cell c ll wall, causing th plant to wilt, a pot ntially l thal ffu ct call d Plant plasmolysis (b) Turgid (normal) F l a c cid Plasmolyzed"
+        },
+        {
+          "page": 39,
+          "text": "Facilitated Diffusion: Passive Transport Aided by Proteins  In facilitated diffusion , (a) A channel protein transport proteins speed the EXTR A CE L L U L A R passive movement of FLUID molecules across the plasma membrane  Transport proteins include channel proteins and carrier Channel protein proteins So l ute CYTOPLASM  Facilitated diffusion allows a specif i i c molecule or ion to cross the membrane"
+        },
+        {
+          "page": 40,
+          "text": "Facilitated Diffusion: Passive Transport Aided by Proteins  Aquaporins facilitate the diffusion (a) A channel protein of water  EXTR A CE L L U L A R Ion channels facilitate the FLUID transport of ions  Some ion channels, called gated channels , open or close in response to a stimulus Channel protein So l ute  For example, in nerve cells, ion CYTOPLASM channels open in response to electrical stimulus"
+        },
+        {
+          "page": 41,
+          "text": "Facilitated Diffusion: Passive Transport Aided by Proteins - Carrier proteins undergo a subtle change in shape that translocates the solute-binding site across the membrane - This change in shape can be triggered by the binding and release of the transported molecule Carrier protein So l ute (b) A carrier protein"
+        },
+        {
+          "page": 42,
+          "text": "Concept 8.4: Active transport uses energy to move solutes against their gradients  Facilitated diffusion is still passive because the solute moves down its concentration gradient , and the transport requires no energy  Some transport proteins, however, can move solutes against their concentration gradients : active transport"
+        },
+        {
+          "page": 43,
+          "text": "The Need for Energy in Active Transport  Active transport requires energy, usually in the form of ATP (adenosine triphosphate) hydrolysis , to move substances against their concentration gradients  All proteins involved in active transport are carrier proteins Adenosine Triphosphate (ATP)- energy source"
+        },
+        {
+          "page": 44,
+          "text": " Active transport allows cells to maintain concentration gradients that differ from their surroundings  For xampl , an animal c ll has a much high r potassium + (K ) and a much low r + sodium (Na ) conc ntration compar d to its surroundings  Thei s is controll d by th sodium-potassium pump , a transport prot in that is n rgiz d by transf r of a phosphat group from th hydrolysis of ATP"
+        },
+        {
+          "page": 45,
+          "text": "Passive transport Active transport Dif f usion Facilitated diffusion A T P © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 46,
+          "text": "1. What is the difference between prokaryotic and eukaryotic cells? 2. Compare a plant and animal cell. 3. What is the function of membranes 4. What is the function of: • Mitochondria • Nucleus • Golgi apparatus • Lysosome • Ribosomes • Smooth and rough ER"
+        },
+        {
+          "page": 47,
+          "text": "Reading Assignment: Chapter 12. © 2018 Pearson Education Ltd."
+        }
+      ]
+    },
+    {
+      "title": "Biology · Lecture 18 · Photosynthesis",
+      "fileName": "BIOL110+Lecture18.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "BIOL 110: Integrated Science- Biology Lecture 18. Photosynthesis"
+        },
+        {
+          "page": 2,
+          "text": "Concepts today in Chapter 11: Photosynthetic Processes 1. Photosynthesis converts light energy to the chemical energy of food 2. The light reactions convert solar energy to the chemical energy of ATP and NADPH 3. The Calvin cycle uses the chemical energy of ATP and NADPH to reduce CO to sugar 4. Alternative mechanisms of carbon f i i xation have evolved in hot, arid climates"
+        },
+        {
+          "page": 4,
+          "text": "Thee Process Thea t Feeds the Biosphere  Plants and other photosynthetic organisms contain organelles called chloroplasts  Photosynthesis is the process that converts solar energy into chemical energy within chloroplasts becomes reduced becomes oxidized"
+        },
+        {
+          "page": 5,
+          "text": "The Process That Feeds the Biosphere  Autotrophs are “self-feeders” that sustain themselves without eating anything derived from other organisms  Autotrophs are the producers of the biosphere, producing organic molecules from CO and other inorganic molecules  Almost all plants are photoautotrophs , using the energy of sunlight to make organic molecules  Heterotrophs obtain organic material from other organisms"
+        },
+        {
+          "page": 6,
+          "text": "The Process That Feeds the Biosphere (d) Cyanobacteria  Photosynthesis μ m (a) Plants occurs in plants, algae, certain other unicellular eukaryotes, and some prokaryotes (b) Multicellular alga m μ (e) Purple sulfur m bacteria μ (c) Unicellular eukaryotes"
+        },
+        {
+          "page": 7,
+          "text": "Thee Process Thea t Feeds the Biosphere  Earth’s supply of fossil fuels was formed from the remains of organisms that died hundreds of millions of years ago  Fossil fuels are being consumed faster then they are being replenished  Researchers are exploring methods of using the photosynthetic process to produce alternative fuels"
+        },
+        {
+          "page": 8,
+          "text": "https://www.frontiersin.org/articles/10.3389/fpls.2022.955843/full © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 9,
+          "text": "Concept 11.1: Photosynthesis converts light energy to the chemical energy of food  Chloroplasts are structurally similar to and likely evolved from photosynthetic bacteria  The structural organization of these organelles allows for the chemical reactions of photosynthesis"
+        },
+        {
+          "page": 10,
+          "text": "Chloroplasts: Thee Sites of Leaf cross section Photosynthesis in Plants C h loropla s ts V ein  Leaves are the major locations of Mesoph y ll photosynthesis in plants  Chloroplasts are found mainly in cells of the mesophyll , the interior tissue of the leaf Stomata CO O 2 2  Each mesophyll cell contains 30–40 Chloroplast Mesoph y ll chloroplasts cell  CO enters and O exits the leaf 2 2 through microscopic pores called stomata 20 μ m"
+        },
+        {
+          "page": 11,
+          "text": "Chloroplasts: Thee Sites of Photosynthesis in Plants  A chloroplast has an envelope of two membranes surrounding a dense fluu id called the stroma Outer membrane  Thylakoids are connected Thylakoid sacs in the chloroplast that T h y lakoid Int ermembrane compose a third membrane Stroma Granum space space system  Thyy lakoids may be stacked Inner in columns called grana membrane  Chlorophyll , the pigment that gives leaves their green color , resides in the thylakoid membranes Chloroplast 1 μ m"
+        },
+        {
+          "page": 12,
+          "text": "Tracking Atoms Ther ough Photosynthesis: Scientific Inquiry  Photosynthesis is a complex series of reactions that can be summarized as the following equation: 6 CO + 12 H O + Light energy → C H O + 6 O + 6 H O 2 2 6 12 6 2 2 :the reverse of the one that occurs during cellular respiration"
+        },
+        {
+          "page": 13,
+          "text": "The Splitting of Water  Chloroplasts split H O into hydrogen and oxygen , incorporating the electrons of hydrogen into sugar molecules and releasing oxygen as a by- product Reactants: 6 CO 12 H O 2 2 Products: 6 H O 6 O 2 2 C H O 6 12 6"
+        },
+        {
+          "page": 14,
+          "text": "Photosynthesis as a Redox Process  Photosynthesis reverses the direction of electron flow compared to respiration  Photosynthesis is a redox process in which H O is oxidized and CO is reduced 2 2  Photosynthesis is an endergonic process ; the energy boost is provided by light becomes reduced Oxidation: - loss of electrons - addition of oxygen - removal of hydrogen oxi d izing becomes oxidized agent reducing Reduction: agent - gain of electrons - removal of oxygen - gain of hydrogen"
+        },
+        {
+          "page": 15,
+          "text": "Thee Two Stages of Photosynthesis: A Preview  Photosynthesis consists of the light reactions (the photo part) and Calvin cycle (the synthesis part)  The light reactions (in the thylakoids)  Split H O  Release O  Reduce the electron acceptor + NADP to NADPH  Generate ATP from ADP by photophosphorylation"
+        },
+        {
+          "page": 16,
+          "text": "Cooperation of the light reactions and the Calvin cycle Light H O light reactions Photons : light energy and as such they are a key + NADP component in photosynthesis . Plants ADP capture photons (light + P energy) through their i LIGHT chloroplast. RE A CTIONS A T T h y lak o id Stroma P NA DP H Chloroplast O"
+        },
+        {
+          "page": 17,
+          "text": "Light H O CO 2 2 + NADP ADP + Calvin cycle P CA L VI i LIGHT N REACTIONS CYCLE A T T h y lak o id Stroma - Thye Calvin cycle (in the P stroma) forms sugar from NA DP H CO , using ATP and NADPH - Thye Calvin cycle begins with Chloroplast carbon fixation , [CH O] O 2 incorporating CO into 2 2 (sugar) organic molecules"
+        },
+        {
+          "page": 18,
+          "text": "Concept 11.2: Thee light reactions convert solar energy to the chemical energy of ATP and NADPH  Thye electromagnetic spectrum is the entire range of electromagnetic energy, or radiation  Visible light consists of wavelengths (380 nm to 750 nm) that produce colors we can see  Visible light also includes the wavelengths that drive photosynthesis T h"
+        },
+        {
+          "page": 19,
+          "text": "Photosynthetic Pigments: Thee Light Receptors  Pigments are substances that absorb visible light  Di ffee rent pigments (chlorophyll a , chlorophyll b , carotenoid) in the thylakoid absorb di ffee rent wavelengths  Leaves appear green because chlorophyll re flue cts and transmits green light"
+        },
+        {
+          "page": 20,
+          "text": "What wavelengths can be used for photosynthesis in chloroplasts?  A spectrophotometer measures a pigment’s ability to absorb various wavelengths  Thyi s machine sends light through pigments and measures the fraction of light transmi ttee d at each wavelength  An absorption spectrum is a graph plotting a pigment’s light absorption versus wavelength"
+        },
+        {
+          "page": 21,
+          "text": "What wavelengths can be used for photosynthesis in chloroplasts?  Thye re are three types of pigments in chloroplasts:  Chlorophyll a , the key light- capturing pigment  Chlorophyll b , an accessory pigment  Carotenoids , a separate group of accessory pigments  Thye absorption spectrum of chlorophyll a suggests that violet-blue and red light work best for photosynthesis"
+        },
+        {
+          "page": 22,
+          "text": "Photosynthetic Pigments: The Light Receptors  Pigments are substances that absorb visible light  Di ffee rent pigments (chlorophyll a , chlorophyll b , carotenoid) in the thylakoid absorb di ffee rent wavelengths  Leaves appear green because chlorophyll re flue cts and transmits green light"
+        },
+        {
+          "page": 23,
+          "text": "CH in chlorophyll a CHO in chlorophyll b CH Structure of chlorophyll Porphyrin ring: molecules in chloroplasts of light-absorbing plants “head” of molecule; note magnesium atom at center Some carotenoids function in photoprotection; they absorb excessive light that would damage Hydrocarbon tail: chlorophyll or react with oxygen interacts with hydrophobic regions of proteins inside thylakoid membranes of chloroplasts"
+        },
+        {
+          "page": 24,
+          "text": "Excitation of Chlorophyll by Light  When a pigment absorbs light, it goes from a ground state to an excited state, which is unstable and higher energy level  When excited electrons fall back to the ground state, excess energy is released as heat  In isolation, some pigments also emit light, an a ftee rglow called fluu orescence"
+        },
+        {
+          "page": 25,
+          "text": "A Photosystem: A Reaction-Center Complex Associated with Light-Harvesting Complexes  A photosystem consists of a reaction-center complex surrounded by light-harvesting complexes  Thye reaction-center complex is an association of proteins holding a special pair of chlorophyll a molecules and a primary electron acceptor  Thye light-harvesting complex consists of pigment molecules bound to proteins  Light-harvesting complexes transfer the energy of photons to the chlorophyll a molecules in the reaction-center complex"
+        },
+        {
+          "page": 26,
+          "text": "A Photosystem: A Reaction-Center Complex Associated with Light-Harvesting Complexes  Thye se chlorophyll a molecules are special because they can transfer an excited electron to a different molecule  A primary electron acceptor in the reaction center accepts excited electrons and is reduced as a result  Solar-powered transfer of an electron from a chlorophyll a molecule to the primary electron acceptor is the firr st step of the light reactions"
+        },
+        {
+          "page": 27,
+          "text": "Two types of photosystems in the thylakoid membrane  Photosystem II (PS II ) functions firr st (the numbers re flue ct order of discovery)  Thye reaction-center level chlorophyll a of PS II is (G) called P680 because it is best at absorbing a wavelength of 680 nm energy  Photosystem I (PS I ) is free best at absorbing a wavelength of 700 nm relative  Thye reaction-center chlorophyll a of PS I is called P700"
+        },
+        {
+          "page": 28,
+          "text": "How linear electron flow during the light reactions generates ATP and NADPH Primary electron  Thye re are eight steps in linear electron fluo w: a c c e p t o r level – e 1. A photon hits a pigment in a light- (G) harvesting complex of PS II , and its energy is passed among pigment energy 1 P 68 0 molecules until it excites P680 free Light 2. An excited electron from P680 is relative transferred to the primary electron + acceptor (we now call it P680 ) Pigment mole c u l es Photosystem II (PS II )"
+        },
+        {
+          "page": 29,
+          "text": "How linear electron flow during the light reactions generates ATP and NADPH 3. H O is split by enzymes, and the Primary electron electrons are transferred from the a c c e p t o r + hydrogen atoms to P680 , thus + 2 H – H O e level reducing it to P680 + (G) 1 O 3 /2 2  + P680 is the strongest known – e biological oxidizing agent energy 1 e – P680 free Light  O is released as a by-product of this reaction relative Pigment mole c u l es Photosystem II (PS II )"
+        },
+        {
+          "page": 30,
+          "text": "How linear electron flow during the light reactions generates ATP and NADPH 4 Electron Primary 4. Each electron “falls” down an transport chain electron Primary electron transport chain from electron a c c e ptor the primary electron acceptor Pq – e a c c e ptor of PS II to PS I . Energy + C y t o c h r o me level 2 H – H 2 O e complex released by the fall drives the (G) + 1 O 3 /2 2 Pc creation of a proton gradient – e P 7 00 across the thylakoid energy – 5 e Light 1 P 6 80 membrane free Light 4. Potential energy stored in the A T relative proton gradient drives P production of ATP by Pigment chemiosmosis (H+ pump pumps mo l ecul es Photosystem I in H+ into the thylakoid and (PS I ) Photosystem II ATPases generates ATP) (PS II )"
+        },
+        {
+          "page": 31,
+          "text": "How linear electron flow during the light reactions generates ATP and NADPH 4 Electron Primary transport chain electron Primary electron a c c e ptor Pq – e 6. In PS I (like PS II ), transferred a c c e ptor + C y t o c h r o me 2 H – light energy excites P700, which H O e level complex + loses an electron to the primary (G) 1 O 3 /2 2 Pc electron acceptor e – P 7 00 energy Light 1 e – P 6 80 +  P700 (P700 that is missing an free Light 6 electron) accepts an electron A T passed down from PS II via the relative P electron transport chain Pigment mole c u l es Photosystem I (PS I ) Photosystem II (PS II )"
+        },
+        {
+          "page": 32,
+          "text": "How linear electron flow during the light reactions generates ATP and NADPH Electron transport chain 7 4 Electron Primary transport chain electron Fd + 8 NADP Primary – e – e electron a c c e ptor + + NADP + H Pq – e reductase a c c e ptor N A D P H + Cytochrome 2 H – H 2 O e level complex + (G) 1 O 3 /2 2 Pc 7. Each electron “falls” down an – e P 7 00 – 5 e electron transport chain from the energy 1 P 68 0 Light free Light primary electron acceptor of PS I to the protein ferredoxin (Fd) A T relative + P 8. NADP reductase catalyzes the + transfer of electrons to NADP , Pigment mole c u l es reducing it to NADPH Photosystem I (PS I ) Photosystem II  Thye electrons of NADPH are (PS II ) available for the reactions of the Calvin cycle  Thyi s process also removes an © 2018 Pearson Education Ltd. + H from the stroma"
+        },
+        {
+          "page": 33,
+          "text": "The energy changes of electrons during linear flow through the light reactions can be shown – e in a mechanical analogy – – e e Mill makes N A DPH ATP – e – e – e – e A T P Photosystem II Photosystem I"
+        },
+        {
+          "page": 34,
+          "text": "A Comparison of Chemiosmosis in Chloroplasts and Mitochondria Mitochondrion Chloroplast Diffusion of + H through I n te r - Th y lak o id A T P space s y n t h ase + membrane H s p ace Electron I nn er Thylakoid tra n s po rt membrane M I T O C H ON D RION CHL O R OP L A ST chain mem b ra n e STRUCTURE A T S TRUCTUR E P u m p i n g synthase P + of H Matrix Str o ma by ETC A D P P + i A T + + Higher [H ] H P + + Lower [H ] H"
+        },
+        {
+          "page": 35,
+          "text": "becomes reduced Oxidation: - loss of electrons - addition of oxygen - removal of hydrogen oxi d izing becomes oxidized agent reducing Reduction: agent - gain of electrons - removal of oxygen - gain of hydrogen"
+        },
+        {
+          "page": 36,
+          "text": "A Comparison of Chemiosmosis in Chloroplasts and Mitochondria Mitochondrion Chloroplast Diffusion of + H through I n te r - Th y lak o id A T P space s y n t h ase + membrane H s p ace Electron I nn er Thylakoid tra n s po rt membrane M I T O C H ON D RION CHL O R OP L A ST chain mem b ra n e STRUCTURE A T S TRUCTUR E P u m p i n g synthase P + of H Matrix Str o ma by ETC A D P P + i A T + + Higher [H ] H P + + Lower [H ] H"
+        },
+        {
+          "page": 37,
+          "text": "The light reactions and chemiosmosis: Current model of the organization of the thylakoid membrane Cytochrome + NADP complex Photosystem II Photosystem I reductase Lig h t 3 + 4 H L i gh t N Fd A D P Pq + N A D PH Pc – e 2 + – e H O O 1 1 / 2 H 2 + THYLAKOID SPACE + 4 H + 2 H + + (high H concentration) C A L VI N CYCLE Thylakoid A T mem b ra n e STROMA synthase P + (low H concentration) ADP + A T P P + i H"
+        },
+        {
+          "page": 38,
+          "text": " ATP and NADPH are produced on the side facing the stroma, where the Calvin cycle takes place  In summary, light reactions generate ATP and increase the potential energy of electrons by moving them from H O to NADPH"
+        },
+        {
+          "page": 39,
+          "text": "Concept 11.3: The Calvin cycle uses the chemical energy of ATP and NADPH to reduce CO to sugar  The Calvin cycle, like the citric acid cycle, regenerates its starting material after molecules enter and leave the cycle  The Calvin cycle is anabolic ; it builds sugar from smaller molecules by using ATP and the reducing power of electrons carried by NADPH"
+        },
+        {
+          "page": 40,
+          "text": "Calvin cycle  Carbon enters the cycle as CO and leaves as a sugar named glyceraldehyde 3-phosp h ate (G3P)  For net synthesis of one G3P, the cycle must take place three times , f i i xing three molecules of CO  The Calvin cycle has three phases: 1. Carbon fixation (catalyzed by rubisco ) 2. Reduction 3. Regeneration of the CO acceptor (RuBP)"
+        },
+        {
+          "page": 41,
+          "text": "The catabolism of Proteins Carbohydrates F ats various molecules from food A mino S ug ars G l y c e rol Fatty a c i d s acids GLYCOLYSIS Glucose Glyceraldehyde 3- P NH P y ru v ate Acetyl CoA CITRIC OXIDATIVE ACID PHOSPHO R YL A T I O C Y CLE N"
+        },
+        {
+          "page": 42,
+          "text": "Figure 11.19_1 Input 3 CO , entering one per cycle Calvin cycle Phase 1: Carbon fixation Rub i s c o 3 P P 6 P P 3 P 3 - Phos p h o gl y cer a te RuBP Ribulose bisphosphate C a l v in Cycle"
+        },
+        {
+          "page": 43,
+          "text": "Figure 11.19_2 Input 3 CO , entering one per cycle Calvin cycle Phase 1: Carbon fixation Rub i s c o 3 P P 6 P P 3 P 3 - Phos p h o gl y cer a te RuBP 6 A T P Ribulose bisphosphate 6 ADP C a l v in 6 P P 1,3-Bisphosphoglycerate Cycle 6 NADPH + 6 NADP 6 P i 6 P G 3P Phase 2: Glyceraldehyde-3 R e d u ction -phopshate 1 P Glucose and G3P other organic Output compounds"
+        },
+        {
+          "page": 44,
+          "text": "Figure 11.19_3 Input 3 CO , entering one per cycle Phase 1: Carbon fixation Calvin cycle Rub i s c o 3 P P 6 P P 3 P 3 - Phos p h o gl y cer a te 6 A T P RuBP Ribulose bisphosphate 6 ADP 3 ADP C a l v in 6 P P 3 A T P 1,3-Bisphosphoglycerate Cycle 6 NADPH Phase 3: + 6 NADP R e gener a ti o n 6 P i 5 P of RuBP G3P 6 P G 3P Phase 2: R e d u ction 1 P Glucose and G3P other organic Output compounds"
+        },
+        {
+          "page": 45,
+          "text": "Concept 11.4: Alternative mechanisms of carbon fixation have evolved in hot, arid climates  Dehydration is a problem for plants, sometimes requiring trade-o ffes with other metabolic processes, especially photosynthesis  On hot, dry days, plants close stomata , which conserves H O but also limits photosynthesis  Thye closing of stomata reduces access to CO and causes O to build up 2 2  These conditions favor an apparently wasteful process called photorespiration"
+        },
+        {
+          "page": 46,
+          "text": "Photorespiration: An Evolutionary Relic?  In most plants ( C plants ), initial f i i xation of CO , via rubisco, forms a three-carbon compound (3-phosphoglycerate)  In photorespiration , rubisco adds O instead of CO in the Calvin cycle, 2 2 producing a two-carbon compound  Photorespiration consumes O and organic fuel and releases CO without producing ATP or sugar"
+        },
+        {
+          "page": 47,
+          "text": "C Plants  C plants minimize the cost of photorespiration by incorporating CO into four-carbon compounds : more e fficc ient in higher concentration of CO  Thye re are two distinct types of cells in the leaves of C plants:  Bundle-sheath cells are arranged in tightly packed sheaths around the veins of the leaf  Mesophyll cells are loosely packed between the bundle sheath and the leaf surface"
+        },
+        {
+          "page": 48,
+          "text": "C Plants  C plants minimize the cost of photorespiration by incorporating CO into four-carbon compounds : more e fficc ient in higher concentration of CO because C4 plants do not have photorespiration.  Thye re are two distinct types of cells in the leaves of C plants:  Bundle-sheath cells are arranged in tightly packed sheaths around the veins of the leaf  Mesophyll cells are loosely packed - Scientists have genetically modi fire d rice, a C between the bundle sheath and the plant, to carry out C photosynthesis in high leaf surface temperature and dehydrate condition. - Thye y estimate 30–50% increase in yield compared to C rice"
+        },
+        {
+          "page": 49,
+          "text": "Concept 11.5: Life depends on photosynthesis The Importance of Photosynthesis: A Review What can be the next step? © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 50,
+          "text": "Figure 11.22a O CO 2 2 H O Sucrose (export) H O"
+        },
+        {
+          "page": 51,
+          "text": "Figure 11.22b Chloroplast H O CO 2 2 Light + NADP ADP 3-Phosphoglycerate LIGHT + REA C TIONS: C A L V I Photosystem II P Ru B P i N Electron transport CYCLE chain A T Photosystem I G3P P Electron transport chain NADPH Starch ( s tor a ge) O 2 Sucrose (export)"
+        },
+        {
+          "page": 52,
+          "text": "MAKE CONNECTIONS: The Working Cell M o v ement A cr o ss C ell M em b ra n e s (Chapter 8) DNA Nucleus mRNA Energy Transformations in the Cell: Nucl e ar pore Photosynthesis and Cellular 2 Rough endoplasmic Respiration (Chapters 6, 10, and 11) Protein reticulum (ER) Protein in vesicle V ac uole Ribosome mRNA Vesicle 7 Photosynthesis CO Golgi in chloroplast fo r ming H O appa r at u s 2 Pr otein A T P 6 Organic T r anspo r t Plasma 8 A T P m o le c ules pump membrane O Cellular respiration A T P 2 11 Flow of Genetic in mitochondrion A T P Information in the Cell: DNA → RNA → Protein (Chapters 5, 7, 9 and 8) Cell wall O CO H O"
+        },
+        {
+          "page": 53,
+          "text": "DNA Nucleus mRNA N uclear pore Rough endoplasmic Protein Protein reticulum (ER) in vesicle Ribosome mRNA Flow of Genetic Information in the Cell: DNA → RNA → Protein (Chapters 5, 7, 8)"
+        },
+        {
+          "page": 54,
+          "text": "Vesicle Golgi formi n g appara t us Protein Plasma me m brane Cell wall Flow of Genetic Information in the Cell: DNA → RNA → Protein (Chapters 5, 7, 8)"
+        },
+        {
+          "page": 55,
+          "text": "7 Photosynthesis CO in chloroplast H O A T P T r ans p ort Organic pump molec u les A T P O Cellular respiration A T P in mitochondrion A T P Movement Across Cell Membranes (Chapter 8) O Energy Transformations CO in the Cell: Photosynthesis H O and Cellular Respiration (Chapters 6, 10, 11)"
+        },
+        {
+          "page": 56,
+          "text": "Reading Assignment: Chapter 41 © 2018 Pearson Education Ltd."
+        }
+      ]
+    },
+    {
+      "title": "Biology · Lecture 22 · Evolution",
+      "fileName": "BIOL110+Lecture22.pdf",
+      "pages": [
+        {
+          "page": 1,
+          "text": "BIOL 110: Integrated Science- Biology Lecture 22. How evolution works"
+        },
+        {
+          "page": 2,
+          "text": "Chapter 21: How evolution works © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 3,
+          "text": "How is its resemblance to a fallen leaf helpful to this moth?"
+        },
+        {
+          "page": 4,
+          "text": "Three examples of beak variation in Galápagos finches (a) Cactus-eater (b) Insect-eater - In 1844, Darwin wrote an essay on natural selection as the mechanism of descent with modi ficc ation, but did not introduce his theory publicly - Natural selection is a process in which individuals with favorable inherited traits are more likely to survive and reproduce (c) Seed-eater"
+        },
+        {
+          "page": 5,
+          "text": "Darwin’s Focus on Adaptation  In reassessing his observations, Darwin perceived adaptation to the environment and the origin of new species as closely related processes  From studies made years after Darwin’s voyage, biologists have concluded that this is what happened to the Galápagos f i i nches"
+        },
+        {
+          "page": 6,
+          "text": "The Origin of Species  A new era of biology began in 1859 when Charles Darwin published The Origin of Species  The Origin of Species focused biologists’ a ttee ntion on the great diversity of organisms  Darwin noted that current species are descendants of ancestral species  Evolution can be def i i ned by Darwin’s phrase descent with modification  Evolution can be viewed as both a pattern and a process"
+        },
+        {
+          "page": 7,
+          "text": "Ideas from The Origin of Species  Darwin explained three broad observations:  The unity of life  The diversity of life  The ways organisms are suited to life in their environments"
+        },
+        {
+          "page": 8,
+          "text": "Tree branches for life’s diversity  In the Darwinian view, the history of life is like a tree with branches representing life’s diversity  Darwin reasoned that large morphological gaps between related groups could be explained by this branching process and past extinction events"
+        },
+        {
+          "page": 9,
+          "text": "H y racoidea (Hyraxes) Sirenia (Manatees and † Moeritherium relatives) Descent with modification † Barytherium † Deinotherium † Mammut † Platybelodon † Stegodon † Mammuthus Elephas maximus (Asia) Co m m o n ancestor of Loxodonta africana (Africa) living elephant species Loxodonta cyclotis (Africa) 60 34 24 5.5 2 10 0 Millions of years ago Y e ar s ago"
+        },
+        {
+          "page": 10,
+          "text": "Artificial Selection, Natural Selection, and Adaptation  Darwin noted that humans have modif i i ed other species by selecting and breeding C a b b age individuals with desired Selection for traits, a process called apical (tip) bud artificial selection B r us se ls Selection for B r oc c o l i Selection sprouts axillary (side) for flowers buds and stems Selection for Selection stems for leaves K a le Wild mustard Kohlr a bi"
+        },
+        {
+          "page": 11,
+          "text": "Darwin drew two conclusions from two observations  Observation #1 : Members of a population often vary in their inherited traits Variation of a population"
+        },
+        {
+          "page": 12,
+          "text": "Darwin drew two conclusions from two observations  Observation #2 : All species can S p ore produce more o ffss pring than the cloud environment can support, and many of these o ffss pring fail to survive and reproduce Overproduction of offspring"
+        },
+        {
+          "page": 13,
+          "text": "Key Features of Natural Selection  Individuals with certain heritable traits survive and reproduce at a higher rate than other individuals  Natural selection increases the frequency of adaptations that are favorable in a given environment  If an environment changes over time, natural selection may result in adaptation to these new conditions and may give rise to new species"
+        },
+        {
+          "page": 14,
+          "text": "Camouflage as an example of evolutionary adaptation"
+        },
+        {
+          "page": 15,
+          "text": "Natural Selection  Note that individuals do not evolve; populations evolve over time  Natural selection can only increase or decrease heritable traits that vary in a population  Adaptations vary with di ffse rent environments"
+        },
+        {
+          "page": 16,
+          "text": "Evolution is supported by an overwhelming amount of scientific evidence  New discoveries continue to f i i ll the gaps identi fiee d by Darwin in The Origin of Species  Four types of data document the pa ttee rn of evolution  Direct observations  Homology  Thee fossil record  Biogeography"
+        },
+        {
+          "page": 17,
+          "text": "Direct Observations of Evolutionary Change  Natural selection in response to introduced species and the evolution of drug-resistant bacteria © 2018 Pearson Education Ltd."
+        },
+        {
+          "page": 18,
+          "text": "Natural Selection in Response to Introduced Species  Soapberry bugs use their “beak” to feed on seeds within fruits  Feeding is most e ffse ctive when beak length is closely matched to seed depth within the fruit Soapberry bug with beak inserted in balloon vine fruit"
+        },
+        {
+          "page": 19,
+          "text": "Natural Selection in Response to Introduced Species  In southern Florida, soapberry bugs feed on the native balloon vine with larger fruit; they have longer beaks  In central Florida, they feed on the introduced goldenrain tree with smaller fruit; they have shorter beaks  Correlation between fruit size and beak size has also been observed in Louisiana, Oklahoma, and Australia  These cases are examples of evolution by natural selection  In Florida, this evolution in beak size occurred in less than 35 years"
+        },
+        {
+          "page": 20,
+          "text": "The Evolution of Drug-Resistant Bacteria  The bacterium Staphylococcus aureus is commonly found on people  One strain, methicillin-resistant S. aureus (MRSA), is a dangerous pathogen  Resistance to penicillin evolved in S. aureus by 1945, two years a ftee r it was fier st widely used  Resistance to methicillin evolved in S. aureus by 1961, two years after it was fier st widely used"
+        },
+        {
+          "page": 21,
+          "text": "The Evolution of Drug-Resistant Bacteria  Methicillin works by inhibiting an enzyme used by bacteria to produce cell walls  MRSA bacteria use a di ffee rent enzyme in cell wall production  MRSA strains are now resistant to many antibiotics  In recent decades, antibiotic resistance has spread faster than new antibiotics have been discovered"
+        },
+        {
+          "page": 22,
+          "text": "The Evolution of Drug-Resistant Bacteria  Natural selection does not create new traits, but edits or selects for traits already present in the population  Evolution by natural selection can occur rapidly in species with short generation times  The current, local environment determines which traits will be selected for or selected against in any specif i i c population"
+        },
+        {
+          "page": 23,
+          "text": "Homology  Homology is similarity resulting from common ancestry  Homologous structures are anatomical resemblances that represent variations on a structural theme present in a common ancestor"
+        },
+        {
+          "page": 24,
+          "text": "Homology  Comparative embryology reveals anatomical homologies not visible in adult organisms  For example, all vertebrate embryos have a post-anal tail and pharyngeal arches Pha r y n g e a l arches Pos t -an a l tail Chick embryo (LM) Human embryo"
+        },
+        {
+          "page": 25,
+          "text": "Vestigial structures : homologous to structures that function normally in other species.  Vestigial structures are remnants of features that served a function in the organism’s ancestors If a tendon raises up when you touch your pinky to thumb: vestigial structures"
+        },
+        {
+          "page": 26,
+          "text": "A Different Cause of Resemblance: Convergent Evolution  Convergent evolution is the evolution of similar, or analogous , features in distantly related groups  Analogous traits arise when groups independently adapt to similar environments in similar ways  Convergent evolution does not provide information about ancestry"
+        },
+        {
+          "page": 27,
+          "text": "The Fossil Record  The fossil record provides evidence of the extinction of species , the origin of new groups , and changes within groups over time Most mammals Cetaceans and even-toed ungulates P ak ic e tus (a) Canis (dog) (b) Pakicetus (c) Sus (pig) (d) Odocoileus (deer)"
+        },
+        {
+          "page": 28,
+          "text": "Fossils can document important transitions  Thee transition from land to sea in the ancestors of cetaceans Other e v e n -toed Pelvis and ungulates hind limb Hippopot am us e s bones † Pakicetus † Rodhocetus Common † ancestor Dorudon of cetaceans Living c e ta c e a ns 70 60 50 40 30 20 10 0 Millions of years ago Key to Pelvis T i b ia cetacean pelvis and hind limb bones Femur Foot"
+        },
+        {
+          "page": 29,
+          "text": "Biogeography  Biogeography , the scientif i i c study of the geographic distribution of species, provides evidence of evolution  Earth’s continents were formerly united in a single large continent called Pangaea , but have since separated by continental drift  An understanding of continent movement and modern distribution of species allows us to predict when and where different groups evolved"
+        },
+        {
+          "page": 30,
+          "text": "Biogeography  Endemic species are species that are not found anywhere else in the world  Islands have many endemic species that are often closely related to species on the nearest mainland or island  Darwin suggested that species from the mainland colonized islands and gave rise to new species as they adapted to new environments"
+        },
+        {
+          "page": 31,
+          "text": "What Is Theoretical About Darwin’s View of Life?  In science, a theory accounts for many observations and data , and attempts to explain and integrate a great variety of phenomena  Darwin’s theory of evolution by natural selection integrates diverse areas of biological study and stimulates many new research questions  Ongoing research adds to our understanding of evolution"
+        },
+        {
+          "page": 32,
+          "text": "Reading Assignment: Chapter 22 © 2018 Pearson Education Ltd."
+        }
+      ]
+    }
+  ]
+}
