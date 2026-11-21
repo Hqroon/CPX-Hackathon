@@ -1,40 +1,19 @@
-// Builds data/reels.json from the files in media/reels/.
+// Builds data/reels.json from the videos in REELS_DIR (default: media/reels/).
 // Owner: M3.
 //
-// Naming convention:
-//   media/reels/f01.mp4 ... f10.mp4  -> "friend" reels (shown first, never charged)
-//   media/reels/r01.mp4 ... r40.mp4  -> recommended reels
-//   media/thumbs/<same name>.jpg      -> optional thumbnail
+// Any file names work (r01.mp4, clip-cat.mp4…). The id is the file name without extension.
+// Optional thumbnail: THUMBS_DIR/<id>.jpg
+// Re-running keeps captions/authors you already edited in reels.json and drops entries
+// whose video is gone.
 //
-// Usage:
-//   npm run manifest             placeholder captions
-//   npm run manifest:captions    captions written by the LLM (uses backend/.env keys)
+// Usage (from backend/):
+//   npm run manifest             placeholder captions for new videos
+//   npm run manifest:captions    captions for new videos written by the LLM (uses .env keys)
 
 import 'dotenv/config';
-import { readdir, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { writeFile } from 'node:fs/promises';
 import { chatWithFallback, parseJsonLoose } from '../src/llm.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.join(__dirname, '..');
-const REELS_DIR = path.join(ROOT, 'media', 'reels');
-const THUMBS_DIR = path.join(ROOT, 'media', 'thumbs');
-const OUT = path.join(ROOT, 'data', 'reels.json');
-
-const FRIEND_NAMES = ['Lina', 'Wei', 'Sara', 'Kai', 'Mei', 'Omar', 'Yuki', 'Jun', 'Aisha', 'Hao'];
-const CREATOR_NAMES = [
-  'foodie.sz', 'travelwithmia', 'dailycat', 'gymrat_lee', 'study.with.yan', 'citylights',
-  'memes.cn', 'plantdad', 'streetstyle.sh', 'techtok', 'bubbletea.club', 'hikingdiaries',
-];
-const PLACEHOLDER_CAPTIONS = [
-  'Wait for the end 😳', 'POV: it is 2am and you have a deadline', 'Best noodles in Suzhou?',
-  'This changed my morning routine', 'Rate this from 1 to 10', 'Nobody talks about this',
-  '你绝对想不到结局', '周末去哪儿玩？', '这个也太好看了吧', 'Save this for later',
-];
-
-const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+import { reelsDir, listVideoFiles, readManifest, entryForFile, REELS_JSON } from '../src/media.js';
 
 async function llmCaptions(count) {
   const messages = [
@@ -52,40 +31,36 @@ async function llmCaptions(count) {
   return value;
 }
 
-const files = existsSync(REELS_DIR)
-  ? (await readdir(REELS_DIR)).filter((f) => /\.(mp4|webm|mov)$/i.test(f)).sort()
-  : [];
-
+const files = listVideoFiles();
 if (files.length === 0) {
-  console.log('No videos found in media/reels/. Add f01.mp4..., r01.mp4... and run again.');
+  console.log(`No videos found in ${reelsDir()}. Add .mp4 files there (or set REELS_DIR in .env) and run again.`);
   process.exit(0);
 }
 
+let existing = new Map();
+try {
+  existing = new Map(readManifest().map((r) => [r.id, r]));
+} catch (err) {
+  console.warn('Existing reels.json is unreadable, starting fresh:', err.message);
+}
+
+const newFiles = files.filter((f) => !existing.has(f.replace(/\.[^.]+$/, '')));
 let captions = [];
-if (process.argv.includes('--captions')) {
+if (process.argv.includes('--captions') && newFiles.length > 0) {
   try {
-    captions = await llmCaptions(files.length);
+    captions = await llmCaptions(newFiles.length);
     console.log(`Got ${captions.length} captions from the LLM.`);
   } catch (err) {
     console.warn('Caption generation failed, using placeholders:', err.message);
   }
 }
 
-let friendIdx = 0;
-const reels = files.map((file, i) => {
-  const id = path.parse(file).name;
-  const isFriend = /^f/i.test(id);
-  const thumb = path.join(THUMBS_DIR, `${id}.jpg`);
-  return {
-    id,
-    src: `/media/reels/${file}`,
-    poster: existsSync(thumb) ? `/media/thumbs/${id}.jpg` : null,
-    author: isFriend ? FRIEND_NAMES[friendIdx++ % FRIEND_NAMES.length] : rand(CREATOR_NAMES),
-    isFriend,
-    caption: captions[i] || rand(PLACEHOLDER_CAPTIONS),
-    likes: isFriend ? 5 + Math.floor(Math.random() * 60) : 200 + Math.floor(Math.random() * 20000),
-  };
+let c = 0;
+const reels = files.map((file) => {
+  const id = file.replace(/\.[^.]+$/, '');
+  const prev = existing.get(id) || null;
+  return entryForFile(file, prev, prev ? null : captions[c++] || null);
 });
 
-await writeFile(OUT, JSON.stringify(reels, null, 2) + '\n');
-console.log(`Wrote ${reels.length} reels (${reels.filter((r) => r.isFriend).length} friends) to data/reels.json`);
+await writeFile(REELS_JSON, JSON.stringify(reels, null, 2) + '\n');
+console.log(`Wrote ${reels.length} reels to data/reels.json (${newFiles.length} new) from ${reelsDir()}`);

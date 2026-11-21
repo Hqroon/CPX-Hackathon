@@ -8,6 +8,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
+    "test": "node --test \"src/**/*.test.js\"",
     "bundle:media": "node scripts/bundle-media.mjs",
     "android:sync": "vite build && cap sync android",
     "android:open": "cap open android"
