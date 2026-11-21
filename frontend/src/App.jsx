@@ -1,4 +1,5 @@
-// App: owns the session and every rule. Owner: M2 (rules), M1 (Feed).
+// App: owns the session and applies the frustration rules. Owner: M2 (rules), M1 (Feed).
+// Every rule decision comes from src/rules/frustration.js (pure, unit-tested).
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
@@ -7,12 +8,18 @@ import AllowanceCard from './components/AllowanceCard.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
+import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
+import { LogoMark } from './components/Illustrations.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent } from './api.js';
 import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
+import {
+  pointsForReel, isFreeReel, paidNumber, asksQuestion, nextQuestion, audioForReel,
+  transitionMsInto, isSlowFrom, visualDecay, decayFilter, indexOfReel,
+} from './rules/frustration.js';
 import mockQuestions from './mock/questions.json';
 
 const newSessionId = () => Math.random().toString(36).slice(2, 10);
@@ -27,9 +34,21 @@ function shuffle(arr) {
   return a;
 }
 
-function reshuffleQuestion(q) {
-  const order = shuffle(q.options.map((_, i) => i));
-  return { ...q, options: order.map((i) => q.options[i]), answerIndex: order.indexOf(q.answerIndex) };
+// Laptop-only backdrop around the phone frame (hidden on phones by CSS).
+function Backdrop() {
+  return (
+    <div className="backdrop" aria-hidden="true">
+      <span className="blob blob-a" />
+      <span className="blob blob-b" />
+      <span className="blob blob-c" />
+      <div className="backdrop-caption">
+        <LogoMark size={44} />
+        <strong>Doomscroll Tax</strong>
+        <span>Your first reels are free. Everything after costs you.</span>
+        <span className="backdrop-meta">CrossPointX 2026 · Track 2 · Reverse UX</span>
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -43,8 +62,6 @@ export default function App() {
   const statsRef = useRef(emptyStats());
   const [stats, setStats] = useState(emptyStats());
   const [points, setPoints] = useState(0);
-  const [owingAtStart, setOwingAtStart] = useState(false);
-  const [slow, setSlow] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [provider, setProvider] = useState('');
   const qPointerRef = useRef(0);
@@ -56,7 +73,6 @@ export default function App() {
   const tapsRef = useRef([]);
 
   const cfg = demo ? { ...CONFIG, ...DEMO_OVERRIDES } : CONFIG;
-  const slowThreshold = owingAtStart ? cfg.slowAfterIfOwing : cfg.slowAfterReels;
   const commitStats = () => setStats({ ...statsRef.current });
 
   const showToast = useCallback((text) => setToast({ text, id: Date.now() }), []);
@@ -81,9 +97,8 @@ export default function App() {
       markOpened();
       setPoints(p);
       if (waived > 0) showToast(COPY.points.welcomeBack(waived, p));
-      return p;
     };
-    setOwingAtStart(apply() > 0);
+    apply();
     const onVisibility = () => (document.visibilityState === 'hidden' ? markClosed() : apply());
     const onHide = () => markClosed();
     document.addEventListener('visibilitychange', onVisibility);
@@ -94,41 +109,54 @@ export default function App() {
     };
   }, [showToast]);
 
-  // Shuffled reels: the first CONFIG.freeReels are free, then the allowance card, then paid reels.
+  // Shuffled reels, each tagged with its reel number:
+  //   [reel 1 … reel 5] [free-reels-used-up card] [reel 6 …]
   const { items, lineIndex } = useMemo(() => {
     if (!reels) return { items: [], lineIndex: 0 };
     const all = shuffle(reels);
     const freeCount = Math.min(CONFIG.freeReels, all.length);
     return {
       items: [
-        ...all.slice(0, freeCount).map((r, k) => ({ type: 'reel', reel: r, free: true, freeNumber: k + 1 })),
-        { type: 'allowance', id: 'allowance' },
-        ...all.slice(freeCount).map((r) => ({ type: 'reel', reel: r, free: false })),
+        ...all.slice(0, freeCount).map((r, k) => ({
+          type: 'reel', reel: r, reelNumber: k + 1, free: true, freeNumber: k + 1,
+        })),
+        { type: 'allowance', id: 'allowance', reelNumber: null },
+        ...all.slice(freeCount).map((r, k) => ({
+          type: 'reel', reel: r, reelNumber: freeCount + k + 1, free: false,
+        })),
       ],
       lineIndex: freeCount,
     };
   }, [reels, sessionId]);
 
   // ---- Question toll -------------------------------------------------------
-  function openQuiz() {
-    const pool = questions.length ? questions : mockQuestions;
-    const q = reshuffleQuestion(pool[qPointerRef.current % pool.length]);
-    qPointerRef.current += 1;
+  const questionPool = () => (questions.length ? questions : mockQuestions);
+
+  function drawQuestion(avoidId = null) {
+    const { question, pointer } = nextQuestion(questionPool(), qPointerRef.current, avoidId);
+    qPointerRef.current = pointer;
     statsRef.current.asked += 1;
     commitStats();
-    setQuiz({ q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 });
-    logEvent(sessionId, 'quiz_open', { questionId: q.id });
+    logEvent(sessionId, 'quiz_open', { questionId: question?.id });
+    return question;
+  }
+
+  function openQuiz() {
+    const q = drawQuestion();
+    if (q) setQuiz({ q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 });
   }
 
   function answer(choice) {
     if (!quiz || quiz.phase !== 'ask') return;
     if (choice === quiz.q.answerIndex) {
+      // Right: show it briefly, then the reel continues.
       statsRef.current.right += 1;
       commitStats();
       setQuiz({ ...quiz, phase: 'right', picked: choice });
       logEvent(sessionId, 'quiz_right', { questionId: quiz.q.id });
       setTimeout(() => setQuiz(null), 1600);
     } else {
+      // Wrong: lock for wrongWaitSeconds, then a NEW question.
       statsRef.current.wrong += 1;
       commitStats();
       setQuiz({ ...quiz, phase: 'wrong', picked: choice, wait: cfg.wrongWaitSeconds });
@@ -136,19 +164,24 @@ export default function App() {
     }
   }
 
-  // Wrong-answer countdown, then retry the same question with shuffled options.
+  // Wrong-answer countdown, then the next question.
   useEffect(() => {
     if (!quiz || quiz.phase !== 'wrong') return;
     if (quiz.wait <= 0) {
-      setQuiz((cur) => ({ ...cur, phase: 'ask', picked: null, q: reshuffleQuestion(cur.q) }));
+      const q = drawQuestion(quiz.q.id);
+      setQuiz({ q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 });
       return;
     }
-    const t = setTimeout(() => setQuiz((cur) => (cur && cur.phase === 'wrong' ? { ...cur, wait: cur.wait - 1 } : cur)), 1000);
+    const t = setTimeout(
+      () => setQuiz((cur) => (cur && cur.phase === 'wrong' ? { ...cur, wait: cur.wait - 1 } : cur)),
+      1000
+    );
     return () => clearTimeout(t);
-  }, [quiz]);
+  }, [quiz]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- Feed movement and per-reel rules ------------------------------------
-  function addPoint(n = 1) {
+  function addPoints(n) {
+    if (n <= 0) return;
     setPoints((prev) => {
       const p = prev + n;
       savePoints(p);
@@ -157,21 +190,19 @@ export default function App() {
     });
   }
 
+  /** Runs once per reel, the first time the user reaches it. */
   function onNewItem(i) {
     const item = items[i];
     if (!item || item.type !== 'reel') return;
+    const n = item.reelNumber;
     const s = statsRef.current;
-    s.totalReels += 1;
-    logEvent(sessionId, 'reel_view', { reelId: item.reel.id, free: item.free });
-    if (!item.free) {
-      s.reelsAfterLine += 1;
-      addPoint(1);
-      if (s.reelsAfterLine % cfg.questionEvery === 0) openQuiz();
-    }
-    if (!slow && s.totalReels >= slowThreshold) {
-      setSlow(true);
-      showToast(COPY.slow(s.totalReels));
-    }
+    s.totalReels = Math.max(s.totalReels, n);
+    if (!isFreeReel(n, cfg)) s.reelsAfterLine = paidNumber(n, cfg);
+    logEvent(sessionId, 'reel_view', { reelId: item.reel.id, reelNumber: n, free: isFreeReel(n, cfg) });
+
+    addPoints(pointsForReel(n, cfg));
+    if (isSlowFrom(n, cfg)) showToast(COPY.slow(cfg.slowAfterReels));
+    if (asksQuestion(n, cfg)) openQuiz();
     commitStats();
   }
 
@@ -215,14 +246,12 @@ export default function App() {
     const { points: p, waived } = loadPoints();
     markOpened();
     setPoints(p);
-    setOwingAtStart(p > 0);
     if (waived > 0) showToast(COPY.points.welcomeBack(waived, p));
     statsRef.current = emptyStats();
     commitStats();
     maxSeenRef.current = 0;
     qPointerRef.current = 0;
     setIndex(0);
-    setSlow(false);
     setQuiz(null);
     setQuestions([]);
     setProvider('');
@@ -247,20 +276,22 @@ export default function App() {
       setPoints(p);
       showToast(COPY.points.welcomeBack(waived, p));
     },
+    // Jump to the last normal-speed reel; the next swipe is the first slow one.
     jumpToSlow() {
       if (phase !== 'feed' || quiz) return;
+      const target = Math.min(items.length - 1, Math.max(index, indexOfReel(cfg.slowAfterReels, cfg)));
       const s = statsRef.current;
-      const targetTotal = Math.max(s.totalReels, slowThreshold - 1);
-      // Reels in items[0..t]: t+1 before the allowance card, t after it.
-      let t = targetTotal <= lineIndex ? targetTotal - 1 : targetTotal;
-      t = Math.min(items.length - 1, Math.max(t, index));
-      const afterLine = Math.max(0, t - lineIndex);
-      const added = afterLine - s.reelsAfterLine;
-      s.totalReels = t < lineIndex ? t + 1 : t;
-      s.reelsAfterLine = afterLine;
-      if (added > 0) addPoint(added);
-      maxSeenRef.current = t;
-      setIndex(t);
+      let added = 0;
+      for (let i = maxSeenRef.current + 1; i <= target; i++) {
+        const n = items[i]?.reelNumber;
+        if (n != null) added += pointsForReel(n, cfg);
+      }
+      const n = items[target]?.reelNumber ?? s.totalReels;
+      s.totalReels = Math.max(s.totalReels, n);
+      s.reelsAfterLine = paidNumber(s.totalReels, cfg);
+      addPoints(added);
+      maxSeenRef.current = Math.max(maxSeenRef.current, target);
+      setIndex(target);
       commitStats();
       setPanelOpen(false);
     },
@@ -283,26 +314,37 @@ export default function App() {
   if (!reels) {
     return (
       <div className="app">
-        <div className="phone"><div className="loading">Loading reels…</div></div>
+        <Backdrop />
+        <div className="phone">
+          <div className="loading">
+            <span className="loading-mark"><LogoMark size={64} /></span>
+            <span>Loading…</span>
+          </div>
+        </div>
       </div>
     );
   }
 
   const current = items[index];
+  const currentReel = current?.reelNumber ?? null;
   const afterLine = index > lineIndex;
-  // Volume roulette: first paid reel loud, next muted, and so on.
-  const muted = current?.type === 'reel' && !current.free ? (index - lineIndex) % 2 === 0 : false;
-  const transitionMs = slow ? cfg.slowTransitionMs : cfg.normalTransitionMs;
+  const audio = audioForReel(currentReel, cfg);
+  const transitionMs = transitionMsInto(currentReel, cfg);
+  const currentDecay = visualDecay(currentReel, cfg);
+  const filterFor = (item) => decayFilter(visualDecay(item?.reelNumber ?? null, cfg));
 
   return (
     <div className="app">
-      <div className="phone">
+      <Backdrop />
+      <div className={`phone phase-${phase}`}>
         <Feed
           ref={feedRef}
           items={items}
           index={index}
           transitionMs={transitionMs}
-          muted={muted}
+          muted={audio.muted}
+          volume={audio.volume}
+          filterFor={filterFor}
           paused={phase !== 'feed' || !!quiz}
           blocked={phase !== 'feed' || !!quiz}
           onRequestMove={move}
@@ -316,15 +358,29 @@ export default function App() {
         />
 
         <div className="topbar">
-          <button className="logo" onClick={onLogoTap} aria-label="Doomscroll Tax">刷屏税</button>
+          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label="Doomscroll Tax">
+            <LogoMark size={30} />
+            <span className="wordmark">刷屏税</span>
+          </button>
           {phase === 'feed' && (
             <div className="topbar-right">
-              {afterLine && current?.type === 'reel' && (
-                <span className="vol" aria-label={muted ? 'Muted' : 'Full volume'}>{muted ? '🔇' : '🔊'}</span>
+              {/* Sound state is only revealed in explain mode; otherwise the volume fade stays silent. */}
+              {explain && afterLine && current?.type === 'reel' && (
+                <span
+                  className={`vol ${audio.muted ? 'muted' : 'wide'}`}
+                  key={`vol-${index}`}
+                  aria-label={audio.muted ? 'Muted' : `Volume ${Math.round(audio.volume * 100)}%`}
+                >
+                  {audio.muted ? <IconMute size={18} /> : <IconSound size={18} />}
+                  {!audio.muted && <span className="vol-pct">{Math.round(audio.volume * 100)}%</span>}
+                </span>
               )}
-              <span className={`points ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>−{points}</span>
+              <span className={`meter ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>
+                <span className="meter-label">Owed</span>
+                <span className="meter-value" key={points}>{points > 0 ? `−${points}` : '0'}</span>
+              </span>
               <button className={`icon-btn ${explain ? 'on' : ''}`} onClick={() => setExplain((e) => !e)} aria-label="Explain mode" aria-pressed={explain}>?</button>
-              <button className="icon-btn" onClick={endSession} aria-label="End session">✕</button>
+              <button className="icon-btn" onClick={endSession} aria-label="End session"><IconClose size={16} /></button>
             </div>
           )}
         </div>
@@ -333,6 +389,7 @@ export default function App() {
           <div className="explain-stack">
             <Explain show text={COPY.explain.points} />
             {afterLine && <Explain show text={COPY.explain.volume} />}
+            {currentDecay > 0 && <Explain show text={COPY.explain.decay} />}
           </div>
         )}
 
@@ -350,7 +407,10 @@ export default function App() {
               totalReels: stats.totalReels,
               reelsAfterLine: stats.reelsAfterLine,
               questionEvery: cfg.questionEvery,
-              slowThreshold,
+              slowThreshold: cfg.slowAfterReels,
+              currentReel,
+              volume: audio.muted ? 'muted' : `${Math.round(audio.volume * 100)}%`,
+              decay: Math.round(currentDecay * 100),
             }}
           />
         )}

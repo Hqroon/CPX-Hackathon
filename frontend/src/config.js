@@ -1,23 +1,44 @@
-// Every tunable number lives here. M4 sets the final values from the interviews.
+// Every tunable number lives here. The rules in src/rules/frustration.js read
+// only these values, so changing a number here changes the whole app.
+//
+// "Reel number" below means the position of a reel in the session: 1, 2, 3…
+// (the "free reels used up" card in between is not counted).
 
 export const CONFIG = {
-  freeReels: 5,              // golden path: the first N reels of a session are free
+  // --- Golden path -----------------------------------------------------------
+  freeReels: 5,              // reels 1–5 are free: no points, no questions, normal sound and speed
+
+  // --- Negative points -------------------------------------------------------
+  pointsPerReel: 1,          // every reel after the free ones costs this many points
+  minutesPerPoint: 15,       // minutes away from the app that clear 1 point
+
+  // --- Question toll ---------------------------------------------------------
+  questionEvery: 5,          // a question after every N paid reels (reels 10, 15, 20…)
+  wrongWaitSeconds: 5,       // wrong answer: wait this long, then a NEW question appears
+  questionCount: 12,         // questions requested from the backend per session
   minSlides: 5,              // slide gate: pages with text needed before scrolling
-  questionCount: 12,         // questions requested from the backend
-  questionEvery: 5,          // a question after every N paid reels (after the free ones)
-  wrongWaitSeconds: 10,      // lockout after a wrong answer
-  slowAfterReels: 20,        // reels in a session before slow scroll starts
-  slowAfterIfOwing: 10,      // ...earlier if the user starts a session still owing points
-  slowTransitionMs: 3000,    // swipe duration in slow mode
+
+  // --- Volume roulette -------------------------------------------------------
+  // After the free reels, sound alternates: on, muted, on, muted…
+  // and every paid reel is quietly 2% softer than the one before (no on-screen slider).
+  volumeStepDown: 0.02,      // volume lost per paid reel
+  minVolume: 0.05,           // never fully silent on the "on" reels
+
+  // --- Slow scroll + visual decay ---------------------------------------------
+  slowAfterReels: 10,        // from reel 11 on, each new reel takes slowTransitionMs to arrive
+  slowTransitionMs: 3000,
   normalTransitionMs: 320,
-  minutesPerPoint: 15,       // minutes away that clear 1 point
+  decayFullAfterReels: 15,   // visual decay grows from reel 11 and is at full strength 15 reels later
+
+  // --- Input -----------------------------------------------------------------
   swipeThresholdPx: 80,
 };
 
-// "Demo speed x3" in the demo panel swaps in these values so the full
-// journey fits into a 3-minute judging slot.
+// "Demo speed x3" in the demo panel swaps in these values so the whole journey
+// fits into a 3-minute judging slot.
 export const DEMO_OVERRIDES = {
   questionEvery: 2,
   slowAfterReels: 8,
-  slowAfterIfOwing: 6,
+  decayFullAfterReels: 5,
+  volumeStepDown: 0.1,
 };

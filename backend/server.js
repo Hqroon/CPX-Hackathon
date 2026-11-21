@@ -2,15 +2,14 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { existsSync } from 'node:fs';
-import { readFile, appendFile } from 'node:fs/promises';
+import { appendFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateQuestions } from './src/questions.js';
 import { configuredProviders } from './src/llm.js';
+import { reelsDir, thumbsDir, readManifest, scanReels, mediaExists, listVideoFiles } from './src/media.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const MEDIA_DIR = path.join(__dirname, 'media');
-const REELS_JSON = path.join(__dirname, 'data', 'reels.json');
 const EVENTS_FILE = path.join(__dirname, 'data', 'events.jsonl');
 const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
 
@@ -18,25 +17,31 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
-// Videos and thumbnails. express.static supports Range requests, which video seeking needs.
-app.use('/media', express.static(MEDIA_DIR, { maxAge: '1h' }));
+// Videos and thumbnails, from whatever folders REELS_DIR / THUMBS_DIR point at.
+// express.static supports Range requests, which video seeking needs.
+app.use('/media/reels', express.static(reelsDir(), { maxAge: '1h' }));
+app.use('/media/thumbs', express.static(thumbsDir(), { maxAge: '1h' }));
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, providers: configuredProviders().map((p) => p.label) });
+  res.json({
+    ok: true,
+    providers: configuredProviders().map((p) => p.label),
+    reelsDir: reelsDir(),
+    videosFound: listVideoFiles().length,
+  });
 });
 
-// GET /api/reels -> reel list. `available` tells M3 which files are still missing.
-app.get('/api/reels', async (_req, res) => {
+// GET /api/reels -> reel list.
+// Uses data/reels.json if it has entries (captions you wrote), otherwise scans the
+// video folder directly, so dropping videos into REELS_DIR is enough to get going.
+// `available: false` marks entries whose file is missing.
+app.get('/api/reels', (_req, res) => {
   try {
-    // Strip a UTF-8 BOM: Windows Notepad / PowerShell add one and JSON.parse rejects it.
-    const reels = JSON.parse((await readFile(REELS_JSON, 'utf8')).replace(/^﻿/, ''));
-    const withStatus = reels.map((r) => {
-      const local = r.src && r.src.startsWith('/media/') ? path.join(__dirname, r.src) : null;
-      return { ...r, available: local ? existsSync(local) : Boolean(r.src) };
-    });
-    res.json(withStatus);
+    const manifest = readManifest();
+    const reels = manifest.length > 0 ? manifest : scanReels();
+    res.json(reels.map((r) => ({ ...r, available: mediaExists(r.src) })));
   } catch (err) {
-    res.status(500).json({ error: 'Could not read data/reels.json: ' + err.message });
+    res.status(500).json({ error: 'Could not read the reel list: ' + err.message });
   }
 });
 
@@ -75,5 +80,6 @@ const port = Number(process.env.PORT || 8787);
 app.listen(port, () => {
   const providers = configuredProviders().map((p) => p.label);
   console.log(`Doomscroll Tax backend on http://localhost:${port}`);
+  console.log(`Videos: ${listVideoFiles().length} found in ${reelsDir()}`);
   console.log(`LLM providers: ${providers.length ? providers.join(' -> ') : 'none (fallback questions only)'}`);
 });

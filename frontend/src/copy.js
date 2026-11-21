@@ -2,8 +2,8 @@
 
 export const COPY = {
   gate: {
-    title: 'Pay before you scroll.',
-    body: "Upload at least 5 slides from a course you're taking. We'll quiz you on them while you watch.",
+    title: 'Course slides',
+    body: '',
     upload: 'Upload PDF',
     sample: 'Use sample slides',
     start: 'Start scrolling',
@@ -30,9 +30,9 @@ export const COPY = {
     sub: (page) => (page ? `From your slides, page ${page}. Your reel is paused.` : 'Your reel is paused.'),
     right: 'Correct. Reel unlocked.',
     // The explanation is shown only after a correct answer, so a wrong guess doesn't give the answer away.
-    wrong: (s) => `Not quite. Try again in ${s}s.`,
+    wrong: (s) => `Not quite. A new question in ${s}s.`,
   },
-  slow: (n) => `You've watched ${n} reels. Each one now takes 3 seconds to load. On purpose.`,
+  slow: (n) => `You've watched ${n} reels. Each one now takes 3 seconds to load, and the colours are fading. On purpose.`,
   results: {
     title: 'Session receipt',
     reels: (n) => `${n} reels after your free ones ran out`,
@@ -46,8 +46,9 @@ export const COPY = {
     gate: 'Commitment device: you choose what to learn before you start scrolling.',
     points: 'Loss aversion and cooling-off: extra scrolling costs something, and only time away pays it back.',
     quiz: 'Testing effect: recalling your own slides turns scrolling time into revision.',
-    volume: 'Broken flow: unpredictable sound breaks the immersion that keeps you watching.',
+    volume: 'Broken flow: sound switches on and off every reel, and quietly gets 2% softer each time, so the feed loses its pull.',
     slow: 'Fogg Behavior Model: making the next reel harder to reach weakens the habit without banning it.',
+    decay: 'Reward decay: colours drain and the picture blurs the longer you scroll, so each new reel is less satisfying.',
     free: 'Golden path: your first 5 reels are always free, so you can always check what you came for. Only what comes after costs you.',
   },
 };

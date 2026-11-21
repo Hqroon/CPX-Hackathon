@@ -8,6 +8,8 @@ import {
   validatePdfFile,
 } from '../rules/slides.js';
 import Explain from './Explain.jsx';
+import { IconUpload, IconDoc, IconCheck } from './Icons.jsx';
+import { LogoMark, SlidesArt } from './Illustrations.jsx';
 import sample from '../mock/sample-slides.json';
 
 const IS_DEV = import.meta.env.DEV;
@@ -115,13 +117,21 @@ export default function SlideGate({ onStart, explain }) {
       ? `Reading page ${status.processedPages} of ${status.totalPages}…`
       : 'Opening PDF…'
     : '';
+  const reading = status.kind === 'reading';
+  const ready = status.kind === 'ready';
+  const count = ready ? status.slides.length : reading ? status.processedPages : 0;
 
   return (
     <div className="gate">
       <div className="gate-card">
-        <div className="gate-badge">Toll booth</div>
+        <div className="brand" aria-hidden="true">
+          <span>Doomscroll</span>
+          <LogoMark size={26} />
+          <span>Tax</span>
+        </div>
+        <div className="gate-art"><SlidesArt /></div>
         <h1>{COPY.gate.title}</h1>
-        <p>{COPY.gate.body}</p>
+        {COPY.gate.body && <p className="gate-body">{COPY.gate.body}</p>}
         <Explain show={explain} text={COPY.explain.gate} />
 
         <input
@@ -132,16 +142,33 @@ export default function SlideGate({ onStart, explain }) {
           onChange={onFile}
         />
 
-        {status.kind !== 'ready' && (
+        {/* Slide counter: five boxes to fill, like a form field. */}
+        <div className="slide-counter" aria-label={`${count} of ${CONFIG.minSlides} slides`}>
+          {Array.from({ length: CONFIG.minSlides }, (_, i) => (
+            <span key={i} className={`slide-box ${i < count ? 'filled' : ''}`}>
+              {i < count ? <IconCheck size={16} /> : i + 1}
+            </span>
+          ))}
+          <span className="slide-counter-label">
+            {count > CONFIG.minSlides ? `+${count - CONFIG.minSlides} more` : `min ${CONFIG.minSlides}`}
+          </span>
+        </div>
+
+        {!ready && (
           <div className="gate-actions">
             <button
-              className="btn primary"
+              className={`btn primary big ${reading ? 'busy' : ''}`}
               onClick={() => inputRef.current?.click()}
-              disabled={status.kind === 'reading'}
+              disabled={reading}
             >
-              {status.kind === 'error' ? 'Choose another PDF' : COPY.gate.upload}
+              <IconUpload size={20} />
+              <span>{reading ? readingLabel : status.kind === 'error' ? 'Choose another PDF' : COPY.gate.upload}</span>
             </button>
-            <button className="btn ghost" onClick={useSample} disabled={status.kind === 'reading'}>
+            <button
+              className="btn ghost"
+              onClick={useSample}
+              disabled={reading}
+            >
               {COPY.gate.sample}
             </button>
           </div>
@@ -152,13 +179,16 @@ export default function SlideGate({ onStart, explain }) {
         )}
         {status.kind === 'error' && <p className="gate-error" role="alert">{status.msg}</p>}
 
-        {status.kind === 'ready' && (
+        {ready && (
           <>
-            <p className="gate-status">
-              <strong>{status.name}</strong>
-              <br />
-              {COPY.gate.ready(status.slides.length)}
-            </p>
+            <div className="file-slip">
+              <IconDoc size={22} />
+              <div>
+                <strong>{status.name}</strong>
+                <span>{COPY.gate.ready(status.slides.length)}</span>
+              </div>
+              <span className="file-ok" aria-label="Accepted"><IconCheck size={16} /></span>
+            </div>
             {/* onStart must run inside this click so the browser allows video with sound. */}
             <button className="btn primary big" onClick={() => onStart(status.slides)}>
               {COPY.gate.start}

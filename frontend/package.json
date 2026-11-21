@@ -8,11 +8,13 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
+    "test": "node --test \"src/**/*.test.js\"",
     "bundle:media": "node scripts/bundle-media.mjs",
     "android:sync": "vite build && cap sync android",
     "android:open": "cap open android"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.8",
     "@capacitor/android": "^7.6.10",
     "@capacitor/core": "^7.6.10",
     "pdfjs-dist": "^4.10.38",
