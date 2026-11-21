@@ -45,6 +45,8 @@ Open http://localhost:5173. To test on a phone on the same Wi-Fi, open `http://<
 
 **No keys? No videos? It still works.** Without `.env` keys the backend serves fallback questions. Without videos the frontend shows coloured mock reels. Both are labelled in the demo panel.
 
+**UI theme:** the app uses the dark theme by default: black UI, animated 3D logo, and a welcome screen before the upload page. To get the previous light UI back exactly (with the PNG logo, no welcome screen), create `frontend/.env` with `VITE_UI_THEME=original`, then restart `npm run dev`. The dark styles are all in `frontend/src/theme-dark.css` (colours, sizes and timings are variables at the top); `frontend/src/styles.css` is unchanged. The 3D logo preview is at http://localhost:5173/logo-preview.html (dev only).
+
 **Demo panel:** tap the 刷屏税 logo 5 times. Controls: skip 15 minutes, jump to just before slow scroll, trigger a question, demo speed ×3, explain mode, reset.
 
 ## The reels (M3)

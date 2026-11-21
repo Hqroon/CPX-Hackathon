@@ -8,6 +8,8 @@ import { getGuardStatus, syncGuard, armGuard, minimizeApp } from './native/reelG
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
 import StartScreen from './components/StartScreen.jsx';
+import Welcome from './components/Welcome.jsx';
+import { IS_DARK_THEME } from './theme.js';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
@@ -58,7 +60,8 @@ export default function App() {
   const [reels, setReels] = useState(null);
   const [reelSource, setReelSource] = useState('');
   // start -> (in the app) gate -> feed -> results, or start -> (other apps) guard / bubble
-  const [phase, setPhase] = useState('start'); // start | gate | feed | results | guard | guard-slides
+  // Dark theme opens on the welcome screen; VITE_UI_THEME=original opens on 'start' as before.
+  const [phase, setPhase] = useState(IS_DARK_THEME ? 'welcome' : 'start'); // welcome | start | gate | feed | results | guard | guard-slides
   // Android app (Reel Guard available)? null = still checking.
   const [nativeApp, setNativeApp] = useState(null);
   const [guardStatus, setGuardStatus] = useState(null);
@@ -493,7 +496,9 @@ export default function App() {
           </div>
         )}
 
-        {phase === 'start' && (
+        {phase === 'welcome' && <Welcome onStart={() => setPhase('start')} />}
+        {/* Mounted under the welcome screen too, so its fade-out reveals the upload page, not the feed. */}
+        {(phase === 'start' || phase === 'welcome') && (
           <StartScreen
             nativeApp={nativeApp}
             guardStatus={guardStatus}
