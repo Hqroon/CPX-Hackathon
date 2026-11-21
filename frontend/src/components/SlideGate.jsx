@@ -2,43 +2,124 @@
 import React, { useRef, useState } from 'react';
 import { CONFIG } from '../config.js';
 import { COPY } from '../copy.js';
-import { extractSlides } from '../rules/slides.js';
+import {
+  extractSlidesWithDiagnostics,
+  SlideExtractionError,
+  validatePdfFile,
+} from '../rules/slides.js';
 import Explain from './Explain.jsx';
 import { IconUpload, IconDoc, IconCheck } from './Icons.jsx';
 import { LogoMark, SlidesArt } from './Illustrations.jsx';
 import sample from '../mock/sample-slides.json';
 
+const IS_DEV = import.meta.env.DEV;
+
+function extractionMessage(error, diagnostics) {
+  if (error instanceof SlideExtractionError) return error.message;
+  if (diagnostics?.totalPages > 0 && diagnostics.pagesWithText === 0) {
+    return 'No selectable text was found. This looks like a scanned or image-only PDF. Please upload a text-based PDF exported from PowerPoint or your slide app; OCR is not supported.';
+  }
+  return COPY.gate.failed;
+}
+
+function DevDiagnostics({ diagnostics, error }) {
+  const [selectedPage, setSelectedPage] = useState('');
+  if (!IS_DEV || (!diagnostics && !error)) return null;
+
+  const slides = diagnostics?.slides || [];
+  const selected = slides.find((slide) => String(slide.page) === selectedPage) || slides[0];
+  return (
+    <details className="gate-status" style={{ textAlign: 'left', marginTop: 16 }}>
+      <summary>PDF extraction diagnostics (development only)</summary>
+      <dl>
+        <dt>File</dt><dd>{diagnostics?.fileName || '—'}</dd>
+        <dt>Total PDF pages</dt><dd>{diagnostics?.totalPages ?? '—'}</dd>
+        <dt>Usable pages</dt><dd>{diagnostics?.usablePages ?? 0}</dd>
+        <dt>Page errors</dt><dd>{diagnostics?.pageErrors?.length ?? 0}</dd>
+      </dl>
+      {error && <p role="alert">Error: {error}</p>}
+      {diagnostics?.pageErrors?.map((item) => (
+        <p key={item.page}>Page {item.page}: {item.message}</p>
+      ))}
+      {slides.length > 0 && (
+        <>
+          <label>
+            Text preview page{' '}
+            <select value={selected?.page || ''} onChange={(event) => setSelectedPage(event.target.value)}>
+              {slides.map((slide) => <option key={slide.page} value={slide.page}>{slide.page}</option>)}
+            </select>
+          </label>
+          <p>{selected?.text.slice(0, 400)}{selected?.text.length > 400 ? '…' : ''}</p>
+        </>
+      )}
+    </details>
+  );
+}
+
 export default function SlideGate({ onStart, explain }) {
-  // idle | reading { n } | ready { slides, name } | error { msg }
   const [status, setStatus] = useState({ kind: 'idle' });
+  const [diagnostics, setDiagnostics] = useState(null);
   const inputRef = useRef(null);
 
-  async function onFile(e) {
-    const file = e.target.files?.[0];
-    e.target.value = '';
+  async function onFile(event) {
+    const file = event.target.files?.[0];
+    // Allows choosing the same file again after an error.
+    event.target.value = '';
     if (!file) return;
-    const isPdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf';
-    if (!isPdf) {
-      setStatus({ kind: 'error', msg: /\.pptx?$/i.test(file.name) ? COPY.gate.notPdf : COPY.gate.failed });
+
+    const initialDiagnostics = {
+      fileName: file.name, totalPages: null, usablePages: 0, pageErrors: [], slides: [],
+    };
+    setDiagnostics(initialDiagnostics);
+    try {
+      validatePdfFile(file);
+    } catch (error) {
+      setStatus({ kind: 'error', msg: extractionMessage(error), error: error.message });
       return;
     }
-    setStatus({ kind: 'reading', n: 0 });
+
+    setStatus({ kind: 'reading', processedPages: 0, totalPages: null });
     try {
-      const slides = await extractSlides(file, (n) => setStatus({ kind: 'reading', n }));
-      if (slides.length < CONFIG.minSlides) {
-        setStatus({ kind: 'error', msg: COPY.gate.tooFew(slides.length) });
+      const result = await extractSlidesWithDiagnostics(file, (progress) => {
+        setStatus({
+          kind: 'reading',
+          processedPages: progress.processedPages,
+          totalPages: progress.totalPages,
+        });
+      });
+      setDiagnostics({ ...result.diagnostics, slides: result.slides });
+
+      if (result.slides.length < CONFIG.minSlides) {
+        const msg = result.diagnostics.pagesWithText === 0
+          ? extractionMessage(null, result.diagnostics)
+          : COPY.gate.tooFew(result.slides.length);
+        setStatus({
+          kind: 'error',
+          msg,
+          error: result.diagnostics.pageErrors.length ? 'Some pages could not be read.' : null,
+        });
       } else {
-        setStatus({ kind: 'ready', slides, name: file.name });
+        setStatus({ kind: 'ready', slides: result.slides, name: file.name });
       }
-    } catch (err) {
-      console.error('[slides] extraction failed', err);
-      setStatus({ kind: 'error', msg: COPY.gate.failed });
+    } catch (error) {
+      console.error('[slides] extraction failed', error);
+      setStatus({ kind: 'error', msg: extractionMessage(error, initialDiagnostics), error: error.message });
     }
   }
 
+  function useSample() {
+    setDiagnostics(null);
+    setStatus({ kind: 'ready', slides: sample.pages, name: sample.title });
+  }
+
+  const readingLabel = status.kind === 'reading'
+    ? status.totalPages
+      ? `Reading page ${status.processedPages} of ${status.totalPages}…`
+      : 'Opening PDF…'
+    : '';
   const reading = status.kind === 'reading';
   const ready = status.kind === 'ready';
-  const count = ready ? status.slides.length : reading ? status.n : 0;
+  const count = ready ? status.slides.length : reading ? status.processedPages : 0;
 
   return (
     <div className="gate">
@@ -56,7 +137,7 @@ export default function SlideGate({ onStart, explain }) {
         <input
           ref={inputRef}
           type="file"
-          accept="application/pdf,.pdf,.ppt,.pptx"
+          accept="application/pdf,.pdf"
           hidden
           onChange={onFile}
         />
@@ -81,11 +162,11 @@ export default function SlideGate({ onStart, explain }) {
               disabled={reading}
             >
               <IconUpload size={20} />
-              <span>{reading ? COPY.gate.reading(status.n) : COPY.gate.upload}</span>
+              <span>{reading ? readingLabel : status.kind === 'error' ? 'Choose another PDF' : COPY.gate.upload}</span>
             </button>
             <button
               className="btn ghost"
-              onClick={() => setStatus({ kind: 'ready', slides: sample.pages, name: sample.title })}
+              onClick={useSample}
               disabled={reading}
             >
               {COPY.gate.sample}
@@ -93,6 +174,9 @@ export default function SlideGate({ onStart, explain }) {
           </div>
         )}
 
+        {status.kind === 'reading' && (
+          <p className="gate-status" role="status" aria-live="polite">{readingLabel}</p>
+        )}
         {status.kind === 'error' && <p className="gate-error" role="alert">{status.msg}</p>}
 
         {ready && (
@@ -114,6 +198,8 @@ export default function SlideGate({ onStart, explain }) {
             </button>
           </>
         )}
+
+        <DevDiagnostics diagnostics={diagnostics} error={status.error} />
       </div>
     </div>
   );
