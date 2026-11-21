@@ -7,6 +7,8 @@ import CaughtUpCard from './components/CaughtUpCard.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
+import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
+import { LogoMark } from './components/Illustrations.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent } from './api.js';
@@ -30,6 +32,23 @@ function shuffle(arr) {
 function reshuffleQuestion(q) {
   const order = shuffle(q.options.map((_, i) => i));
   return { ...q, options: order.map((i) => q.options[i]), answerIndex: order.indexOf(q.answerIndex) };
+}
+
+// Laptop-only backdrop around the phone frame (hidden on phones by CSS).
+function Backdrop() {
+  return (
+    <div className="backdrop" aria-hidden="true">
+      <span className="blob blob-a" />
+      <span className="blob blob-b" />
+      <span className="blob blob-c" />
+      <div className="backdrop-caption">
+        <LogoMark size={44} />
+        <strong>Doomscroll Tax</strong>
+        <span>Friends are free. Everything after costs you.</span>
+        <span className="backdrop-meta">CrossPointX 2026 · Track 2 · Reverse UX</span>
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -282,7 +301,13 @@ export default function App() {
   if (!reels) {
     return (
       <div className="app">
-        <div className="phone"><div className="loading">Loading reels…</div></div>
+        <Backdrop />
+        <div className="phone">
+          <div className="loading">
+            <span className="loading-mark"><LogoMark size={64} /></span>
+            <span>Loading…</span>
+          </div>
+        </div>
       </div>
     );
   }
@@ -295,7 +320,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="phone">
+      <Backdrop />
+      <div className={`phone phase-${phase}`}>
         <Feed
           ref={feedRef}
           items={items}
@@ -314,15 +340,23 @@ export default function App() {
         />
 
         <div className="topbar">
-          <button className="logo" onClick={onLogoTap} aria-label="Doomscroll Tax">刷屏税</button>
+          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label="Doomscroll Tax">
+            <LogoMark size={30} />
+            <span className="wordmark">刷屏税</span>
+          </button>
           {phase === 'feed' && (
             <div className="topbar-right">
               {afterLine && current?.type === 'reel' && (
-                <span className="vol" aria-label={muted ? 'Muted' : 'Full volume'}>{muted ? '🔇' : '🔊'}</span>
+                <span className={`vol ${muted ? 'muted' : ''}`} key={`vol-${index}`} aria-label={muted ? 'Muted' : 'Full volume'}>
+                  {muted ? <IconMute size={18} /> : <IconSound size={18} />}
+                </span>
               )}
-              <span className={`points ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>−{points}</span>
+              <span className={`meter ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>
+                <span className="meter-label">Owed</span>
+                <span className="meter-value" key={points}>{points > 0 ? `−${points}` : '0'}</span>
+              </span>
               <button className={`icon-btn ${explain ? 'on' : ''}`} onClick={() => setExplain((e) => !e)} aria-label="Explain mode" aria-pressed={explain}>?</button>
-              <button className="icon-btn" onClick={endSession} aria-label="End session">✕</button>
+              <button className="icon-btn" onClick={endSession} aria-label="End session"><IconClose size={16} /></button>
             </div>
           )}
         </div>
