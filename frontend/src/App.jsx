@@ -4,15 +4,15 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
 import GuardHome from './components/GuardHome.jsx';
-import { getGuardStatus, syncGuard } from './native/reelGuard.js';
+import { getGuardStatus, syncGuard, armGuard, minimizeApp } from './native/reelGuard.js';
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
-import Home, { loadUser, clearUser } from './components/Home.jsx';
+import StartScreen from './components/StartScreen.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
 import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
-import { BrandMark } from './components/Brand.jsx';
+import { BrandMark, Wordmark, BRAND } from './components/Brand.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent } from './api.js';
@@ -45,8 +45,8 @@ function Backdrop() {
       <span className="blob blob-b" />
       <span className="blob blob-c" />
       <div className="backdrop-caption">
-        <BrandMark size={40} />
-        <strong>Doomscroll Tax</strong>
+        <BrandMark size={44} />
+        <Wordmark size="lg" />
         <span>Your first reels are free. Everything after costs you.</span>
         <span className="backdrop-meta">CrossPointX 2026, Track 2: Reverse UX</span>
       </div>
@@ -58,10 +58,9 @@ export default function App() {
   const feedRef = useRef(null);
   const [reels, setReels] = useState(null);
   const [reelSource, setReelSource] = useState('');
-  const [phase, setPhase] = useState('home'); // home | gate | feed | results | guard | guard-slides
-  const [user, setUser] = useState(loadUser);
-  // Android app (Reel Guard available)? null = still checking. The Reel Guard screens
-  // ("guard", "guard-slides") are kept for the "Continue with other apps" button.
+  // start -> (in the app) gate -> feed -> results, or start -> (other apps) guard / bubble
+  const [phase, setPhase] = useState('start'); // start | gate | feed | results | guard | guard-slides
+  // Android app (Reel Guard available)? null = still checking.
   const [nativeApp, setNativeApp] = useState(null);
   const [guardStatus, setGuardStatus] = useState(null);
   const [sessionId, setSessionId] = useState(newSessionId);
@@ -100,16 +99,34 @@ export default function App() {
     refreshGuard().then((s) => {
       const isNative = !!s; // null in the browser
       setNativeApp(isNative);
-      if (isNative) {
-        setPhase('home');
-        syncGuard(); // send the rule numbers and target apps (questions come from slides)
-      }
+      if (isNative) syncGuard(); // send the rule numbers and target apps (questions come from slides)
     });
   }, [refreshGuard]);
 
-  function continueWithOtherApps() {
-    refreshGuard();
-    setPhase('guard');
+  // "Continue on other apps": if Reel Guard is switched on, the app shrinks into the
+  // floating bubble straight away; otherwise show the one-time setup screen.
+  async function continueWithOtherApps() {
+    const s = await refreshGuard();
+    if (s?.accessibilityEnabled && !s.armed) {
+      await startBubble();
+    } else {
+      setPhase('guard'); // first-time setup, or bubble already running (back to it / stop it)
+    }
+  }
+
+  async function startBubble() {
+    await syncGuard({ questions: questions.length ? questions : undefined });
+    await armGuard(true);
+    await refreshGuard();
+    setPhase('start');
+    const ok = await minimizeApp();
+    if (!ok) showToast('See See is now a floating bubble. Open Instagram or Xiaohongshu.');
+  }
+
+  async function stopBubble() {
+    await armGuard(false);
+    await refreshGuard();
+    showToast('Bubble stopped. Instagram and Xiaohongshu are untaxed again.');
   }
 
   // Reel Guard: slides chosen on the guard screen -> questions -> native service.
@@ -400,9 +417,9 @@ export default function App() {
         />
 
         <div className="topbar">
-          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label="Doomscroll Tax">
+          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label={BRAND.full}>
             <BrandMark size={30} />
-            <span className="wordmark">刷屏税</span>
+            <Wordmark tone="light" size="sm" />
           </button>
           {phase === 'feed' && (
             <div className="topbar-right">
@@ -435,27 +452,34 @@ export default function App() {
           </div>
         )}
 
-        {phase === 'home' && <Home onLogin={(u) => { setUser(u); setPhase('gate'); }} />}
-        {phase === 'gate' && (
-          <SlideGate
-            onStart={startSession}
-            explain={explain}
-            user={user}
-            onLogout={() => { clearUser(); setUser(null); setPhase('home'); }}
+        {phase === 'start' && (
+          <StartScreen
+            nativeApp={nativeApp}
+            guardStatus={guardStatus}
+            onThisApp={() => setPhase('gate')}
+            onOtherApps={continueWithOtherApps}
           />
         )}
-        {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} user={user} />}
+        {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} onBack={() => setPhase('start')} />}
+        {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} onHome={() => setPhase('start')} />}
         {phase === 'guard' && (
           <GuardHome
             status={guardStatus}
-            user={user}
+            nativeApp={nativeApp}
             onRefresh={refreshGuard}
             onChooseSlides={() => setPhase('guard-slides')}
-            onBack={() => setPhase('home')}
+            onStart={startBubble}
+            onStop={stopBubble}
+            onBack={() => setPhase('start')}
           />
         )}
         {phase === 'guard-slides' && (
-          <SlideGate onStart={chooseGuardSlides} explain={explain} user={user} startLabel="Use these slides for questions" />
+          <SlideGate
+            onStart={chooseGuardSlides}
+            explain={explain}
+            onBack={() => setPhase('guard')}
+            startLabel="Use these slides for questions"
+          />
         )}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}
         {toast && <div className="toast" key={toast.id} role="status">{toast.text}</div>}

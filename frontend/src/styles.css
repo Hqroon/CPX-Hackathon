@@ -304,3 +304,39 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .guard-rules { font-size: 13px; color: var(--muted); }
 .guard-rules summary { cursor: pointer; font-weight: 600; color: var(--text); }
 .guard-rules ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; line-height: 1.45; }
+
+/* ---------- 看看 See See brand ---------- */
+.brand-mark { font-family: 'Songti SC', 'Noto Serif SC', 'SimSun', var(--serif); font-weight: 700; line-height: 1; border-radius: 30%; }
+.wordmark-stack { display: inline-grid; line-height: 1; gap: 2px; text-align: left; }
+.wordmark-stack .wm-cn { font-family: 'Songti SC', 'Noto Serif SC', 'SimSun', var(--serif); font-weight: 700; letter-spacing: 0.08em; }
+.wordmark-stack .wm-en { font-family: var(--serif); font-weight: 600; letter-spacing: 0.02em; }
+.wordmark-stack.md .wm-cn { font-size: 17px; }
+.wordmark-stack.md .wm-en { font-size: 12px; color: var(--muted); }
+.wordmark-stack.sm .wm-cn { font-size: 15px; }
+.wordmark-stack.sm .wm-en { font-size: 11px; color: var(--muted); }
+.wordmark-stack.lg .wm-cn { font-size: 40px; color: var(--text); }
+.wordmark-stack.lg .wm-en { font-size: 22px; color: var(--muted); }
+.wordmark-stack.xl { gap: 6px; text-align: center; }
+.wordmark-stack.xl .wm-cn { font-size: 56px; color: var(--text); letter-spacing: 0.12em; }
+.wordmark-stack.xl .wm-en { font-size: 22px; color: var(--muted); letter-spacing: 0.18em; }
+.wordmark-stack.light .wm-cn, .wordmark-stack.light .wm-en { color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); }
+.wordmark-stack.light .wm-en { opacity: 0.85; }
+
+/* ---------- Start screen ---------- */
+.start-scroll { justify-content: space-between; padding-top: calc(56px + env(safe-area-inset-top)); padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+.start-hero { display: grid; justify-items: center; gap: 18px; text-align: center; margin-top: 4vh; }
+.start-hero .brand-mark { border-radius: 26%; box-shadow: 0 12px 30px rgba(6, 76, 55, 0.25); }
+.start-lede { text-align: center; margin: 0 auto; }
+.start-options { display: grid; gap: 10px; }
+.start-options .group-label + * { margin-top: 0; }
+.start-option { padding: 18px 16px; }
+.start-option .row-title { font-size: 16px; font-weight: 600; }
+.row-icon.on { background: var(--green); color: #fff; }
+/* On the light "free reels used up" card the top-bar wordmark must be dark. */
+.phone.on-card .wordmark-stack.light .wm-cn,
+.phone.on-card .wordmark-stack.light .wm-en { color: var(--text); text-shadow: none; }
+.phone.on-card .wordmark-stack.light .wm-en { color: var(--muted); opacity: 1; }
+/* Question screen: keep the feedback / note visible at the bottom without scrolling. */
+.quiz .quiz-feedback, .quiz .note { position: sticky; bottom: 0; z-index: 2; box-shadow: 0 -8px 20px rgba(247, 244, 238, 0.95); }
+.quiz .note { background: var(--bg); }
+.deck-cover span { text-wrap: balance; }

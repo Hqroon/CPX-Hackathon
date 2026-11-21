@@ -56,7 +56,7 @@ function DevDiagnostics({ diagnostics, error }) {
   );
 }
 
-export default function SlideGate({ onStart, explain, user, onLogout, startLabel }) {
+export default function SlideGate({ onStart, explain, onBack, startLabel }) {
   // idle | reading { processedPages, totalPages } | ready { slides, name } | error { msg }
   const [status, setStatus] = useState({ kind: 'idle' });
   const [diagnostics, setDiagnostics] = useState(null);
@@ -124,9 +124,11 @@ export default function SlideGate({ onStart, explain, user, onLogout, startLabel
 
   return (
     <div className="screen gate">
-      <TopBar user={user} />
+      <TopBar right={onBack && <button type="button" className="btn small back-btn" onClick={onBack}>← Back</button>} />
       <div className="screen-scroll">
+        <p className="eyebrow">Step 1 of 2</p>
         <h1 className="title">{COPY.gate.title}</h1>
+        <p className="lede">Questions about these slides will pop up while you scroll.</p>
         <Explain show={explain} text={COPY.explain.gate} />
 
         <input ref={inputRef} type="file" accept="application/pdf,.pdf" hidden onChange={onFile} />
@@ -192,12 +194,6 @@ export default function SlideGate({ onStart, explain, user, onLogout, startLabel
           </>
         )}
 
-        {user && onLogout && (
-          <p className="switch-line">
-            Not {user.name}?{' '}
-            <button type="button" className="text-link" onClick={onLogout}>Log out</button>
-          </p>
-        )}
         <DevDiagnostics diagnostics={diagnostics} error={status.error} />
       </div>
 

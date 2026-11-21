@@ -1,11 +1,11 @@
 # Reel Guard: the Doomscroll Tax rules on top of Instagram / Xiaohongshu
 
-One APK, **Doomscroll Tax**. On Android it opens on a home screen with two buttons:
+One APK, **看看 See See**. It opens on a start screen with two choices:
 
 | Button | What it does |
 |---|---|
-| **Continue on this app** | Our own feed with the 50 videos. The safe demo and the backup. |
-| **Continue with other apps** | The Reel Guard screen: switch it on once, load questions from slides, then open **Instagram, Xiaohongshu, Douyin, TikTok or Kuaishou**. The rules run on top of their real reels. **Back** returns to the home screen. |
+| **Continue in the app** | Upload slides (or use the sample) → our own reel feed with the 35 videos. The safe demo and the backup. |
+| **Continue on other apps** | First time: a setup screen (allow See See in Accessibility, optionally load slides) → **Start: shrink into a bubble**. After that, tapping this choice **minimises See See straight into a floating bubble**. Open **Instagram, Xiaohongshu, Douyin, TikTok or Kuaishou**: the rules run on top of their real reels. Tap the bubble to come back; **Stop the bubble** turns it all off. |
 
 > Android only. iPhones don't allow one app to draw over another or watch its scrolling.
 
@@ -38,8 +38,8 @@ After any web change: `npm run build` → `npx cap sync android` → Run again.
 
 ## Switch it on (on the phone, once)
 
-1. Open **Doomscroll Tax** → **Continue with other apps** → step 1 → **Open Accessibility**.
-2. Find **Reel Guard · Doomscroll Tax** (often under "Downloaded apps" or "Installed services") → turn it on → confirm.
+1. Open **看看 See See** → **Continue on other apps** → step 1 → **Open Accessibility**.
+2. Find **看看 See See** (often under "Downloaded apps" or "Installed services") → turn it on → confirm.
 3. **Greyed out / "Restricted setting"?** (Android 13+ blocks this for apps not installed from a store.) Go back to the app → **App info** → ⋮ (top right) → **Allow restricted settings** → repeat step 2.
 4. Back in the app, step 1 shows ✓.
 5. Step 2 → choose slides (or the sample slides), so the questions come from the course. The backend must be reachable (see `VITE_API_BASE` in ANDROID_APK.md). Without it, built-in questions are used.
@@ -61,14 +61,15 @@ These kill background services aggressively. On the demo phone:
 - [ ] Right answer: card closes, sound returns
 - [ ] Reel 11+: 3 s "Loading next reel…" after every swipe, the screen greys more each reel
 - [ ] Leave to the home screen: everything disappears, your normal volume is back
-- [ ] Tap the bubble: Doomscroll Tax opens
-- [ ] **Backup:** Back → **Continue on this app** plays our own 50 videos
+- [ ] **Start: shrink into a bubble** → See See goes to the background and the bubble floats on the home screen
+- [ ] Tap the bubble: See See opens (**Back to the bubble** / **Stop the bubble**)
+- [ ] **Backup:** Back → **Continue in the app** plays our own 35 videos
 
 ## If it misbehaves on stage
 
-1. Continue with other apps → **Reset guard points**, then reopen the app.
+1. Continue on other apps → **Reset points**, then reopen the app.
 2. Still wrong: switch the accessibility service off and on.
-3. Fall back: **Back → Continue on this app**. Same rules, 50 videos, no setup needed.
+3. Fall back: **Back → Continue in the app**. Same rules, 35 videos, no setup needed.
 
 ## Tuning
 

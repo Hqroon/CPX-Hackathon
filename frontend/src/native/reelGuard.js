@@ -17,7 +17,7 @@ export async function getGuardStatus() {
   // Browser preview of the Android home chooser + Reel Guard screen: http://localhost:5173/?guard-preview
   if (!onAndroid() && typeof location !== 'undefined' && location.search.includes('guard-preview')) {
     return {
-      mode: 'combined', accessibilityEnabled: false, running: false, enabled: true, points: 7,
+      mode: 'combined', accessibilityEnabled: false, running: false, enabled: true, armed: false, points: 7,
       sessionReels: 12, questionsAsked: 1, hasQuestions: false,
       targets: GUARD_TARGETS.map((t) => t.pkg), installed: ['com.instagram.android', 'com.xingin.xhs'],
       preview: true,
@@ -58,6 +58,28 @@ export async function syncGuard({ questions } = {}) {
   } catch (err) {
     console.warn('[reel guard] configure failed:', err);
     return null;
+  }
+}
+
+/** Turn the floating bubble (and the tax on other apps) on or off. */
+export async function armGuard(armed) {
+  if (!onAndroid()) return null;
+  try {
+    return await ReelGuard.arm({ armed });
+  } catch (err) {
+    console.warn('[reel guard] arm failed:', err);
+    return null;
+  }
+}
+
+/** Send See See to the background so only the floating bubble is left. */
+export async function minimizeApp() {
+  if (!onAndroid()) return false;
+  try {
+    await ReelGuard.minimize();
+    return true;
+  } catch {
+    return false;
   }
 }
 

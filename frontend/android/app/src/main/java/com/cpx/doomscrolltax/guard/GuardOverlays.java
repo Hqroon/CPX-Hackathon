@@ -163,7 +163,7 @@ final class GuardOverlays {
         d.setColor(points > 0 ? BAD : PRIMARY);
         d.setStroke(dp(3), Color.WHITE);
         bubble.setBackground(d);
-        bubble.setContentDescription(points + " points owed. Tap to open Doomscroll Tax.");
+        bubble.setContentDescription(points + " points owed. Tap to open See See.");
     }
 
     void hideBubble() {
@@ -365,10 +365,19 @@ final class GuardOverlays {
         quizListener = null;
     }
 
-    void removeAll() {
+    /** Everything except the floating bubble (used when leaving a guarded app while armed). */
+    void removeAllButBubble() {
         hideQuiz();
         hideBlocker();
         hideGrey();
+    }
+
+    boolean isBubbleShowing() {
+        return bubble != null;
+    }
+
+    void removeAll() {
+        removeAllButBubble();
         hideBubble();
     }
 }

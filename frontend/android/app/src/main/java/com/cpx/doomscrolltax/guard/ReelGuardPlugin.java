@@ -53,6 +53,7 @@ public class ReelGuardPlugin extends Plugin {
         r.put("accessibilityEnabled", accessibilityEnabled());
         r.put("running", ReelGuardService.isRunning());
         r.put("enabled", s.isEnabled());
+        r.put("armed", s.isArmed());
         r.put("points", s.points());
         r.put("sessionReels", s.sessionReels());
         r.put("questionsAsked", s.questionsAsked());
@@ -131,6 +132,30 @@ public class ReelGuardPlugin extends Plugin {
         if (enabled != null) s.setEnabled(enabled);
         ReelGuardService.reload();
         call.resolve(status());
+    }
+
+    /** { armed: boolean } Start or stop the floating bubble and the tax on other apps. */
+    @PluginMethod
+    public void arm(PluginCall call) {
+        Boolean armed = call.getBoolean("armed");
+        if (armed == null) {
+            call.reject("Pass { armed: true | false }");
+            return;
+        }
+        store().setArmed(armed);
+        ReelGuardService.reload();
+        call.resolve(status());
+    }
+
+    /** Sends See See to the background ("shrink into the bubble"). */
+    @PluginMethod
+    public void minimize(PluginCall call) {
+        if (getActivity() == null) {
+            call.reject("No activity");
+            return;
+        }
+        getActivity().runOnUiThread(() -> getActivity().moveTaskToBack(true));
+        call.resolve();
     }
 
     /** Clears points and the current session (demo reset). */

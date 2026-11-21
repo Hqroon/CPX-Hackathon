@@ -1,4 +1,6 @@
-# Doomscroll Tax (刷屏税)
+# 看看 See See
+
+*(project codename: Doomscroll Tax / 刷屏税)*
 
 **CrossPointX 2026 · Track 2: Reverse UX Challenge.** The brief: *an app users hate, but still have to use.*
 
@@ -20,7 +22,7 @@ The first 5 reels of every session are always free (golden path), so the task ca
 
 **Android demo:** the app is wrapped as an APK with Capacitor, with the videos packed inside. See [docs/ANDROID_APK.md](docs/ANDROID_APK.md).
 
-**One app, two ways to scroll (Android):** the home screen offers **Continue on this app** (our feed) or **Continue with other apps**, which runs the same rules **on top of Instagram / Xiaohongshu / Douyin** through an Android accessibility service (Reel Guard). See [docs/REEL_GUARD.md](docs/REEL_GUARD.md).
+**Two ways to scroll:** the start screen offers **Continue in the app** (slides → our reel feed) or **Continue on other apps**: on Android, See See shrinks into a **floating bubble** and runs the same rules **on top of Instagram / Xiaohongshu / Douyin** through an accessibility service (Reel Guard). See [docs/REEL_GUARD.md](docs/REEL_GUARD.md).
 
 ## Quick start
 

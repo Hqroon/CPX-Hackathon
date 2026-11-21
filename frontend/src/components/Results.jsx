@@ -3,15 +3,15 @@ import React from 'react';
 import { COPY, formatMinutes } from '../copy.js';
 import { minutesToClear } from '../rules/points.js';
 import { CONFIG } from '../config.js';
-import { BrandMark } from './Brand.jsx';
+import { BrandMark, Wordmark } from './Brand.jsx';
 import { IconCircleCheck, IconRotate, IconLayers, IconCheck } from './Icons.jsx';
 
-export default function Results({ stats, points, onRestart }) {
+export default function Results({ stats, points, onRestart, onHome }) {
   const mins = minutesToClear(points);
   return (
     <div className="screen results">
       <div className="top-bar centered-brand">
-        <div className="brand"><BrandMark size={24} /><span className="brand-name small">Doomscroll Tax</span></div>
+        <div className="brand"><BrandMark size={26} /><Wordmark size="sm" /></div>
       </div>
       <div className="screen-scroll">
         <div className="complete-head">
@@ -51,6 +51,7 @@ export default function Results({ stats, points, onRestart }) {
       </div>
       <div className="bottom-actions">
         <button className="btn primary" onClick={onRestart}>{COPY.results.again}</button>
+        {onHome && <button className="btn secondary" onClick={onHome}>Back to start</button>}
       </div>
     </div>
   );

@@ -35,6 +35,13 @@ public final class GuardStore {
     public boolean isEnabled() { return prefs.getBoolean("enabled", true); }
     public void setEnabled(boolean v) { prefs.edit().putBoolean("enabled", v).apply(); }
 
+    /**
+     * Armed = the user chose "Continue on other apps" and started the bubble. Nothing is
+     * taxed and no bubble is shown until then, even with the accessibility service on.
+     */
+    public boolean isArmed() { return prefs.getBoolean("armed", false); }
+    public void setArmed(boolean v) { prefs.edit().putBoolean("armed", v).apply(); }
+
     public GuardConfig config() { return GuardConfig.fromJson(prefs.getString("config", "")); }
     public void setConfigJson(String json) { prefs.edit().putString("config", json).apply(); }
 

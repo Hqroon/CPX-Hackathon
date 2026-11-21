@@ -17,7 +17,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Reel Guard: applies the Doomscroll Tax rules on top of Instagram, Xiaohongshu, Douyin…
+ * Reel Guard: applies the 看看 See See rules on top of Instagram, Xiaohongshu, Douyin…
  *
  * How it works:
  *  - TYPE_WINDOW_STATE_CHANGED tells us which app is on screen. Entering a guarded app
@@ -60,6 +60,7 @@ public class ReelGuardService extends AccessibilityService {
 
     private String foreground = "";
     private boolean inTarget = false;
+    private boolean ownAppForeground = false; // See See's own screen is open
     private long lastCountAt = 0;
     private boolean blocking = false;
     private boolean quizOpen = false;
@@ -72,14 +73,24 @@ public class ReelGuardService extends AccessibilityService {
         return instance != null;
     }
 
-    /** Called by the plugin after the web app sends new questions / settings. */
+    /** Called by the plugin after the web app arms / disarms or sends new questions / settings. */
     public static void reload() {
         ReelGuardService s = instance;
         if (s != null) s.handler.post(() -> {
             s.cfg = s.store.config();
-            if (!s.store.isEnabled() && s.inTarget) s.leaveTarget();
+            if (!s.active()) {
+                if (s.inTarget) s.leaveTarget();
+                s.ui.hideBubble();
+                return;
+            }
             if (s.inTarget) s.ui.updateBubble(s.store.points());
+            else if (!s.ownAppForeground) s.ui.showBubble(s.store.points());
         });
+    }
+
+    /** The tax and the bubble only run after the user started the bubble ("armed"). */
+    private boolean active() {
+        return store.isEnabled() && store.isArmed();
     }
 
     @Override
@@ -112,14 +123,36 @@ public class ReelGuardService extends AccessibilityService {
         if (event == null || event.getPackageName() == null || store == null) return;
         String pkg = event.getPackageName().toString();
 
-        if (!store.isEnabled()) {
+        // Track whether See See's own screen is open, even before the bubble is started.
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !IGNORED.contains(pkg)) {
+            if (!pkg.equals(getPackageName())) {
+                ownAppForeground = false;
+            } else if (event.getClassName() != null && event.getClassName().toString().endsWith("MainActivity")) {
+                ownAppForeground = true;
+            }
+        }
+
+        if (!active()) {
             if (inTarget) leaveTarget();
+            if (ui.isBubbleShowing()) ui.hideBubble();
             return;
         }
 
         switch (event.getEventType()) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (pkg.equals(getPackageName()) || IGNORED.contains(pkg)) return;
+                if (IGNORED.contains(pkg)) return;
+                if (pkg.equals(getPackageName())) {
+                    // Only See See's own screen counts, not our overlay windows.
+                    CharSequence cls = event.getClassName();
+                    if (cls != null && cls.toString().endsWith("MainActivity")) {
+                        ownAppForeground = true;
+                        foreground = pkg;
+                        if (inTarget) leaveTarget();
+                        ui.hideBubble(); // the app itself is open: no bubble needed
+                    }
+                    return;
+                }
+                ownAppForeground = false;
                 boolean target = store.targets().contains(pkg);
                 if (target && (!inTarget || !pkg.equals(foreground))) {
                     foreground = pkg;
@@ -127,6 +160,7 @@ public class ReelGuardService extends AccessibilityService {
                 } else if (!target) {
                     foreground = pkg;
                     if (inTarget) leaveTarget();
+                    ui.showBubble(store.points()); // armed: the bubble floats over any app
                 }
                 break;
             case AccessibilityEvent.TYPE_VIEW_SCROLLED:
@@ -161,7 +195,7 @@ public class ReelGuardService extends AccessibilityService {
             toast("Welcome back. " + cleared + " point" + (cleared == 1 ? "" : "s")
                     + " cleared while you were away.");
         } else if (newSession) {
-            toast("Reel Guard is on: your first " + cfg.freeReels + " reels are free.");
+            toast("See See is watching: your first " + cfg.freeReels + " reels are free.");
         }
         if (store.pendingQuestion()) openQuiz(); // can't dodge a question by leaving
     }
@@ -179,7 +213,7 @@ public class ReelGuardService extends AccessibilityService {
             quizOpen = false;
             abandonFocus();
         }
-        ui.removeAll();
+        ui.removeAllButBubble(); // the bubble stays while armed
         restoreVolume();
     }
 
