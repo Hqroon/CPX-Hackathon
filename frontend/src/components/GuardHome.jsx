@@ -1,7 +1,9 @@
-// "Continue with other apps" screen: switch on Reel Guard, load questions, open
-// Instagram / Xiaohongshu. "Back" returns to the home chooser. Owner: M1.
+// "Continue with other apps" screen (Android): switch on Reel Guard, load questions,
+// open Instagram / Xiaohongshu. Uses the redesign's layout (TopBar, cards, bottom actions).
+// "Back" returns to Home. Owner: M1.
 import React, { useEffect, useState } from 'react';
 import { CONFIG, GUARD_TARGETS } from '../config.js';
+import TopBar from './Brand.jsx';
 import { openGuardSettings, openGuardAppInfo, launchGuardedApp, resetGuard } from '../native/reelGuard.js';
 
 function Step({ done, n, title, children }) {
@@ -16,10 +18,13 @@ function Step({ done, n, title, children }) {
   );
 }
 
-export default function GuardHome({ status, onRefresh, onChooseSlides, onBack }) {
+export default function GuardHome({ status, user, onRefresh, onChooseSlides, onBack }) {
   const [message, setMessage] = useState('');
   const enabled = !!status?.accessibilityEnabled;
   const installed = new Set(status?.installed || []);
+  const shown = GUARD_TARGETS.filter(
+    (t) => installed.has(t.pkg) || ['com.instagram.android', 'com.xingin.xhs'].includes(t.pkg)
+  );
 
   // Refresh when the user comes back from Settings or from Instagram.
   useEffect(() => {
@@ -33,20 +38,18 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBack })
   }, [onRefresh]);
 
   async function open(target) {
-    setMessage('');
-    if (!enabled) {
-      setMessage('Switch Reel Guard on first (step 1), or the feed will run without the tax.');
-    }
+    setMessage(enabled ? '' : 'Switch Reel Guard on first (step 1), or the feed will run without the tax.');
     const ok = await launchGuardedApp(target.pkg);
     if (!ok) setMessage(`${target.name} isn't installed on this phone.`);
   }
 
   return (
-    <div className="gate guard">
-      <div className="gate-card">
-        <div className="brand">Reel Guard</div>
-        <h1>Tax the reels you already watch</h1>
-        <p className="gate-body">
+    <div className="screen guard">
+      <TopBar user={user} />
+      <div className="screen-scroll">
+        <p className="eyebrow">Continue with other apps</p>
+        <h1 className="title">Tax the reels you already watch</h1>
+        <p className="lede">
           Runs on top of Instagram and Xiaohongshu: your first {CONFIG.freeReels} reels are free, then every reel costs a point.
         </p>
 
@@ -60,11 +63,11 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBack })
             <>
               <p>
                 Settings → Accessibility → <b>Reel Guard · Doomscroll Tax</b> → turn on.
-                If it's greyed out (Android 13+): App info → ⋮ → <b>Allow restricted settings</b>, then try again.
+                Greyed out (Android 13+)? App info → ⋮ → <b>Allow restricted settings</b>, then try again.
               </p>
               <div className="guard-row">
                 <button className="btn primary" onClick={openGuardSettings}>Open Accessibility</button>
-                <button className="btn ghost" onClick={openGuardAppInfo}>App info</button>
+                <button className="btn secondary" onClick={openGuardAppInfo}>App info</button>
               </div>
             </>
           )}
@@ -72,15 +75,17 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBack })
 
         <Step n={2} done={!!status?.hasQuestions} title="Questions from your slides">
           <p>{status?.hasQuestions ? 'Loaded. Choose new slides any time.' : 'Until you add slides, general questions are used.'}</p>
-          <button className="btn ghost" onClick={onChooseSlides}>{status?.hasQuestions ? 'Change slides' : 'Choose slides'}</button>
+          <button className="btn secondary" onClick={onChooseSlides}>
+            {status?.hasQuestions ? 'Change slides' : 'Choose slides'}
+          </button>
         </Step>
 
         <Step n={3} done={false} title="Open a feed">
           <div className="guard-apps">
-            {GUARD_TARGETS.filter((t) => installed.has(t.pkg) || ['com.instagram.android', 'com.xingin.xhs'].includes(t.pkg)).map((t) => (
+            {shown.map((t) => (
               <button
                 key={t.pkg}
-                className={`btn ${installed.has(t.pkg) ? 'primary' : 'ghost'}`}
+                className={`btn ${installed.has(t.pkg) ? 'primary' : 'secondary'}`}
                 disabled={!installed.has(t.pkg)}
                 onClick={() => open(t)}
               >
@@ -90,7 +95,7 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBack })
           </div>
         </Step>
 
-        {message && <p className="gate-error" role="alert">{message}</p>}
+        {message && <p className="form-error" role="alert">{message}</p>}
 
         <details className="guard-rules">
           <summary>What happens inside Instagram / Xiaohongshu</summary>
@@ -104,16 +109,22 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBack })
           </ul>
         </details>
 
-        <button className="btn link" onClick={onBack}>← Back (or continue on this app)</button>
-        <button
-          className="btn link"
-          onClick={async () => {
-            await resetGuard();
-            onRefresh();
-          }}
-        >
-          Reset guard points
-        </button>
+        <p className="switch-line">
+          <button
+            type="button"
+            className="text-link"
+            onClick={async () => {
+              await resetGuard();
+              onRefresh();
+            }}
+          >
+            Reset guard points
+          </button>
+        </p>
+      </div>
+
+      <div className="bottom-actions">
+        <button className="btn secondary" onClick={onBack}>← Back</button>
       </div>
     </div>
   );
