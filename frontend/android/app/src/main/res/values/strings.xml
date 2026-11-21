@@ -4,6 +4,8 @@
     <string name="title_activity_main">Doomscroll Tax</string>
     <string name="package_name">com.cpx.doomscrolltax</string>
     <string name="custom_url_scheme">com.cpx.doomscrolltax</string>
-    <!-- "feed" = our own 50-video app. The guard variant overrides this with "guard". -->
-    <string name="app_mode">feed</string>
+    <!-- One app: our own 50-video feed + Reel Guard (rules on top of other apps). -->
+    <string name="app_mode">combined</string>
+    <string name="guard_service_label">Reel Guard · Doomscroll Tax</string>
+    <string name="guard_service_description">Watches when you open Instagram, Xiaohongshu or Douyin and counts how many reels you swipe. It shows your points, silences reels, asks questions from your course slides and slows scrolling after your free reels. It does not read or store what is on your screen.</string>
 </resources>

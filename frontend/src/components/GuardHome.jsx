@@ -1,5 +1,5 @@
-// Home screen of the "Reel Guard" APK: set up the overlay, open Instagram / Xiaohongshu,
-// or fall back to our own 50-video feed. Owner: M1.
+// "Continue with other apps" screen: switch on Reel Guard, load questions, open
+// Instagram / Xiaohongshu. "Back" returns to the home chooser. Owner: M1.
 import React, { useEffect, useState } from 'react';
 import { CONFIG, GUARD_TARGETS } from '../config.js';
 import { openGuardSettings, openGuardAppInfo, launchGuardedApp, resetGuard } from '../native/reelGuard.js';
@@ -16,7 +16,7 @@ function Step({ done, n, title, children }) {
   );
 }
 
-export default function GuardHome({ status, onRefresh, onChooseSlides, onBackupFeed }) {
+export default function GuardHome({ status, onRefresh, onChooseSlides, onBack }) {
   const [message, setMessage] = useState('');
   const enabled = !!status?.accessibilityEnabled;
   const installed = new Set(status?.installed || []);
@@ -104,7 +104,7 @@ export default function GuardHome({ status, onRefresh, onChooseSlides, onBackupF
           </ul>
         </details>
 
-        <button className="btn link" onClick={onBackupFeed}>Backup: open our own feed (50 videos) →</button>
+        <button className="btn link" onClick={onBack}>← Back (or continue on this app)</button>
         <button
           className="btn link"
           onClick={async () => {

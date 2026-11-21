@@ -12,12 +12,12 @@ const ReelGuard = registerPlugin('ReelGuard');
 
 const onAndroid = () => Capacitor.getPlatform() === 'android';
 
-/** { mode: 'feed'|'guard', accessibilityEnabled, running, points, sessionReels, installed, hasQuestions… } or null. */
+/** { mode, accessibilityEnabled, running, points, sessionReels, installed, hasQuestions… } on Android, else null. */
 export async function getGuardStatus() {
-  // Browser preview of the guard home screen: open http://localhost:5173/?guard-preview
+  // Browser preview of the Android home chooser + Reel Guard screen: http://localhost:5173/?guard-preview
   if (!onAndroid() && typeof location !== 'undefined' && location.search.includes('guard-preview')) {
     return {
-      mode: 'guard', accessibilityEnabled: false, running: false, enabled: true, points: 7,
+      mode: 'combined', accessibilityEnabled: false, running: false, enabled: true, points: 7,
       sessionReels: 12, questionsAsked: 1, hasQuestions: false,
       targets: GUARD_TARGETS.map((t) => t.pkg), installed: ['com.instagram.android', 'com.xingin.xhs'],
       preview: true,

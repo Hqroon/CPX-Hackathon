@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
 import GuardHome from './components/GuardHome.jsx';
+import HomeChooser from './components/HomeChooser.jsx';
 import { getGuardStatus, syncGuard } from './native/reelGuard.js';
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
@@ -57,9 +58,10 @@ export default function App() {
   const feedRef = useRef(null);
   const [reels, setReels] = useState(null);
   const [reelSource, setReelSource] = useState('');
-  const [phase, setPhase] = useState('gate'); // gate | feed | results | guard | guard-slides
-  // Reel Guard APK only: null = still checking, false = normal app, true = guard build.
-  const [guardBuild, setGuardBuild] = useState(null);
+  const [phase, setPhase] = useState('gate'); // home | gate | feed | results | guard | guard-slides
+  // Android app (Reel Guard available)? null = still checking. Then the app opens on the
+  // home chooser: "Continue on this app" (our feed) or "Continue with other apps" (Reel Guard).
+  const [nativeApp, setNativeApp] = useState(null);
   const [guardStatus, setGuardStatus] = useState(null);
   const [sessionId, setSessionId] = useState(newSessionId);
   const [index, setIndex] = useState(0);
@@ -87,7 +89,7 @@ export default function App() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  // Reel Guard APK? Then start on the guard home screen instead of the slide gate.
+  // On the Android app, start on the home chooser instead of the slide gate.
   const refreshGuard = useCallback(async () => {
     const s = await getGuardStatus();
     setGuardStatus(s);
@@ -95,16 +97,21 @@ export default function App() {
   }, []);
   useEffect(() => {
     refreshGuard().then((s) => {
-      const isGuard = s?.mode === 'guard';
-      setGuardBuild(isGuard);
-      if (isGuard) {
-        setPhase('guard');
+      const isNative = !!s; // null in the browser
+      setNativeApp(isNative);
+      if (isNative) {
+        setPhase('home');
         syncGuard(); // send the rule numbers and target apps (questions come from slides)
       }
     });
   }, [refreshGuard]);
 
-  // Guard build: slides chosen on the guard home -> questions -> native service.
+  function continueWithOtherApps() {
+    refreshGuard();
+    setPhase('guard');
+  }
+
+  // Reel Guard: slides chosen on the guard screen -> questions -> native service.
   function chooseGuardSlides(slides) {
     setPhase('guard');
     showToast('Writing questions from your slides…');
@@ -290,7 +297,7 @@ export default function App() {
     setQuestions([]);
     setProvider('');
     setSessionId(newSessionId());
-    setPhase(guardBuild ? 'guard' : 'gate');
+    setPhase(nativeApp ? 'home' : 'gate');
   }
 
   // ---- Demo controls ---------------------------------------------------------
@@ -345,7 +352,7 @@ export default function App() {
   };
 
   // ---- Render ----------------------------------------------------------------
-  if (!reels || guardBuild === null) {
+  if (!reels || nativeApp === null) {
     return (
       <div className="app">
         <Backdrop />
@@ -428,12 +435,15 @@ export default function App() {
         )}
 
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} />}
+        {phase === 'home' && (
+          <HomeChooser onThisApp={() => setPhase('gate')} onOtherApps={continueWithOtherApps} status={guardStatus} />
+        )}
         {phase === 'guard' && (
           <GuardHome
             status={guardStatus}
             onRefresh={refreshGuard}
             onChooseSlides={() => setPhase('guard-slides')}
-            onBackupFeed={() => setPhase('gate')}
+            onBack={() => setPhase('home')}
           />
         )}
         {phase === 'guard-slides' && (
