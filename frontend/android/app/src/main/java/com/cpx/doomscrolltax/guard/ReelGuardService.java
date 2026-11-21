@@ -216,7 +216,7 @@ public class ReelGuardService extends AccessibilityService {
                     ownAppForeground = false;
                     enterTarget();
                 }
-                if (isReelScroll(event, pkg)) onSwipe();
+                if (isReelScroll(event, pkg)) onSwipe(reelPosition(event));
                 break;
             default:
                 break;
@@ -349,7 +349,8 @@ public class ReelGuardService extends AccessibilityService {
 
         boolean newSession = now - store.lastSeenAt() > cfg.sessionGapMinutes * 60000L
                 || store.sessionReels() <= 0;
-        if (newSession) store.setSessionReels(1); // the first reel on screen is reel 1
+        if (newSession) store.setSessionReels(0); // nothing counted until the first swipe in the reels
+        lastPosition = -1; // new visit: learn the reel position again
         store.setLastSeenAt(now);
 
         if (store.savedVolume() < 0 && audio != null) {
@@ -386,10 +387,33 @@ public class ReelGuardService extends AccessibilityService {
         restoreVolume();
     }
 
-    private void onSwipe() {
+    /** Index of the reel on screen, from the pager's scroll event; -1 when the app doesn't say. */
+    private static int reelPosition(AccessibilityEvent e) {
+        int to = e.getToIndex();
+        return to >= 0 ? to : e.getFromIndex();
+    }
+
+    private int lastPosition = -1;
+
+    /**
+     * One swipe = one reel. When the app reports which reel is on screen, a reel counts only
+     * when that position changes (a swipe sends several scroll events, all with the same new
+     * position, so it can't count twice). Otherwise fall back to "events closer than
+     * swipeDebounceMs are one swipe".
+     */
+    private void onSwipe(int position) {
         long now = System.currentTimeMillis();
         if (blocking || quizOpen) return;
-        if (now - lastCountAt < cfg.swipeDebounceMs) return;
+        if (position >= 0) {
+            boolean first = lastPosition < 0;
+            boolean moved = position != lastPosition;
+            lastPosition = position;
+            // First event of a visit: count it only if the user already swiped past the first reel.
+            if (!moved || (first && position == 0)) return;
+            if (now - lastCountAt < 400) return;
+        } else if (now - lastCountAt < cfg.swipeDebounceMs) {
+            return;
+        }
         lastCountAt = now;
         store.setLastSeenAt(now);
         int n = store.sessionReels() + 1;

@@ -15,14 +15,14 @@ public final class GuardConfig {
     public int wrongWaitSeconds = 5;
     public double volumeStepDown = 0.02;
     public double minVolume = 0.05;
-    public int slowAfterReels = 10;
+    public int slowAfterReels = 9;
     public int slowTransitionMs = 3000;
     public int decayFullAfterReels = 15;
 
     /** Being away from every target app this long starts a new session (free reels again). */
     public int sessionGapMinutes = 10;
     /** Scroll events closer together than this are one swipe, i.e. one reel. */
-    public int swipeDebounceMs = 900;
+    public int swipeDebounceMs = 1200;
     /** Opacity of the grey "decay" layer at full decay, 0..1. */
     public double maxGreyAlpha = 0.6;
 

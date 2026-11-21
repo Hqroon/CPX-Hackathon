@@ -26,10 +26,10 @@ export const CONFIG = {
   minVolume: 0.05,           // never fully silent on the "on" reels
 
   // --- Slow scroll + visual decay ---------------------------------------------
-  slowAfterReels: 10,        // from reel 11 on, each new reel takes slowTransitionMs to arrive
+  slowAfterReels: 9,         // from reel 10 on, each new reel takes slowTransitionMs to arrive
   slowTransitionMs: 3000,
   normalTransitionMs: 320,
-  decayFullAfterReels: 15,   // visual decay grows from reel 11 and is at full strength 15 reels later
+  decayFullAfterReels: 15,   // visual decay grows from reel 10 and is at full strength 15 reels later
 
   // --- Input -----------------------------------------------------------------
   swipeThresholdPx: 80,
