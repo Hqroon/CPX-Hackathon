@@ -7,6 +7,9 @@ import { chatWithFallback, parseJsonLoose } from './llm.js';
 const FALLBACK_PATH = new URL('../data/fallback-questions.json', import.meta.url);
 const PAGES_PER_BATCH = 6;
 const MAX_QUESTIONS = 15;
+// Up to 5 PDFs can arrive at once; cap the pages sent to the model (6 batches) so a
+// big upload doesn't fire dozens of parallel calls. Pages are sampled evenly.
+const MAX_PAGES = 36;
 
 const SYSTEM_PROMPT = `You write multiple-choice questions that help a university student recall their own lecture slides.
 Every question must be answerable from the slide text alone. Never use outside facts.
@@ -85,6 +88,14 @@ async function loadFallback() {
   return raw.map((q) => ({ ...q, ...shuffleOptions(q.options, q.answerIndex) }));
 }
 
+/** Keep at most `max` items, spread evenly from first to last (keeps order). */
+function evenlySample(arr, max) {
+  if (arr.length <= max) return arr;
+  const out = [];
+  for (let i = 0; i < max; i++) out.push(arr[Math.round((i * (arr.length - 1)) / (max - 1))]);
+  return out;
+}
+
 function chunk(arr, size) {
   const out = [];
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
@@ -124,45 +135,50 @@ async function generateBatch(pages, count) {
  * Never throws: if every provider fails, it returns fallback questions.
  */
 export async function generateQuestions(slides, requested = 10) {
-  const pages = (slides || [])
+  const allPages = (slides || [])
     .map((s) => ({ page: Number(s.page), text: String(s.text || '').slice(0, 2500) }))
     .filter((s) => Number.isFinite(s.page) && s.text.trim().length >= 30);
+  const pages = evenlySample(allPages, MAX_PAGES);
   const target = Math.max(1, Math.min(MAX_QUESTIONS, Number(requested) || 10, pages.length * 2 || 10));
 
   let questions = [];
+  const seen = new Set();
   const providersUsed = new Set();
-  if (pages.length > 0) {
+
+  // One pass over all pages, split into batches; keeps only new (non-duplicate) questions.
+  async function pass(wanted) {
     const batches = chunk(pages, PAGES_PER_BATCH);
-    const perBatch = Math.ceil(target / batches.length) + 2;
+    // +2 headroom per batch so a few rejected questions don't force a retry.
+    const perBatch = Math.max(1, Math.ceil(wanted / batches.length)) + 2;
     const results = await Promise.allSettled(batches.map((b) => generateBatch(b, perBatch)));
     for (const r of results) {
-      if (r.status === 'fulfilled') {
-        questions.push(...r.value.questions);
-        providersUsed.add(r.value.provider);
-      } else {
+      if (r.status !== 'fulfilled') {
         console.warn('[questions] batch failed:', r.reason?.message);
+        continue;
+      }
+      providersUsed.add(r.value.provider);
+      for (const q of r.value.questions) {
+        const key = norm(q.question);
+        if (!seen.has(key)) {
+          seen.add(key);
+          questions.push(q);
+        }
       }
     }
   }
 
-  questions = questions.filter((q, i, all) => all.findIndex((other) => norm(other.question) === norm(q.question)) === i);
-  if (questions.length < target && pages.length) {
-    try {
-      const extra = await generateBatch(pages.slice(0, PAGES_PER_BATCH), target - questions.length + 2);
-      providersUsed.add(extra.provider);
-      for (const q of extra.questions) {
-        if (!questions.some((other) => norm(other.question) === norm(q.question))) questions.push(q);
-      }
-    } catch (error) {
-      console.warn('[questions] top-up failed:', error.message);
-    }
+  if (pages.length > 0) {
+    await pass(target);
+    // Short on valid questions? Ask again for the gap instead of mixing in unrelated ones.
+    if (questions.length < target) await pass(target - questions.length);
   }
 
+  // Only when the slides produced nothing at all do we use the generic bank,
+  // and every such question is marked `sample` so the UI can label it.
   let usedFallback = false;
-  if (questions.length < Math.min(3, target)) {
+  if (questions.length === 0) {
     usedFallback = true;
-    const fallback = await loadFallback();
-    questions = questions.concat(fallback).slice(0, Math.max(target, 3));
+    questions = (await loadFallback()).map((q) => ({ ...q, sample: true }));
   }
 
   questions = questions.slice(0, target).map((q, i) => ({ id: `q${i + 1}`, ...q }));

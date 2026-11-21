@@ -15,7 +15,7 @@ const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '8mb' })); // up to 5 PDFs of slide text
 
 // Videos and thumbnails, from whatever folders REELS_DIR / THUMBS_DIR point at.
 // express.static supports Range requests, which video seeking needs.

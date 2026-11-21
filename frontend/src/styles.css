@@ -286,3 +286,12 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .slow-fill { width: 100%; }
 }
+
+/* Quiz: waiting for questions from the user's slides, and sample-question label */
+.quiz-progress.indeterminate span { width: 30%; animation: slide-across 1.2s ease-in-out infinite; }
+@keyframes slide-across { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+.quiz-spinner { width: 28px; height: 28px; margin-top: 18px; border-radius: 50%; border: 3px solid var(--green-soft); border-top-color: var(--green); animation: spin 0.8s linear infinite; }
+.sample-pill { margin-bottom: 14px; padding: 4px 10px; border-radius: 999px; background: var(--rust-soft); color: var(--rust); font-size: 13px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .quiz-progress.indeterminate span { animation: none; width: 100%; opacity: 0.4; } }
+
+.card-label.keep-case { text-transform: none; letter-spacing: 0; } /* file names keep their own case */

@@ -38,7 +38,8 @@ export async function fetchQuestions(slides, count) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slides, count }),
-      signal: AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined,
+      // Someone may be waiting on a paused reel for these, so don't hang for long.
+      signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined,
     });
     if (!res.ok) throw new Error(res.statusText);
     const data = await res.json();
@@ -46,8 +47,11 @@ export async function fetchQuestions(slides, count) {
   } catch (err) {
     console.warn('[api] /api/questions unavailable, using mock questions:', err.message);
   }
-  return { questions: mockQuestions, provider: 'mock', usedFallback: true };
+  return { questions: SAMPLE_QUESTIONS, provider: 'mock', usedFallback: true };
 }
+
+/** Built-in questions, marked so the quiz can label them as samples (not from the user's slides). */
+export const SAMPLE_QUESTIONS = mockQuestions.map((q) => ({ ...q, sample: true }));
 
 export function logEvent(sessionId, type, extra = {}) {
   const url = `${API_BASE}/api/events`;
