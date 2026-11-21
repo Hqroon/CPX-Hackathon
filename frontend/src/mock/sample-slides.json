@@ -1,0 +1,11 @@
+{
+  "title": "Sample: Data Structures & Algorithms, Week 3",
+  "pages": [
+    { "page": 1, "text": "Big-O notation describes how the running time of an algorithm grows as the input size n grows. We ignore constants and lower-order terms, so 3n² + 5n + 2 is O(n²)." },
+    { "page": 2, "text": "Linear search checks each element one by one, so its worst-case running time is O(n). Binary search needs a sorted array and runs in O(log n) because it halves the search range at every step." },
+    { "page": 3, "text": "Merge sort divides the array in half, sorts each half recursively, then merges the two sorted halves. Its running time is O(n log n) in the best, average and worst case, and it needs O(n) extra memory." },
+    { "page": 4, "text": "A hash table stores key-value pairs in an array of buckets. A hash function maps each key to a bucket. With a good hash function, lookup, insert and delete take O(1) time on average. Collisions are handled by chaining or open addressing." },
+    { "page": 5, "text": "A stack is last-in, first-out (LIFO): push adds to the top and pop removes from the top. A queue is first-in, first-out (FIFO): enqueue adds to the back and dequeue removes from the front. Both operations run in O(1)." },
+    { "page": 6, "text": "A binary search tree keeps smaller keys in the left subtree and larger keys in the right subtree. In a balanced tree, search, insert and delete take O(log n). If keys are inserted in sorted order, the tree degrades into a list and operations take O(n)." }
+  ]
+}

@@ -1,0 +1,32 @@
+// Hidden judging controls. Open by tapping the logo 5 times. Owner: M2.
+import React from 'react';
+
+export default function DemoPanel({ info, actions, onClose }) {
+  return (
+    <div className="demo-panel" role="dialog" aria-label="Demo controls">
+      <div className="demo-head">
+        <strong>Demo controls</strong>
+        <button className="icon-btn" onClick={onClose} aria-label="Close demo controls">✕</button>
+      </div>
+      <div className="demo-grid">
+        <button className="btn small" onClick={actions.skip15}>Skip 15 minutes</button>
+        <button className="btn small" onClick={actions.jumpToSlow}>Jump to just before slow scroll</button>
+        <button className="btn small" onClick={actions.triggerQuiz}>Trigger a question now</button>
+        <button className={`btn small ${info.demo ? 'on' : ''}`} onClick={actions.toggleDemo}>
+          Demo speed ×3: {info.demo ? 'on' : 'off'}
+        </button>
+        <button className={`btn small ${info.explain ? 'on' : ''}`} onClick={actions.toggleExplain}>
+          Explain mode: {info.explain ? 'on' : 'off'}
+        </button>
+        <button className="btn small danger" onClick={actions.reset}>Reset everything</button>
+      </div>
+      <dl className="demo-info">
+        <dt>Reels</dt><dd>{info.reelSource}</dd>
+        <dt>Questions</dt><dd>{info.provider || '–'} ({info.questionCount})</dd>
+        <dt>Points</dt><dd>{info.points}</dd>
+        <dt>Session</dt><dd>{info.totalReels} reels · {info.reelsAfterLine} after line</dd>
+        <dt>Rules</dt><dd>question every {info.questionEvery} · slow after {info.slowThreshold}</dd>
+      </dl>
+    </div>
+  );
+}

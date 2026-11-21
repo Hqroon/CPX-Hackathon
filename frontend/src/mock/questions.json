@@ -1,0 +1,8 @@
+[
+  { "id": "m1", "question": "What does Big-O notation ignore when describing growth?", "options": ["Constants and lower-order terms", "The input size", "The worst case", "Memory usage only"], "answerIndex": 0, "explanation": "Big-O keeps only the dominant term and drops constants.", "sourcePage": 1 },
+  { "id": "m2", "question": "Binary search requires the array to be…", "options": ["Sorted", "Stored in a hash table", "Smaller than 100 items", "Made of integers only"], "answerIndex": 0, "explanation": "Binary search halves a sorted range at every step.", "sourcePage": 2 },
+  { "id": "m3", "question": "What is merge sort's running time in all cases?", "options": ["O(n log n)", "O(n²)", "O(n)", "O(log n)"], "answerIndex": 0, "explanation": "It splits log n times and merges in O(n) per level.", "sourcePage": 3 },
+  { "id": "m4", "question": "Average lookup time in a hash table with a good hash function?", "options": ["O(1)", "O(n)", "O(log n)", "O(n log n)"], "answerIndex": 0, "explanation": "A good hash spreads keys evenly, so lookup is constant on average.", "sourcePage": 4 },
+  { "id": "m5", "question": "Which structure is first-in, first-out?", "options": ["Queue", "Stack", "Binary tree", "Hash table"], "answerIndex": 0, "explanation": "A queue removes the earliest added item first.", "sourcePage": 5 },
+  { "id": "m6", "question": "A balanced binary search tree finds a key in…", "options": ["O(log n)", "O(1)", "O(n)", "O(n²)"], "answerIndex": 0, "explanation": "Each comparison halves the remaining tree in a balanced BST.", "sourcePage": 6 }
+]

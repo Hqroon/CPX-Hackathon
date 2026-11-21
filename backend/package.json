@@ -1,0 +1,19 @@
+{
+  "name": "doomscroll-tax-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "manifest": "node scripts/make-manifest.js",
+    "manifest:captions": "node scripts/make-manifest.js --captions",
+    "test:questions": "node scripts/test-questions.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
+}

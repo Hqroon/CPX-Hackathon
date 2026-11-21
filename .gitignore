@@ -1,0 +1,26 @@
+# Dependencies and builds
+node_modules/
+dist/
+
+# Secrets: never commit API keys
+.env
+.env.*
+!.env.example
+
+# Media lives on the server, not in git (licences + repo size)
+backend/media/reels/*
+!backend/media/reels/.gitkeep
+backend/media/thumbs/*
+!backend/media/thumbs/.gitkeep
+raw/
+music/
+
+# Event logs from the volunteer test
+backend/data/events.jsonl
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
