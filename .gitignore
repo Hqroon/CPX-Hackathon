@@ -6,6 +6,7 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.*.example
 
 # Media lives on the server, not in git (licences + repo size)
 backend/media/reels/*
@@ -14,6 +15,16 @@ backend/media/thumbs/*
 !backend/media/thumbs/.gitkeep
 raw/
 music/
+frontend/public/reels/
+frontend/public/thumbs/
+
+# Android build outputs (the android/ project itself is committed)
+frontend/android/app/build/
+frontend/android/build/
+frontend/android/.gradle/
+frontend/android/local.properties
+*.apk
+*.aab
 
 # Event logs from the volunteer test
 backend/data/events.jsonl
