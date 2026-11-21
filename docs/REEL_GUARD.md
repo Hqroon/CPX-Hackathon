@@ -20,7 +20,7 @@ Same rules as the in-app feed (`frontend/src/rules/frustration.js`). The Java co
 | 1–5 | Free. A floating bubble shows points owed (tap it to come back to Reel Guard). |
 | 6+ | −1 point per reel. The phone's **media volume** alternates on / muted and drops 2% per reel, **without showing the volume slider**. |
 | 6, 11, 16… | A **question card covers the reel** and silences it. Right = card closes. Wrong = 5 s, then a **new** question. Leaving the app doesn't dodge it: the card is back when you return. |
-| 11+ | After every swipe, a **3-second "Loading next reel…" cover** blocks the screen, and a **grey layer** dims the feed more each reel. |
+| 10+ | After every swipe, a **3-second "Loading next reel…" cover** blocks the screen, and a **grey layer** dims the feed more each reel. |
 | Closing 看看 | Back out of the app or swipe it away from recent apps: the bubble disappears and points + reel count go back to 0 (demo: each judge gets a clean phone). |
 | Away | 15 minutes away from all guarded apps clears 1 point. 10 minutes away starts a new session (5 free reels again). Your normal volume is restored when you leave. |
 
@@ -60,7 +60,7 @@ These kill background services aggressively. On the demo phone:
 - [ ] Reel 6 (then 11, 16…): question card appears, the reel is silent, swiping is blocked
 - [ ] Wrong answer: "A new question in 5s", then a different question
 - [ ] Right answer: card closes, sound returns
-- [ ] Reel 11+: 3 s "Loading next reel…" after every swipe, the screen greys more each reel
+- [ ] Reel 10+: 3 s "Loading next reel…" after every swipe, the screen greys more each reel
 - [ ] Leave to the home screen: everything disappears, your normal volume is back
 - [ ] **Start: shrink into a bubble** → See See goes to the background and the bubble floats on the home screen
 - [ ] Tap the bubble: See See opens (**Back to the bubble** / **Stop the bubble**)

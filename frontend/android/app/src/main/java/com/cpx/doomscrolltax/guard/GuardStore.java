@@ -40,7 +40,11 @@ public final class GuardStore {
      * taxed and no bubble is shown until then, even with the accessibility service on.
      */
     public boolean isArmed() { return prefs.getBoolean("armed", false); }
-    public void setArmed(boolean v) { prefs.edit().putBoolean("armed", v).apply(); }
+    public void setArmed(boolean v) {
+        prefs.edit().putBoolean("armed", v).putLong("armedAt", v ? System.currentTimeMillis() : 0L).apply();
+    }
+    /** When the bubble was last started (ms), 0 when off. */
+    public long armedAt() { return prefs.getLong("armedAt", 0L); }
 
     public GuardConfig config() { return GuardConfig.fromJson(prefs.getString("config", "")); }
     public void setConfigJson(String json) { prefs.edit().putString("config", json).apply(); }

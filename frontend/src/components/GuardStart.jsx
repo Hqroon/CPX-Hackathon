@@ -7,7 +7,7 @@ import { IconBack, IconShare } from './Icons.jsx';
 import { openGuardSettings } from '../native/reelGuard.js';
 import BackgroundLogo from './BackgroundLogo.jsx';
 
-export default function GuardStart({ status, nativeApp, onStart, onBack, onNote }) {
+export default function GuardStart({ status, nativeApp, onStart, onBack, onNote, onRefresh = async () => status }) {
   const [busy, setBusy] = useState(false);
 
   async function start() {
@@ -15,17 +15,18 @@ export default function GuardStart({ status, nativeApp, onStart, onBack, onNote 
       onNote('The bubble runs in the 看看 Android app. In the browser, use “Continue in this app”.');
       return;
     }
-    if (!status?.accessibilityEnabled) {
+    // Ask the phone again now: the page's status may be from before Settings was changed.
+    const now = (await onRefresh()) || status;
+    if (!now?.accessibilityEnabled) {
       // Safety net only: on the demo phone this is already switched on.
       onNote('Turn on 看看 in Accessibility first, then come back and tap Start.');
       openGuardSettings();
       return;
     }
-    if (status.running === false) {
-      // Switched on in Settings, but Android hasn't started (or has paused) the service.
-      onNote('看看 is paused by the phone. In Accessibility, turn 看看 off and on again, then tap Start.');
-      openGuardSettings();
-      return;
+    if (now.running === false) {
+      // On in Settings but not running yet (e.g. right after an app update). Start anyway:
+      // the bubble appears as soon as Android restarts the service. Just say what to do if not.
+      onNote('If the bubble doesn’t appear, turn 看看 off and on in Accessibility.');
     }
     setBusy(true);
     try {

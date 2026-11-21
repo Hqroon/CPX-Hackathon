@@ -122,8 +122,14 @@ public class ReelGuardService extends AccessibilityService {
         ui = new GuardOverlays(this);
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
         log("service connected, armed=" + store.isArmed());
-        // A fresh start of the service means 看看 was closed or killed: start clean
-        // (demo rule: closing the app clears the bubble and the points).
+        // The bubble was started in the last 2 minutes, before Android (re)started this
+        // service (e.g. right after an app update): keep it and show it now.
+        if (store.isArmed() && System.currentTimeMillis() - store.armedAt() < 120000L) {
+            ui.showBubble(store.points());
+            return;
+        }
+        // Otherwise a fresh start of the service means 看看 was closed or killed: start
+        // clean (demo rule: closing the app clears the bubble and the points).
         resetForExit(this);
     }
 
@@ -216,7 +222,7 @@ public class ReelGuardService extends AccessibilityService {
                     ownAppForeground = false;
                     enterTarget();
                 }
-                if (isReelScroll(event, pkg)) onSwipe();
+                if (isReelScroll(event, pkg)) onReelScroll(event);
                 break;
             default:
                 break;
@@ -349,7 +355,10 @@ public class ReelGuardService extends AccessibilityService {
 
         boolean newSession = now - store.lastSeenAt() > cfg.sessionGapMinutes * 60000L
                 || store.sessionReels() <= 0;
-        if (newSession) store.setSessionReels(1); // the first reel on screen is reel 1
+        if (newSession) store.setSessionReels(0); // nothing counted until the first swipe in the reels
+        maxPosition = -1; // new visit: learn the reel position again
+        unsettledEvents = 0;
+        timeFallback = false;
         store.setLastSeenAt(now);
 
         if (store.savedVolume() < 0 && audio != null) {
@@ -386,10 +395,58 @@ public class ReelGuardService extends AccessibilityService {
         restoreVolume();
     }
 
-    private void onSwipe() {
+    private int maxPosition = -1;      // furthest reel reached in this visit
+    private int unsettledEvents = 0;   // scroll events that never settle on one reel
+    private boolean timeFallback = false;
+
+    /**
+     * One new reel = one count. The reels player tells us which items are on screen
+     * (fromIndex..toIndex). While a swipe is moving two reels are visible; when it settles,
+     * exactly one is (from == to). A reel counts only when a swipe settles on a reel
+     * further than any reached before in this visit, so:
+     *  - the several scroll events of one swipe count once,
+     *  - a half swipe that snaps back counts zero,
+     *  - swiping back up to an old reel counts zero.
+     * Apps that don't report positions fall back to "events closer than swipeDebounceMs
+     * are one swipe".
+     */
+    private void onReelScroll(AccessibilityEvent e) {
+        int from = e.getFromIndex(), to = e.getToIndex();
+        if (timeFallback || from < 0 || to < 0) {
+            onSwipe(true);
+            return;
+        }
+        if (from != to) {
+            // Still moving. If this app never reports a settled reel, use the time rule.
+            if (++unsettledEvents > 40 && maxPosition < 0) {
+                timeFallback = true;
+                log("no settled positions from this app: counting by time");
+            }
+            return;
+        }
+        unsettledEvents = 0;
+        if (maxPosition < 0) {
+            // First settled reel of this visit is the starting point (not a swipe), unless
+            // the user had already swiped past the first reel.
+            maxPosition = from;
+            if (from > 0) onSwipe(false);
+            return;
+        }
+        if (from == 0 && maxPosition > 0) {
+            // Back at the very first reel: the reels player was reopened (Reels tab again).
+            maxPosition = 0;
+            return;
+        }
+        if (from > maxPosition) {
+            maxPosition = from;
+            onSwipe(false);
+        }
+    }
+
+    private void onSwipe(boolean useDebounce) {
         long now = System.currentTimeMillis();
         if (blocking || quizOpen) return;
-        if (now - lastCountAt < cfg.swipeDebounceMs) return;
+        if (useDebounce && now - lastCountAt < cfg.swipeDebounceMs) return;
         lastCountAt = now;
         store.setLastSeenAt(now);
         int n = store.sessionReels() + 1;

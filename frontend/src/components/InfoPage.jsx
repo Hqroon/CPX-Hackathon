@@ -8,7 +8,7 @@ import BackgroundLogo from './BackgroundLogo.jsx';
 export default function InfoPage({ onBack }) {
   const free = CONFIG.freeReels;
   const every = CONFIG.questionEvery;
-  const firstQ = free + every;
+  const firstQ = every;
   const qReels = [firstQ, firstQ + every, firstQ + 2 * every].join(', ');
 
   return (
@@ -39,7 +39,7 @@ export default function InfoPage({ onBack }) {
             </li>
             <li>
               <strong>It gets less fun.</strong> After the free reels the sound turns on and off and gets quieter.
-              After reel {CONFIG.slowAfterReels}, each new reel takes {CONFIG.slowTransitionMs / 1000} seconds to
+              From reel {CONFIG.slowAfterReels + 1}, each new reel takes {CONFIG.slowTransitionMs / 1000} seconds to
               load and the screen slowly turns grey.
             </li>
             <li>

@@ -1,0 +1,725 @@
+{
+  "note": "Pre-written questions for \"Choose existing slides\" (generated once with AIHubMix deepseek-chat), so the demo never waits for the AI.",
+  "questions": [
+    {
+      "id": "preset-1",
+      "question": "According to Newton's law of gravitation, the force between two particles always points in which direction?",
+      "options": [
+        "Perpendicular to the line joining them",
+        "From one particle to the other",
+        "Away from both particles",
+        "Toward the larger particle only"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide states the force always points from one particle to the other.",
+      "sourcePage": 6,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-2",
+      "question": "A rubber ball bounces to 2h/3 instead of h. Which principle best explains the lost height?",
+      "options": [
+        "Gravity did work that reduced the ball's kinetic energy",
+        "The floor pushed too weakly during the collision",
+        "Potential energy was lost while accelerating toward the floor",
+        "Non-conservative forces did work, reducing total mechanical energy"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide's correct option says non-conservative forces did work, leaving less total mechanical energy.",
+      "sourcePage": 2,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 2
+    },
+    {
+      "id": "preset-3",
+      "question": "According to the shell theorem, a uniform spherical shell attracts an outside particle as if its mass were where?",
+      "options": [
+        "Spread along its surface",
+        "Concentrated at the particle",
+        "Concentrated at its center",
+        "Distributed through its volume"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide states the shell attracts an outside particle as if all its mass were concentrated at its center.",
+      "sourcePage": 7,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 7
+    },
+    {
+      "id": "preset-4",
+      "question": "Which is NOT listed as a reason calculated gravitational force may not match weight?",
+      "options": [
+        "Earth's mass is not uniformly distributed",
+        "Earth is not a sphere",
+        "Earth's orbit is elliptical",
+        "Earth rotates"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide lists nonuniform mass, nonspherical shape, and rotation, but not an elliptical orbit.",
+      "sourcePage": 14,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 14
+    },
+    {
+      "id": "preset-5",
+      "question": "For a two-particle system, the slides state gravitational potential energy U equals which expression?",
+      "options": [
+        "U = +GMm/r",
+        "U = −GM/r²",
+        "U = −GMm/r",
+        "U = −Gm/r"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide gives U = −GMm/r as the gravitational potential energy of a two-particle system.",
+      "sourcePage": 17,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 17
+    },
+    {
+      "id": "preset-6",
+      "question": "According to Kepler's Law of Orbits, where is the Sun located in a planet's elliptical orbit?",
+      "options": [
+        "At the orbit's eccentricity",
+        "At the center of the ellipse",
+        "At the semimajor axis",
+        "At one focus of the ellipse"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states all planets move in elliptical orbits with the Sun at one focus.",
+      "sourcePage": 22,
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 22
+    },
+    {
+      "id": "preset-7",
+      "question": "What is the center of mass of a system of particles defined as?",
+      "options": [
+        "The point that always remains stationary",
+        "The point where all mass is concentrated and external forces applied",
+        "The geometric center of the object's shape",
+        "The point with the greatest mass in the system"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide states the CoM is the point that moves as though all mass were concentrated there and all external forces applied there.",
+      "sourcePage": 5,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-8",
+      "question": "Does the center of mass location depend on the coordinate system used?",
+      "options": [
+        "Yes, but only in three dimensions",
+        "Yes, it changes with the origin",
+        "No, it is a property of the particles",
+        "No, but only for two particles"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide states the CoM is in the same location regardless of coordinate system and is a property of the particles.",
+      "sourcePage": 5,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-9",
+      "question": "For many particles, which expression gives x_com with M equal to the total mass?",
+      "options": [
+        "x_com = Σ m_i x_i",
+        "x_com = (1/M) Σ x_i",
+        "x_com = M Σ m_i x_i",
+        "x_com = (1/M) Σ m_i x_i"
+      ],
+      "answerIndex": 3,
+      "explanation": "Equation 9-4 on the slide gives x_com as (1/M) times the sum of m_i x_i.",
+      "sourcePage": 6,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-10",
+      "question": "For a uniform-density object, what does the slide say you can bypass using symmetry?",
+      "options": [
+        "One or more of the integrals",
+        "The total mass M",
+        "The volume V",
+        "The density ρ"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states you can bypass one or more of these integrals if the object has symmetry.",
+      "sourcePage": 8,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 8
+    },
+    {
+      "id": "preset-11",
+      "question": "When finding the center of mass of a disk with a smaller disk cut out, how is the cutout treated?",
+      "options": [
+        "As having double mass",
+        "As having negative mass",
+        "As having the same mass",
+        "As having zero mass"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide instructs treating the cutout as having negative mass.",
+      "sourcePage": 9,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 9
+    },
+    {
+      "id": "preset-12",
+      "question": "In F_net = M a_com for a system of particles, what is F_net?",
+      "options": [
+        "The sum of all internal forces",
+        "The total internal plus external force",
+        "The sum of all external forces",
+        "The net force on one particle"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide's reminder defines F_net as the sum of all external forces.",
+      "sourcePage": 12,
+      "sourceFile": "Linear Momentum",
+      "sourceFilePage": 12
+    },
+    {
+      "id": "preset-13",
+      "question": "According to the slides, what makes climate change a \"diabolical\" policy problem?",
+      "options": [
+        "The problem is only about carbon markets",
+        "The problem is simple, local, and short-term",
+        "The problem is purely scientific with no politics",
+        "The problem is not linear, local, or short-term"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states Steffen's point that the problem is not linear, local, or short-term.",
+      "sourcePage": 3,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 3
+    },
+    {
+      "id": "preset-14",
+      "question": "What does the slide say governance must do despite uncertainty, scale mismatches, and delayed outcomes?",
+      "options": [
+        "Wait for perfect certainty",
+        "Ignore political systems",
+        "Make decisions",
+        "Avoid all decisions"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide says governance must make decisions despite these challenges.",
+      "sourcePage": 4,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-15",
+      "question": "According to the slides, what is a carbon market?",
+      "options": [
+        "A system that bans all carbon emissions",
+        "A natural system with no policy involvement",
+        "A scientific model of the climate system",
+        "A policy-created system giving emissions or reductions tradable value"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide defines a carbon market as a policy-created system giving carbon emissions or reductions a tradable value.",
+      "sourcePage": 6,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-16",
+      "question": "A policy creates tradable value for carbon reductions. Which slide concept does this best illustrate?",
+      "options": [
+        "A scale mismatch",
+        "A diabolical policy problem",
+        "A carbon market",
+        "A delayed outcome"
+      ],
+      "answerIndex": 2,
+      "explanation": "A carbon market is defined as a policy-created system giving emissions or reductions tradable value.",
+      "sourcePage": 6,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-17",
+      "question": "Which statement best reflects why climate policy is hard, based on the slides?",
+      "options": [
+        "The climate system and political systems operate differently",
+        "Climate policy has no uncertainty",
+        "The climate system and political systems operate identically",
+        "Climate outcomes are always immediate"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states the climate system and political systems operate differently.",
+      "sourcePage": 4,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-18",
+      "question": "According to the slides, what must work for a market to work?",
+      "options": [
+        "The price",
+        "The competition",
+        "The technology",
+        "The governance"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states a market works only if the governance works.",
+      "sourcePage": 7,
+      "sourceFile": "Global Challenges · W2 S2",
+      "sourceFilePage": 7
+    },
+    {
+      "id": "preset-19",
+      "question": "According to the definition, f is continuous at a when f(a) is defined and which limit holds?",
+      "options": [
+        "lim f(x) = f(a) as x→a",
+        "lim f(x) = 0 as x→a",
+        "lim f(x) = a as x→f(a)",
+        "lim f(x) does not exist as x→a"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states continuity at a requires f(a) defined and lim f(x) = f(a) as x→a.",
+      "sourcePage": 3,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 3
+    },
+    {
+      "id": "preset-20",
+      "question": "In the continuity checklist, what conclusion follows if any checklist answer is NO?",
+      "options": [
+        "f is not continuous at x = a",
+        "f is continuous at x = a",
+        "f(a) must equal zero",
+        "The limit must equal a"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide says if any checklist answer is NO, then f is not continuous at x = a.",
+      "sourcePage": 4,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-21",
+      "question": "If f is a polynomial or rational function and a is in its domain, what is true at x = a?",
+      "options": [
+        "f is discontinuous at x = a",
+        "f(a) is undefined",
+        "f is continuous at x = a",
+        "The limit does not exist"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide states that if a is in the domain, then f is continuous at x = a.",
+      "sourcePage": 10,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 10
+    },
+    {
+      "id": "preset-22",
+      "question": "Why is a rational function discontinuous exactly where its denominator is zero?",
+      "options": [
+        "The function is a polynomial there",
+        "The function is undefined there",
+        "The limit equals f(a) there",
+        "The numerator is zero there"
+      ],
+      "answerIndex": 1,
+      "explanation": "A zero denominator makes the rational function undefined, so it cannot be continuous there.",
+      "sourcePage": 12,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 12
+    },
+    {
+      "id": "preset-23",
+      "question": "According to the theorem, if f is continuous on [a, b] and m is in (f(a), f(b)), what exists?",
+      "options": [
+        "A number m with f(m) = c",
+        "A number c with f(c) = a",
+        "A number c equal to a or b",
+        "A number c with a < c < b and f(c) = m"
+      ],
+      "answerIndex": 3,
+      "explanation": "The theorem states there is a number c between a and b such that f(c) = m.",
+      "sourcePage": 14,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 14
+    },
+    {
+      "id": "preset-24",
+      "question": "When is a function f(x) continuous at x = a, per the summary?",
+      "options": [
+        "When the limit as x goes to a does not exist",
+        "When f(a) is undefined but the limit exists",
+        "When f(a) is defined but differs from the limit",
+        "When f(a) is defined and equals the limit as x goes to a"
+      ],
+      "answerIndex": 3,
+      "explanation": "The summary says continuity at a requires f(a) defined and equal to the limit.",
+      "sourcePage": 16,
+      "sourceFile": "Calculus · Continuity",
+      "sourceFilePage": 16
+    },
+    {
+      "id": "preset-25",
+      "question": "What is the domain of the natural logarithm function ln x?",
+      "options": [
+        "(0, ∞)",
+        "[0, ∞)",
+        "(−∞, ∞)",
+        "(1, ∞)"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states the domain of ln x is (0, ∞), i.e., all x > 0.",
+      "sourcePage": 4,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-26",
+      "question": "According to the definition, what are the derivative and value at 1 of ln x?",
+      "options": [
+        "d/dx ln x = x and ln(1) = 1",
+        "d/dx ln x = 1/x and ln(1) = 1",
+        "d/dx ln x = 1/x and ln(1) = 0",
+        "d/dx ln x = ln x and ln(1) = 0"
+      ],
+      "answerIndex": 2,
+      "explanation": "The definition gives d/dx ln x = 1/x and ln(1) = 0.",
+      "sourcePage": 3,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 3
+    },
+    {
+      "id": "preset-27",
+      "question": "For 0 < x < 1, what sign does ln x have?",
+      "options": [
+        "ln x > 0",
+        "ln x is undefined",
+        "ln x = 0",
+        "ln x < 0"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states that for 0 < x < 1, ln x < 0.",
+      "sourcePage": 5,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-28",
+      "question": "If 0 < x < y, which statement about ln x and ln y is true?",
+      "options": [
+        "ln x = ln y",
+        "No comparison is possible",
+        "ln x < ln y",
+        "ln x > ln y"
+      ],
+      "answerIndex": 2,
+      "explanation": "Since ln is strictly increasing, 0 < x < y implies ln x < ln y.",
+      "sourcePage": 4,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-29",
+      "question": "According to the lemma, if f is continuous on an interval and f′(x)=0 for all x there, then f is what?",
+      "options": [
+        "Constant",
+        "Zero everywhere",
+        "Increasing",
+        "Differentiable"
+      ],
+      "answerIndex": 0,
+      "explanation": "The lemma states that a continuous function with zero derivative throughout an interval is constant.",
+      "sourcePage": 7,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 7
+    },
+    {
+      "id": "preset-30",
+      "question": "For positive a and b, which identity does the slide give for ln(ab)?",
+      "options": [
+        "ln a + ln b",
+        "ln a · ln b",
+        "ln a − ln b",
+        "ln a / ln b"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states ln(ab) = ln a + ln b.",
+      "sourcePage": 8,
+      "sourceFile": "Calculus · Logarithms and Exponentials",
+      "sourceFilePage": 8
+    },
+    {
+      "id": "preset-31",
+      "question": "In a phospholipid, which parts are hydrophobic?",
+      "options": [
+        "The glycerol backbone",
+        "The two fatty acid tails",
+        "The phosphate group and its attachments",
+        "The hydrophilic head"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide states the two fatty acid tails are hydrophobic, while the phosphate group and attachments form a hydrophilic head.",
+      "sourcePage": 6,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-32",
+      "question": "What are the water-filled compartments formed when a phospholipid bilayer closes in on itself called?",
+      "options": [
+        "Plasma membranes",
+        "Transport proteins",
+        "Hydrophilic heads",
+        "Liposomes"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states these water-filled compartments are called liposomes.",
+      "sourcePage": 8,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 8
+    },
+    {
+      "id": "preset-33",
+      "question": "A membrane lets some substances cross more easily than others. Which term describes this property?",
+      "options": [
+        "Bulk transport",
+        "Diffusion",
+        "Active transport",
+        "Selective permeability"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states the plasma membrane exhibits selective permeability, allowing some substances to cross more easily than others.",
+      "sourcePage": 5,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-34",
+      "question": "What mainly holds membranes together, according to the slides?",
+      "options": [
+        "Weak hydrophobic interactions",
+        "Hydrogen bonds between proteins",
+        "Ionic bonds with cholesterol",
+        "Strong covalent bonds between lipids"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states membranes are held together mainly by weak hydrophobic interactions.",
+      "sourcePage": 10,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 10
+    },
+    {
+      "id": "preset-35",
+      "question": "How do double bonds in fatty acid tails affect membrane fluidity?",
+      "options": [
+        "They cause lipids to flip-flop across layers",
+        "They have no effect on membrane fluidity",
+        "They increase fluidity by hindering tail packing",
+        "They decrease fluidity by tightening tail packing"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide says double bonds make it harder for tails to pack, increasing fluidity.",
+      "sourcePage": 12,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 12
+    },
+    {
+      "id": "preset-36",
+      "question": "At warm temperatures, what does cholesterol do to phospholipids in animal cell membranes?",
+      "options": [
+        "Forms glycolipids with carbohydrates",
+        "Prevents tight packing of phospholipids",
+        "Spans the membrane as a transmembrane protein",
+        "Prevents movement of phospholipids"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states that at warm temperatures cholesterol prevents movement of phospholipids.",
+      "sourcePage": 17,
+      "sourceFile": "Biology · Lecture 6",
+      "sourceFilePage": 17
+    },
+    {
+      "id": "preset-37",
+      "question": "What are autotrophs described as in the slides?",
+      "options": [
+        "Self-feeders that sustain themselves without eating other organisms",
+        "Organisms that lack chloroplasts entirely",
+        "Organisms that obtain organic material from other organisms",
+        "Organisms that only consume fossil fuels"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slides define autotrophs as self-feeders that sustain themselves without eating anything derived from other organisms.",
+      "sourcePage": 4,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-38",
+      "question": "A plant uses sunlight to make organic molecules. Which term from the slides describes it?",
+      "options": [
+        "Mesophyll",
+        "Stomata",
+        "Photoautotroph",
+        "Heterotroph"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slides state that almost all plants are photoautotrophs, using sunlight energy to make organic molecules.",
+      "sourcePage": 4,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 5
+    },
+    {
+      "id": "preset-39",
+      "question": "Where are chloroplasts found mainly in a leaf?",
+      "options": [
+        "In the stomata pores",
+        "In cells of the mesophyll",
+        "In the leaf veins",
+        "In the fossil fuel remains"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slides state chloroplasts are found mainly in cells of the mesophyll, the interior tissue of the leaf.",
+      "sourcePage": 9,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 10
+    },
+    {
+      "id": "preset-40",
+      "question": "Where does chlorophyll, the pigment giving leaves their green color, reside?",
+      "options": [
+        "In the thylakoid membranes",
+        "In the stroma",
+        "In the intermembrane space",
+        "In the outer membrane"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states chlorophyll resides in the thylakoid membranes.",
+      "sourcePage": 10,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 11
+    },
+    {
+      "id": "preset-41",
+      "question": "In photosynthesis as a redox process, which molecule is oxidized and which is reduced?",
+      "options": [
+        "CO2 is oxidized and H2O is reduced",
+        "Both H2O and CO2 are reduced",
+        "H2O is oxidized and CO2 is reduced",
+        "Both H2O and CO2 are oxidized"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide states H2O is oxidized and CO2 is reduced.",
+      "sourcePage": 13,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 14
+    },
+    {
+      "id": "preset-42",
+      "question": "Why do leaves appear green, based on the behavior of chlorophyll?",
+      "options": [
+        "Chlorophyll absorbs green light strongly",
+        "Chlorophyll emits green light as photons",
+        "Chlorophyll reflects and transmits green light",
+        "Carotenoids reflect green light"
+      ],
+      "answerIndex": 2,
+      "explanation": "The slide says leaves appear green because chlorophyll reflects and transmits green light.",
+      "sourcePage": 18,
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis",
+      "sourceFilePage": 19
+    },
+    {
+      "id": "preset-43",
+      "question": "According to the slides, what is natural selection?",
+      "options": [
+        "Organisms adapt during their lifetime and pass changes on",
+        "Individuals with favorable inherited traits survive and reproduce more",
+        "Species gradually change because organisms choose new traits",
+        "New species form when ancestral species go extinct"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide defines natural selection as a process in which individuals with favorable inherited traits are more likely to survive and reproduce.",
+      "sourcePage": 4,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 4
+    },
+    {
+      "id": "preset-44",
+      "question": "Which phrase did Darwin use to define evolution?",
+      "options": [
+        "Survival of the fittest",
+        "Descent with modification",
+        "Origin of new species",
+        "Adaptation to the environment"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide states evolution can be defined by Darwin's phrase descent with modification.",
+      "sourcePage": 6,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-45",
+      "question": "In 1859, what did Charles Darwin publish?",
+      "options": [
+        "A study of Galápagos finch beaks",
+        "A theory of descent with modification",
+        "An essay on natural selection",
+        "The Origin of Species"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states a new era of biology began in 1859 when Charles Darwin published The Origin of Species.",
+      "sourcePage": 6,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "preset-46",
+      "question": "According to Darwin, what does the branching history of life help explain?",
+      "options": [
+        "The uniformity of all inherited traits",
+        "How artificial selection creates wild mustard",
+        "Why environments cannot support offspring",
+        "Large morphological gaps between related groups"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide states Darwin reasoned large morphological gaps could be explained by branching and past extinction events.",
+      "sourcePage": 8,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 8
+    },
+    {
+      "id": "preset-47",
+      "question": "What process did Darwin call selecting and breeding individuals with desired traits?",
+      "options": [
+        "Overproduction of offspring",
+        "Descent with modification",
+        "Natural selection",
+        "Artificial selection"
+      ],
+      "answerIndex": 3,
+      "explanation": "The slide defines artificial selection as humans selecting and breeding individuals with desired traits.",
+      "sourcePage": 10,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 10
+    },
+    {
+      "id": "preset-48",
+      "question": "A species produces more offspring than the environment can support. Which Darwin observation is this?",
+      "options": [
+        "Artificial selection observation",
+        "Observation #2: overproduction of offspring",
+        "Observation #1: inherited variation",
+        "Unity of life observation"
+      ],
+      "answerIndex": 1,
+      "explanation": "The slide labels the fact that species produce more offspring than the environment supports as Observation #2.",
+      "sourcePage": 12,
+      "sourceFile": "Biology · Lecture 22 · Evolution",
+      "sourceFilePage": 12
+    }
+  ]
+}

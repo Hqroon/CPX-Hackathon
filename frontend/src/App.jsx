@@ -19,6 +19,18 @@ import { BrandMark, Wordmark, BRAND } from './components/Brand.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent, SAMPLE_QUESTIONS } from './api.js';
+import presetQuestionFile from './mock/preset-questions.json';
+
+// "Choose existing slides": questions were written in advance (mock/preset-questions.json),
+// so starting is instant and needs no AI call. Shuffled for every session.
+function presetQuestions() {
+  const qs = presetQuestionFile.questions.slice();
+  for (let i = qs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [qs[i], qs[j]] = [qs[j], qs[i]];
+  }
+  return qs;
+}
 import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
@@ -131,7 +143,9 @@ export default function App() {
     // Questions for Reel Guard are written only now, when the user starts the bubble
     // (not when they open "Continue on other apps"), and once per set of slides.
     const slides = guardSlidesRef.current;
-    if (slides && guardQuestionsRef.current.slides !== slides) {
+    if (slides && deck?.preset && guardQuestionsRef.current.slides !== slides) {
+      guardQuestionsRef.current = { slides, questions: presetQuestions() }; // instant, no AI call
+    } else if (slides && guardQuestionsRef.current.slides !== slides) {
       showToast('Writing questions from your slides…');
       const r = await fetchQuestions(slides, CONFIG.questionCount);
       guardQuestionsRef.current = { slides, questions: r.questions };
@@ -316,6 +330,15 @@ export default function App() {
     setQuestionsReady(false);
     setProvider('generating…');
     // With several PDFs, remember which file (and its own page number) each deck page came from.
+    if (deck?.preset) {
+      // Existing slides: pre-written questions, ready at once.
+      const qs = presetQuestions();
+      setQuestions(qs);
+      setQuestionsReady(true);
+      syncGuard({ questions: qs });
+      setProvider('pre-written (AIHubMix)');
+      return;
+    }
     const bySlide = new Map(slides.map((s) => [Number(s.page), s]));
     const multiFile = new Set(slides.map((s) => s.file).filter(Boolean)).size > 1;
     showToast('Generating questions from your slides…');
@@ -516,6 +539,7 @@ export default function App() {
             onStart={startBubble}
             onBack={() => setPhase('start')}
             onNote={showToast}
+            onRefresh={refreshGuard}
           />
         )}
         {phase === 'info' && <InfoPage onBack={() => setPhase('start')} />}

@@ -32,10 +32,10 @@ test('5 minutes away clears 1 Loan Point', () => {
   assert.equal(pointsCleared(11), 2);
 });
 
-test('a question every 5 paid reels: 10, 15, 20…', () => {
+test('a question every 5 reels: 5, 10, 15, 20…', () => {
   const asked = range(1, 30).filter((n) => asksQuestion(n));
-  assert.deepEqual(asked, [10, 15, 20, 25, 30]);
-  for (const n of range(1, 5)) assert.equal(asksQuestion(n), false); // free reels never ask
+  assert.deepEqual(asked, [5, 10, 15, 20, 25, 30]);
+  for (const n of range(1, 4)) assert.equal(asksQuestion(n), false); // first question on reel 5
 });
 
 test('wrong answer leads to a different next question', () => {
@@ -74,27 +74,31 @@ test('paid reels alternate on / muted and get 2% quieter each reel', () => {
   assert.deepEqual(audioForReel(null), { muted: false, volume: 1 });
 });
 
-test('reels 1-10 arrive normally, reel 11 onwards takes 3 seconds', () => {
-  for (const n of range(1, 10)) assert.equal(transitionMsInto(n), CONFIG.normalTransitionMs);
-  for (const n of range(11, 50)) assert.equal(transitionMsInto(n), 3000);
+test('reels 1-9 arrive normally, reel 10 onwards takes 3 seconds', () => {
+  for (const n of range(1, 9)) assert.equal(transitionMsInto(n), CONFIG.normalTransitionMs);
+  for (const n of range(10, 50)) assert.equal(transitionMsInto(n), 3000);
   assert.equal(transitionMsInto(null), CONFIG.normalTransitionMs); // the card
 });
 
-test('colours start fading after reel 10 and reach full decay 15 reels later', () => {
-  for (const n of range(1, 10)) assert.equal(visualDecay(n), 0);
-  assert.ok(visualDecay(11) > 0 && visualDecay(11) < 0.1);
+test('colours start fading at reel 10 and reach full decay 15 reels later', () => {
+  for (const n of range(1, 9)) assert.equal(visualDecay(n), 0);
+  assert.ok(visualDecay(10) > 0 && visualDecay(10) < 0.1);
   assert.ok(visualDecay(18) > visualDecay(12));
-  assert.equal(visualDecay(25), 1);
+  assert.equal(visualDecay(24), 1);
   assert.equal(visualDecay(40), 1);
   assert.equal(decayFilter(0), 'none');
   assert.match(decayFilter(1), /grayscale\(1\).*blur\(2\.5px\)/);
 });
 
 test('rulesForReel summarises one reel', () => {
-  assert.deepEqual(rulesForReel(10), {
-    reel: 10, free: false, points: 1, question: true, muted: false, volume: 0.9,
+  assert.deepEqual(rulesForReel(9), {
+    reel: 9, free: false, points: 1, question: false, muted: true, volume: 0.92,
     transitionMs: CONFIG.normalTransitionMs, decay: 0, filter: 'none',
   });
+  const r10 = rulesForReel(10);
+  assert.equal(r10.question, true);
+  assert.equal(r10.transitionMs, 3000); // slowdown and grey start at reel 10
+  assert.notEqual(r10.filter, 'none');
   const r11 = rulesForReel(11);
   assert.equal(r11.transitionMs, 3000);
   assert.equal(r11.muted, true);
@@ -104,7 +108,7 @@ test('rulesForReel summarises one reel', () => {
 
 test('demo overrides still give a sensible sequence', () => {
   const demo = { ...CONFIG, questionEvery: 2, slowAfterReels: 8, decayFullAfterReels: 5 };
-  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [7, 9, 11]);
+  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [2, 4, 6, 8, 10, 12]);
   assert.equal(transitionMsInto(9, demo), 3000);
   assert.equal(visualDecay(13, demo), 1);
 });
