@@ -39,8 +39,9 @@ h1, h2 { text-wrap: balance; }
 .app { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--cream); }
 .phone { position: relative; z-index: 1; width: 100%; height: 100%; max-width: 430px; overflow: hidden; background: var(--navy); color: #fff; }
 /* Light screens: hide the dark feed behind them so it can't bleed through the rounded corners. */
-.phone.phase-gate, .phone.phase-results { background: var(--white); }
-.phone.phase-gate .feed, .phone.phase-results .feed { visibility: hidden; }
+.phone.phase-gate, .phone.phase-results, .phone.phase-guard, .phone.phase-guard-slides { background: var(--white); }
+.phone.phase-gate .feed, .phone.phase-results .feed,
+.phone.phase-guard .feed, .phone.phase-guard-slides .feed { visibility: hidden; }
 @media (min-width: 600px) {
   .phone { height: min(92vh, 900px); border-radius: 40px; box-shadow: 0 0 0 10px #fff, 0 30px 80px rgba(63, 65, 78, 0.25); }
 }
@@ -260,3 +261,23 @@ h1, h2 { text-wrap: balance; }
   .slow-fill { width: 100%; }
 }
 .caught-up .allowance-hint { margin: 2px 0 0; font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+/* ---------- Reel Guard home (guard APK only) ---------- */
+.guard .gate-card { gap: 14px; text-align: left; }
+.guard h1 { font-size: 24px; text-align: center; }
+.guard .gate-body, .guard .brand { text-align: center; }
+.guard-meters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.guard-meters div { background: #f2f3f7; border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; }
+.guard-meters span { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.guard-meters strong { font-size: 24px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.guard-step { display: grid; grid-template-columns: 32px 1fr; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 18px; }
+.guard-step.done { border-color: rgba(108, 178, 142, 0.6); background: rgba(108, 178, 142, 0.08); }
+.guard-step-mark { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #f2f3f7; color: var(--ink); font-weight: 700; font-size: 14px; }
+.guard-step.done .guard-step-mark { background: #6cb28e; color: #fff; }
+.guard-step-body { display: grid; gap: 8px; min-width: 0; color: var(--ink); }
+.guard-step-body p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.guard-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.guard-apps { display: grid; gap: 8px; }
+.guard-rules { font-size: 13px; color: var(--muted); }
+.guard-rules summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.guard-rules ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; line-height: 1.45; }

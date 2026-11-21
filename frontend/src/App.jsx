@@ -3,6 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
+import GuardHome from './components/GuardHome.jsx';
+import { getGuardStatus, syncGuard } from './native/reelGuard.js';
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
@@ -55,7 +57,10 @@ export default function App() {
   const feedRef = useRef(null);
   const [reels, setReels] = useState(null);
   const [reelSource, setReelSource] = useState('');
-  const [phase, setPhase] = useState('gate'); // gate | feed | results
+  const [phase, setPhase] = useState('gate'); // gate | feed | results | guard | guard-slides
+  // Reel Guard APK only: null = still checking, false = normal app, true = guard build.
+  const [guardBuild, setGuardBuild] = useState(null);
+  const [guardStatus, setGuardStatus] = useState(null);
   const [sessionId, setSessionId] = useState(newSessionId);
   const [index, setIndex] = useState(0);
   const maxSeenRef = useRef(0);
@@ -81,6 +86,34 @@ export default function App() {
     const t = setTimeout(() => setToast(null), 3500);
     return () => clearTimeout(t);
   }, [toast]);
+
+  // Reel Guard APK? Then start on the guard home screen instead of the slide gate.
+  const refreshGuard = useCallback(async () => {
+    const s = await getGuardStatus();
+    setGuardStatus(s);
+    return s;
+  }, []);
+  useEffect(() => {
+    refreshGuard().then((s) => {
+      const isGuard = s?.mode === 'guard';
+      setGuardBuild(isGuard);
+      if (isGuard) {
+        setPhase('guard');
+        syncGuard(); // send the rule numbers and target apps (questions come from slides)
+      }
+    });
+  }, [refreshGuard]);
+
+  // Guard build: slides chosen on the guard home -> questions -> native service.
+  function chooseGuardSlides(slides) {
+    setPhase('guard');
+    showToast('Writing questions from your slides…');
+    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
+      await syncGuard({ questions: r.questions });
+      await refreshGuard();
+      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
+    });
+  }
 
   // Load reels once.
   useEffect(() => {
@@ -230,6 +263,7 @@ export default function App() {
     setProvider('generating…');
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
       setQuestions(r.questions);
+      syncGuard({ questions: r.questions }); // no-op outside the Android app
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
     });
@@ -256,7 +290,7 @@ export default function App() {
     setQuestions([]);
     setProvider('');
     setSessionId(newSessionId());
-    setPhase('gate');
+    setPhase(guardBuild ? 'guard' : 'gate');
   }
 
   // ---- Demo controls ---------------------------------------------------------
@@ -311,7 +345,7 @@ export default function App() {
   };
 
   // ---- Render ----------------------------------------------------------------
-  if (!reels) {
+  if (!reels || guardBuild === null) {
     return (
       <div className="app">
         <Backdrop />
@@ -394,6 +428,17 @@ export default function App() {
         )}
 
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} />}
+        {phase === 'guard' && (
+          <GuardHome
+            status={guardStatus}
+            onRefresh={refreshGuard}
+            onChooseSlides={() => setPhase('guard-slides')}
+            onBackupFeed={() => setPhase('gate')}
+          />
+        )}
+        {phase === 'guard-slides' && (
+          <SlideGate onStart={chooseGuardSlides} explain={explain} startLabel="Use these slides for questions" />
+        )}
         {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} />}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}
         {toast && <div className="toast" key={toast.id} role="status">{toast.text}</div>}

@@ -34,6 +34,18 @@ export const CONFIG = {
   swipeThresholdPx: 80,
 };
 
+// Apps the Reel Guard APK runs on top of (Android package names).
+// Only used in the "guard" build; see docs/REEL_GUARD.md.
+export const GUARD_TARGETS = [
+  { pkg: 'com.instagram.android', name: 'Instagram' },
+  { pkg: 'com.xingin.xhs', name: '小红书 Xiaohongshu' },
+  { pkg: 'com.ss.android.ugc.aweme', name: '抖音 Douyin' },
+  { pkg: 'com.ss.android.ugc.aweme.lite', name: '抖音极速版 Douyin Lite' },
+  { pkg: 'com.zhiliaoapp.musically', name: 'TikTok' },
+  { pkg: 'com.ss.android.ugc.trill', name: 'TikTok (Asia)' },
+  { pkg: 'com.smile.gifmaker', name: '快手 Kuaishou' },
+];
+
 // "Demo speed x3" in the demo panel swaps in these values so the whole journey
 // fits into a 3-minute judging slot.
 export const DEMO_OVERRIDES = {

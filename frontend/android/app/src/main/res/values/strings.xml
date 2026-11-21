@@ -4,4 +4,6 @@
     <string name="title_activity_main">Doomscroll Tax</string>
     <string name="package_name">com.cpx.doomscrolltax</string>
     <string name="custom_url_scheme">com.cpx.doomscrolltax</string>
+    <!-- "feed" = our own 50-video app. The guard variant overrides this with "guard". -->
+    <string name="app_mode">feed</string>
 </resources>

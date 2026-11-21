@@ -16,6 +16,21 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Two APKs from one project (pick in Android Studio: Build > Select Build Variant):
+    //   feedDebug  -> "Doomscroll Tax": our own feed with the 50 videos (the backup)
+    //   guardDebug -> "Reel Guard": runs the rules on top of Instagram / Xiaohongshu / Douyin
+    // Different application ids, so both can be installed on the same phone.
+    flavorDimensions "mode"
+    productFlavors {
+        feed {
+            dimension "mode"
+        }
+        guard {
+            dimension "mode"
+            applicationIdSuffix ".guard"
+            versionNameSuffix "-guard"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

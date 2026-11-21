@@ -8,7 +8,7 @@ import { IconUpload, IconDoc, IconCheck } from './Icons.jsx';
 import { LogoMark, SlidesArt } from './Illustrations.jsx';
 import sample from '../mock/sample-slides.json';
 
-export default function SlideGate({ onStart, explain }) {
+export default function SlideGate({ onStart, explain, startLabel }) {
   // idle | reading { n } | ready { slides, name } | error { msg }
   const [status, setStatus] = useState({ kind: 'idle' });
   const inputRef = useRef(null);
@@ -107,7 +107,7 @@ export default function SlideGate({ onStart, explain }) {
             </div>
             {/* onStart must run inside this click so the browser allows video with sound. */}
             <button className="btn primary big" onClick={() => onStart(status.slides)}>
-              {COPY.gate.start}
+              {startLabel || COPY.gate.start}
             </button>
             <button className="btn link" onClick={() => setStatus({ kind: 'idle' })}>
               Choose different slides

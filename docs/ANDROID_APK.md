@@ -72,6 +72,12 @@ npx cap open android
 ```
 Android Studio opens the project. **Wait for "Gradle sync" to finish**; the first time it downloads a lot.
 
+**Pick the variant:** Build → Select Build Variant → `app`:
+- **`feedDebug`** = "Doomscroll Tax", our own 50-video feed (build this first: it's the backup)
+- **`guardDebug`** = "Reel Guard", the overlay on Instagram / Xiaohongshu. See [REEL_GUARD.md](REEL_GUARD.md)
+
+Both can be installed side by side. With `guardDebug` the APK file is under `outputs/apk/guard/debug/`.
+
 **Option A: run directly on the phone (easiest).** Plug the phone in over USB, accept the "Allow USB debugging" prompt on the phone, choose the phone in the device dropdown at the top, and press the green ▶ Run button.
 
 **Option B: build an APK file.** Menu **Build → Build App Bundle(s) / APK(s) → Build APK(s)**. When it finishes, click **locate**. The file is `android/app/build/outputs/apk/debug/app-debug.apk`. Send it to the phone (USB or a file transfer app), open it, and allow "Install unknown apps" when asked.
