@@ -19,8 +19,7 @@ import java.util.List;
 
 /**
  * Bridge between the web app (frontend/src/native/reelGuard.js) and the Reel Guard service.
- * Present in both APK variants; the service itself is only declared in the "guard" variant
- * (src/guard/AndroidManifest.xml), so in the "feed" variant getStatus() reports mode "feed".
+ * The web app uses getStatus() to show the Android home chooser and the guard setup steps.
  */
 @CapacitorPlugin(name = "ReelGuard")
 public class ReelGuardPlugin extends Plugin {
@@ -29,7 +28,7 @@ public class ReelGuardPlugin extends Plugin {
         return new GuardStore(getContext());
     }
 
-    /** "feed" or "guard", from res/values/strings.xml (overridden in the guard variant). */
+    /** "combined": one app with our own feed + Reel Guard (res/values/strings.xml). */
     private String mode() {
         return getContext().getString(R.string.app_mode);
     }

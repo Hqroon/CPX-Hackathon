@@ -1,13 +1,11 @@
 # Reel Guard: the Doomscroll Tax rules on top of Instagram / Xiaohongshu
 
-Two APKs come from the same project:
+One APK, **Doomscroll Tax**. On Android it opens on a home screen with two buttons:
 
-| Build variant | App name on the phone | What it does |
-|---|---|---|
-| `feedDebug` | **Doomscroll Tax** | Our own feed with the 50 videos. The safe demo and the backup. |
-| `guardDebug` | **Reel Guard** | Runs the rules **on top of Instagram, Xiaohongshu, Douyin, TikTok and Kuaishou**, on their real reels. Its home screen also has **"Backup: open our own feed"**, which opens the 50-video app inside the same APK. |
-
-They have different app ids (`com.cpx.doomscrolltax` and `com.cpx.doomscrolltax.guard`), so **both can be installed on the demo phone at the same time**.
+| Button | What it does |
+|---|---|
+| **Continue on this app** | Our own feed with the 50 videos. The safe demo and the backup. |
+| **Continue with other apps** | The Reel Guard screen: switch it on once, load questions from slides, then open **Instagram, Xiaohongshu, Douyin, TikTok or Kuaishou**. The rules run on top of their real reels. **Back** returns to the home screen. |
 
 > Android only. iPhones don't allow one app to draw over another or watch its scrolling.
 
@@ -33,18 +31,17 @@ Same rules as the in-app feed (`frontend/src/rules/frustration.js`). The Java co
 
 Prerequisites, the web build and syncing are the same as in [ANDROID_APK.md](ANDROID_APK.md). Then:
 
-1. Android Studio → **Build → Select Build Variant** → set `app` to **`guardDebug`**.
-2. Plug in the phone → ▶ Run. Or **Build → Build APK(s)**: the file is `android/app/build/outputs/apk/guard/debug/app-guard-debug.apk`.
-3. To install the normal app as well, switch the variant to **`feedDebug`** and run again.
+1. Plug in the phone → ▶ Run. Or **Build → Build APK(s)**: the file is `android/app/build/outputs/apk/debug/app-debug.apk`.
+2. There's only one APK. The Reel Guard part stays off until it's switched on in Settings (below).
 
 After any web change: `npm run build` → `npx cap sync android` → Run again.
 
 ## Switch it on (on the phone, once)
 
-1. Open **Reel Guard** → step 1 → **Open Accessibility**.
+1. Open **Doomscroll Tax** → **Continue with other apps** → step 1 → **Open Accessibility**.
 2. Find **Reel Guard · Doomscroll Tax** (often under "Downloaded apps" or "Installed services") → turn it on → confirm.
-3. **Greyed out / "Restricted setting"?** (Android 13+ blocks this for apps not installed from a store.) Go back to Reel Guard → **App info** → ⋮ (top right) → **Allow restricted settings** → repeat step 2.
-4. Back in Reel Guard, step 1 shows ✓.
+3. **Greyed out / "Restricted setting"?** (Android 13+ blocks this for apps not installed from a store.) Go back to the app → **App info** → ⋮ (top right) → **Allow restricted settings** → repeat step 2.
+4. Back in the app, step 1 shows ✓.
 5. Step 2 → choose slides (or the sample slides), so the questions come from the course. The backend must be reachable (see `VITE_API_BASE` in ANDROID_APK.md). Without it, built-in questions are used.
 6. Step 3 → **Instagram** or **小红书 Xiaohongshu**. Go to Reels / the video feed and swipe.
 
@@ -64,20 +61,20 @@ These kill background services aggressively. On the demo phone:
 - [ ] Right answer: card closes, sound returns
 - [ ] Reel 11+: 3 s "Loading next reel…" after every swipe, the screen greys more each reel
 - [ ] Leave to the home screen: everything disappears, your normal volume is back
-- [ ] Tap the bubble: Reel Guard opens
-- [ ] **Backup:** Reel Guard → "Backup: open our own feed (50 videos)" works
+- [ ] Tap the bubble: Doomscroll Tax opens
+- [ ] **Backup:** Back → **Continue on this app** plays our own 50 videos
 
 ## If it misbehaves on stage
 
-1. Reel Guard home → **Reset guard points**, then reopen the app.
+1. Continue with other apps → **Reset guard points**, then reopen the app.
 2. Still wrong: switch the accessibility service off and on.
-3. Fall back: **"Backup: open our own feed"**, or open the separate **Doomscroll Tax** app. Same rules, 50 videos, no setup needed.
+3. Fall back: **Back → Continue on this app**. Same rules, 50 videos, no setup needed.
 
 ## Tuning
 
-- Rule numbers come from `frontend/src/config.js` (synced to the phone when Reel Guard opens). Change them there, rebuild, sync.
+- Rule numbers come from `frontend/src/config.js` (synced to the phone when the app opens). Change them there, rebuild, sync.
 - Native-only settings in `GuardConfig.java`: `swipeDebounceMs` (900 ms; raise it if one swipe counts twice), `sessionGapMinutes` (10), `maxGreyAlpha` (0.6).
-- Guarded apps: `GUARD_TARGETS` in `config.js`, and the `<queries>` list in `android/app/src/guard/AndroidManifest.xml` (both must list the package).
+- Guarded apps: `GUARD_TARGETS` in `config.js`, and the `<queries>` list in `android/app/src/main/AndroidManifest.xml` (both must list the package).
 
 ## Files
 
@@ -91,15 +88,15 @@ frontend/android/app/src/main/java/com/cpx/doomscrolltax/
   guard/GuardOverlays.java     bubble, grey layer, 3 s cover, question card
   guard/ReelGuardService.java  the accessibility service (watches apps + swipes)
   guard/ReelGuardPlugin.java   bridge used by frontend/src/native/reelGuard.js
-frontend/android/app/src/guard/
-  AndroidManifest.xml          declares the service (guard variant only)
-  res/values/strings.xml       app name "Reel Guard", app_mode = guard
+frontend/android/app/src/main/
+  AndroidManifest.xml          declares the service, permission and <queries>
   res/xml/reel_guard_service.xml
-frontend/src/native/reelGuard.js   web → native bridge (no-op in the browser)
-frontend/src/components/GuardHome.jsx
+frontend/src/native/reelGuard.js        web → native bridge (no-op in the browser)
+frontend/src/components/HomeChooser.jsx the two-button home screen (Android)
+frontend/src/components/GuardHome.jsx   "Continue with other apps" screen
 ```
 
-Preview the guard home screen in a browser: `http://localhost:5173/?guard-preview`.
+Preview the home screen and guard screen in a browser: `http://localhost:5173/?guard-preview`.
 
 **Privacy:** the service only receives "which app is open" and "something scrolled". `canRetrieveWindowContent` is false, so it never reads what's on screen, and nothing leaves the phone.
 

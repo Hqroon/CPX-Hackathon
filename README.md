@@ -20,7 +20,7 @@ The first 5 reels of every session are always free (golden path), so the task ca
 
 **Android demo:** the app is wrapped as an APK with Capacitor, with the videos packed inside. See [docs/ANDROID_APK.md](docs/ANDROID_APK.md).
 
-**Reel Guard (second APK):** the same rules running **on top of Instagram / Xiaohongshu / Douyin** through an Android accessibility service, with "Backup: open our own feed" built in. Build variant `guardDebug`. See [docs/REEL_GUARD.md](docs/REEL_GUARD.md).
+**One app, two ways to scroll (Android):** the home screen offers **Continue on this app** (our feed) or **Continue with other apps**, which runs the same rules **on top of Instagram / Xiaohongshu / Douyin** through an Android accessibility service (Reel Guard). See [docs/REEL_GUARD.md](docs/REEL_GUARD.md).
 
 ## Quick start
 
