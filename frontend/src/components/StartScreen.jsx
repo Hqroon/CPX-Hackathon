@@ -7,7 +7,7 @@ import presets from '../mock/course-slides.json';
 import { HomeLogo } from './Brand.jsx';
 import { IconLayers, IconShare, IconChevron, IconUpload, IconDoc, IconBack, IconCheck } from './Icons.jsx';
 
-export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp, deck, onDeckChange = () => {} }) {
+export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp, deck, onDeckChange = () => {}, onInfo = () => {} }) {
   // `deck` is the user's confirmed upload, kept by App: coming back here (from results,
   // from Reel Guard, …) reopens on the choices with the same files instead of asking again.
   const { status, inputRef, onFile, readingLabel, reading, ready, choose, reset, useDecks } = useSlideUpload(deck);
@@ -31,7 +31,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
   const otherSub = !nativeApp
     ? 'Android app only · Instagram, 小红书 Xiaohongshu'
     : armed
-      ? 'Running as a bubble' + (owed > 0 ? ` · −${owed} owed` : '')
+      ? 'Running as a bubble' + (owed > 0 ? ` · −${owed} Loan Points` : '')
       : 'Instagram · 小红书 Xiaohongshu · 抖音 Douyin';
 
   return (
@@ -116,6 +116,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
           )}
         </div>
       </div>
+      <button type="button" className="info-link" onClick={onInfo}>Click Here for More Information</button>
     </div>
   );
 }

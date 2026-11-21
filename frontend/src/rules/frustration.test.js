@@ -26,15 +26,15 @@ test('first 5 reels are free, then every reel costs 1 point', () => {
   assert.equal(paidNumber(6), 1);
 });
 
-test('15 minutes away clears 1 point', () => {
-  assert.equal(pointsCleared(14), 0);
-  assert.equal(pointsCleared(15), 1);
-  assert.equal(pointsCleared(31), 2);
+test('5 minutes away clears 1 Loan Point', () => {
+  assert.equal(pointsCleared(4), 0);
+  assert.equal(pointsCleared(5), 1);
+  assert.equal(pointsCleared(11), 2);
 });
 
-test('a question right after the 5 free reels, then every 5 reels: 6, 11, 16…', () => {
+test('a question every 5 paid reels: 10, 15, 20…', () => {
   const asked = range(1, 30).filter((n) => asksQuestion(n));
-  assert.deepEqual(asked, [6, 11, 16, 21, 26]);
+  assert.deepEqual(asked, [10, 15, 20, 25, 30]);
   for (const n of range(1, 5)) assert.equal(asksQuestion(n), false); // free reels never ask
 });
 
@@ -92,19 +92,19 @@ test('colours start fading after reel 10 and reach full decay 15 reels later', (
 
 test('rulesForReel summarises one reel', () => {
   assert.deepEqual(rulesForReel(10), {
-    reel: 10, free: false, points: 1, question: false, muted: false, volume: 0.9,
+    reel: 10, free: false, points: 1, question: true, muted: false, volume: 0.9,
     transitionMs: CONFIG.normalTransitionMs, decay: 0, filter: 'none',
   });
   const r11 = rulesForReel(11);
   assert.equal(r11.transitionMs, 3000);
   assert.equal(r11.muted, true);
   assert.notEqual(r11.filter, 'none');
-  assert.equal(r11.question, true);
+  assert.equal(r11.question, false);
 });
 
 test('demo overrides still give a sensible sequence', () => {
   const demo = { ...CONFIG, questionEvery: 2, slowAfterReels: 8, decayFullAfterReels: 5 };
-  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [6, 8, 10, 12]);
+  assert.deepEqual(range(1, 12).filter((n) => asksQuestion(n, demo)), [7, 9, 11]);
   assert.equal(transitionMsInto(9, demo), 3000);
   assert.equal(visualDecay(13, demo), 1);
 });

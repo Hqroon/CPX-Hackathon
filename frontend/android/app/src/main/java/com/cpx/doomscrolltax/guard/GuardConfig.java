@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public final class GuardConfig {
     public int freeReels = 5;
     public int pointsPerReel = 1;
-    public int minutesPerPoint = 15;
+    public int minutesPerPoint = 5;
     public int questionEvery = 5;
     public int wrongWaitSeconds = 5;
     public double volumeStepDown = 0.02;

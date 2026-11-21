@@ -37,6 +37,12 @@
 
         <!-- Reel Guard: runs the rules on top of Instagram / Xiaohongshu / Douyin.
              Off until the user switches it on in Settings > Accessibility. See docs/REEL_GUARD.md -->
+        <!-- Hears "swiped away from recent apps" so the bubble and Loan Points reset. -->
+        <service
+            android:name=".guard.ExitWatchService"
+            android:exported="false"
+            android:stopWithTask="false" />
+
         <service
             android:name="com.cpx.doomscrolltax.guard.ReelGuardService"
             android:exported="true"

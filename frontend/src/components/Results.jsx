@@ -29,7 +29,7 @@ function ResultsOriginal({ stats, points, onRestart, onHome }) {
 
         <div className="total">
           <span className={`total-number ${points > 0 ? 'owing' : ''}`}>{points > 0 ? `−${points}` : '0'}</span>
-          <p className="muted strong">{points === 1 ? 'point owed' : 'points owed'}</p>
+          <p className="muted strong">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
         </div>
 
         <div className="card breakdown">
@@ -108,7 +108,7 @@ function ResultsMinimal({ stats, points, onRestart, onHome }) {
           <span className="rs-number" aria-label={finalText}>
             <span aria-hidden="true">{shown > 0 ? `−${shown}` : '0'}</span>
           </span>
-          <p className="rs-unit">{points === 1 ? 'point owed' : 'points owed'}</p>
+          <p className="rs-unit">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
         </div>
 
         <p className="rs-stats">
