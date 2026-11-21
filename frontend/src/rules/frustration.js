@@ -7,7 +7,8 @@
 // Spec (CONFIG defaults):
 //   reels 1–5      free: 0 points, no question, full volume, normal speed, no decay
 //   reel 6+        −1 point each
-//   reels 10,15…   a question (every 5 paid reels); right = next reel, wrong = 5 s, then a new question
+//   reels 6,11,16… a question right after the free reels, then after every 5 more reels;
+//                  right = next reel, wrong = wait, then a new question
 //   reel 6+        sound alternates on / muted, and each paid reel is 2% quieter
 //   reel 11+       each new reel takes 3 s to arrive, and colours progressively fade
 
@@ -55,10 +56,14 @@ export const pointsCleared = (minutesAway, cfg = CONFIG) =>
 // Question toll
 // ---------------------------------------------------------------------------
 
-/** True when a question must be answered on arriving at reel n. */
+/**
+ * True when a question must be answered on arriving at reel n.
+ * The first question comes as soon as the free reels end (reel F+1), then one after
+ * every `questionEvery` further reels: with 5 free and every 5 -> reels 6, 11, 16, 21…
+ */
 export function asksQuestion(n, cfg = CONFIG) {
   const k = paidNumber(n, cfg);
-  return k > 0 && k % cfg.questionEvery === 0;
+  return k > 0 && (k - 1) % cfg.questionEvery === 0;
 }
 
 /**

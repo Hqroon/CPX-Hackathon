@@ -27,7 +27,7 @@ export default function DemoPanel({ info, actions, onClose }) {
         <dt>Points</dt><dd>{info.points}</dd>
         <dt>Session</dt><dd>{info.totalReels} reels · {info.reelsAfterLine} after line</dd>
         <dt>Now</dt><dd>reel {info.currentReel ?? '–'} · sound {info.volume} · decay {info.decay}%</dd>
-        <dt>Rules</dt><dd>question every {info.questionEvery} paid reels · slow + fading after reel {info.slowThreshold}</dd>
+        <dt>Rules</dt><dd>question after the free reels, then every {info.questionEvery} · slow + fading after reel {info.slowThreshold}</dd>
       </dl>
     </div>
   );

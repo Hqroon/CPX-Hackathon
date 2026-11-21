@@ -129,6 +129,18 @@ export default function App() {
     showToast('Bubble stopped. Instagram and Xiaohongshu are untaxed again.');
   }
 
+  // Home page: slides were uploaded first, then "Continue on other apps" was chosen.
+  // Write questions from those slides for Reel Guard, and open it straight away.
+  function otherAppsWithSlides(slides) {
+    showToast('Writing questions from your slides…');
+    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
+      await syncGuard({ questions: r.questions }); // no-op outside the Android app
+      await refreshGuard();
+      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
+    });
+    continueWithOtherApps();
+  }
+
   // Reel Guard: slides chosen on the guard screen -> questions -> native service.
   function chooseGuardSlides(slides) {
     setPhase('guard');
@@ -485,8 +497,8 @@ export default function App() {
           <StartScreen
             nativeApp={nativeApp}
             guardStatus={guardStatus}
-            onThisApp={() => setPhase('gate')}
-            onOtherApps={continueWithOtherApps}
+            onThisApp={startSession}
+            onOtherApps={otherAppsWithSlides}
           />
         )}
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} onBack={() => setPhase('start')} />}
