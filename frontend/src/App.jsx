@@ -199,7 +199,20 @@ export default function App() {
     return question;
   }
 
+  const pendingQuizRef = useRef(false);
+  useEffect(() => {
+    if (questions.length && pendingQuizRef.current) {
+      pendingQuizRef.current = false;
+      openQuiz();
+    }
+  }, [questions]);
+
   function openQuiz() {
+    if (!questions.length) {
+      pendingQuizRef.current = true;
+      showToast('Questions are still being generated. Please try again shortly.');
+      return;
+    }
     const q = drawQuestion();
     if (q) setQuiz({ q, k: statsRef.current.asked, phase: 'ask', picked: null, wait: 0 });
   }
@@ -280,17 +293,22 @@ export default function App() {
 
   // ---- Session lifecycle -----------------------------------------------------
   function startSession(slides) {
+    pendingQuizRef.current = false;
     feedRef.current?.unlockAudio(); // must happen inside the click
     setPhase('feed');
     logEvent(sessionId, 'session_start', { slides: slides.length });
     onNewItem(0);
     setQuestions([]);
     setProvider('generating…');
+    showToast('Generating questions from your slides…');
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
       setQuestions(r.questions);
       syncGuard({ questions: r.questions }); // no-op outside the Android app
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
+      showToast(r.usedFallback
+        ? 'AI unavailable: using clearly labelled practice questions.'
+        : `${r.questions.length} AI questions ready from your slides.`);
     });
   }
 
@@ -423,6 +441,7 @@ export default function App() {
           </button>
           {phase === 'feed' && (
             <div className="topbar-right">
+              <span role="status" title="Question source">{provider === 'generating…' ? 'AI generating…' : /mock|fallback/.test(provider) ? 'Practice bank' : questions.length ? `AI · ${questions.length}` : ''}</span>
               {/* Sound state is only revealed in explain mode; otherwise the volume fade stays silent. */}
               {explain && afterLine && current?.type === 'reel' && (
                 <span
