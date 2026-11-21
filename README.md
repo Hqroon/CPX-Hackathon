@@ -45,7 +45,11 @@ Open http://localhost:5173. To test on a phone on the same Wi-Fi, open `http://<
 
 **Demo panel:** tap the 刷屏税 logo 5 times. Controls: skip 15 minutes, jump to just before slow scroll, trigger a question, demo speed ×3, explain mode, reset.
 
-## Adding the 50 reels (M3)
+## The reels (M3)
+
+**The 35 videos live on the `media` branch, not on `main`** (so pulling `main` stays fast). How to get them and point the app at them: [docs/VIDEOS.md](docs/VIDEOS.md).
+
+### Adding reels
 
 1. Install ffmpeg: `winget install Gyan.FFmpeg`, and convert the clips to vertical MP4 with sound (command in TEAM_PLAN.md).
 2. Put the videos in **one folder**. Any file names work (`.mp4`, `.webm`, `.mov`). Either:
