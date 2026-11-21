@@ -109,6 +109,10 @@ export default function App() {
 
   // "Continue on other apps": if Reel Guard is switched on, the app shrinks into the
   // floating bubble straight away; otherwise show the one-time setup screen.
+  // Slides chosen for Reel Guard, and the questions written from them (once, on start).
+  const guardSlidesRef = useRef(null);
+  const guardQuestionsRef = useRef({ slides: null, questions: [] });
+
   async function continueWithOtherApps() {
     const s = await refreshGuard();
     if (s?.accessibilityEnabled && s.running !== false && !s.armed) {
@@ -119,7 +123,17 @@ export default function App() {
   }
 
   async function startBubble() {
-    await syncGuard({ questions: questions.length ? questions : undefined });
+    // Questions for Reel Guard are written only now, when the user starts the bubble
+    // (not when they open "Continue on other apps"), and once per set of slides.
+    const slides = guardSlidesRef.current;
+    if (slides && guardQuestionsRef.current.slides !== slides) {
+      showToast('Writing questions from your slides…');
+      const r = await fetchQuestions(slides, CONFIG.questionCount);
+      guardQuestionsRef.current = { slides, questions: r.questions };
+      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
+    }
+    const guardQuestions = slides ? guardQuestionsRef.current.questions : (questions.length ? questions : undefined);
+    await syncGuard({ questions: guardQuestions });
     await armGuard(true);
     await refreshGuard();
     setPhase('start');
@@ -136,12 +150,7 @@ export default function App() {
   // Home page: slides were uploaded first, then "Continue on other apps" was chosen.
   // Write questions from those slides for Reel Guard, and open it straight away.
   function otherAppsWithSlides(slides) {
-    showToast('Writing questions from your slides…');
-    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
-      await syncGuard({ questions: r.questions }); // no-op outside the Android app
-      await refreshGuard();
-      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
-    });
+    guardSlidesRef.current = slides; // questions are written when the bubble starts
     continueWithOtherApps();
   }
 

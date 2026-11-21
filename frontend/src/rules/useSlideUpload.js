@@ -106,6 +106,24 @@ export function useSlideUpload(savedDeck = null) {
     reading: status.kind === 'reading',
     ready: status.kind === 'ready',
     choose: () => inputRef.current?.click(),
+    // Preset decks already in the app (mock/course-slides.json), merged like uploaded PDFs.
+    useDecks: (picked) => {
+      // Some preset titles were saved with a broken dash (U+FFFD); show a real one.
+      const decks = picked.map((d) => ({ ...d, title: String(d.title).replace(/�/g, '–') }));
+      const slides = [];
+      for (const deck of decks) {
+        for (const sl of deck.pages) {
+          if (String(sl.text || '').trim().length < 30) continue;
+          slides.push({ page: slides.length + 1, text: sl.text, file: deck.title, filePage: sl.page });
+        }
+      }
+      const files = decks.map((d) => ({ name: d.title, count: d.pages.length }));
+      const name = files.length === 1 ? files[0].name : `${files[0].name} + ${files.length - 1} more`;
+      const deck = { slides, name, files, skipped: [], preset: true };
+      setDiagnostics(null);
+      setStatus({ kind: 'ready', ...deck });
+      return deck;
+    },
     reset: () => { setStatus({ kind: 'idle' }); setDiagnostics(null); },
   };
 }

@@ -3,19 +3,26 @@
 import React, { useState } from 'react';
 import { CONFIG } from '../config.js';
 import { useSlideUpload } from '../rules/useSlideUpload.js';
+import presets from '../mock/course-slides.json';
 import { HomeLogo } from './Brand.jsx';
 import { IconLayers, IconShare, IconChevron, IconUpload, IconDoc, IconBack, IconCheck } from './Icons.jsx';
 
 export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp, deck, onDeckChange = () => {} }) {
   // `deck` is the user's confirmed upload, kept by App: coming back here (from results,
   // from Reel Guard, …) reopens on the choices with the same files instead of asking again.
-  const { status, inputRef, onFile, readingLabel, reading, ready, choose, reset } = useSlideUpload(deck);
+  const { status, inputRef, onFile, readingLabel, reading, ready, choose, reset, useDecks } = useSlideUpload(deck);
+  // "Choose existing slides": use the preset lecture decks straight away, skipping the
+  // file review, and go directly to "Where do you want to scroll?".
+  const useExisting = () => {
+    onDeckChange(useDecks(presets.decks));
+    setConfirmed(true);
+  };
   // Steps once slides are read: review the files (Confirm / back to change them), then choose where to scroll.
   const [confirmed, setConfirmed] = useState(!!deck);
   const changeFiles = () => { setConfirmed(false); onDeckChange(null); reset(); };
   const confirm = () => {
-    const { slides, name, files, skipped } = status;
-    onDeckChange({ slides, name, files, skipped });
+    const { slides, name, files, skipped, preset } = status;
+    onDeckChange({ slides, name, files, skipped, preset });
     setConfirmed(true);
   };
   const owed = guardStatus?.points || 0;
@@ -52,6 +59,9 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
                   <><IconUpload size={18} /><span>{status.kind === 'error' ? 'Choose other PDFs' : 'Choose PDFs'}</span></>
                 )}
               </button>
+              <button className="btn primary" onClick={useExisting} disabled={reading}>
+                <IconLayers size={18} /><span>Choose existing slides</span>
+              </button>
             </>
           ) : !confirmed ? (
             <>
@@ -80,7 +90,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
           ) : (
             <>
               <div className="dialog-head">
-                <button type="button" className="dialog-back" onClick={() => setConfirmed(false)} aria-label="Go back to your files">
+                <button type="button" className="dialog-back" onClick={status.preset ? changeFiles : () => setConfirmed(false)} aria-label={status.preset ? 'Go back to upload' : 'Go back to your files'}>
                   <IconBack size={20} />
                 </button>
                 <h2 id="upload-title" className="upload-title">Where do you want to scroll?</h2>
