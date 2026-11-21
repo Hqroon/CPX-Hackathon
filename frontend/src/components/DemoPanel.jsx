@@ -1,12 +1,13 @@
 // Hidden judging controls. Open by tapping the logo 5 times. Owner: M2.
 import React from 'react';
+import { IconClose } from './Icons.jsx';
 
 export default function DemoPanel({ info, actions, onClose }) {
   return (
     <div className="demo-panel" role="dialog" aria-label="Demo controls">
       <div className="demo-head">
-        <strong>Demo controls</strong>
-        <button className="icon-btn" onClick={onClose} aria-label="Close demo controls">✕</button>
+        <strong><span className="dot" aria-hidden="true" />Demo controls</strong>
+        <button className="icon-btn" onClick={onClose} aria-label="Close demo controls"><IconClose size={16} /></button>
       </div>
       <div className="demo-grid">
         <button className="btn small" onClick={actions.skip15}>Skip 15 minutes</button>

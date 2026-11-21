@@ -8,6 +8,8 @@ import AllowanceCard from './components/AllowanceCard.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
+import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
+import { LogoMark } from './components/Illustrations.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent } from './api.js';
@@ -30,6 +32,23 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+// Laptop-only backdrop around the phone frame (hidden on phones by CSS).
+function Backdrop() {
+  return (
+    <div className="backdrop" aria-hidden="true">
+      <span className="blob blob-a" />
+      <span className="blob blob-b" />
+      <span className="blob blob-c" />
+      <div className="backdrop-caption">
+        <LogoMark size={44} />
+        <strong>Doomscroll Tax</strong>
+        <span>Your first reels are free. Everything after costs you.</span>
+        <span className="backdrop-meta">CrossPointX 2026 · Track 2 · Reverse UX</span>
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -295,7 +314,13 @@ export default function App() {
   if (!reels) {
     return (
       <div className="app">
-        <div className="phone"><div className="loading">Loading reels…</div></div>
+        <Backdrop />
+        <div className="phone">
+          <div className="loading">
+            <span className="loading-mark"><LogoMark size={64} /></span>
+            <span>Loading…</span>
+          </div>
+        </div>
       </div>
     );
   }
@@ -310,7 +335,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="phone">
+      <Backdrop />
+      <div className={`phone phase-${phase}`}>
         <Feed
           ref={feedRef}
           items={items}
@@ -332,18 +358,29 @@ export default function App() {
         />
 
         <div className="topbar">
-          <button className="logo" onClick={onLogoTap} aria-label="Doomscroll Tax">刷屏税</button>
+          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label="Doomscroll Tax">
+            <LogoMark size={30} />
+            <span className="wordmark">刷屏税</span>
+          </button>
           {phase === 'feed' && (
             <div className="topbar-right">
-              {/* Sound state is only revealed in explain mode; otherwise the fade stays silent. */}
+              {/* Sound state is only revealed in explain mode; otherwise the volume fade stays silent. */}
               {explain && afterLine && current?.type === 'reel' && (
-                <span className="vol" aria-label={audio.muted ? 'Muted' : `Volume ${Math.round(audio.volume * 100)}%`}>
-                  {audio.muted ? '🔇' : `🔊 ${Math.round(audio.volume * 100)}%`}
+                <span
+                  className={`vol ${audio.muted ? 'muted' : 'wide'}`}
+                  key={`vol-${index}`}
+                  aria-label={audio.muted ? 'Muted' : `Volume ${Math.round(audio.volume * 100)}%`}
+                >
+                  {audio.muted ? <IconMute size={18} /> : <IconSound size={18} />}
+                  {!audio.muted && <span className="vol-pct">{Math.round(audio.volume * 100)}%</span>}
                 </span>
               )}
-              <span className={`points ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>−{points}</span>
+              <span className={`meter ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>
+                <span className="meter-label">Owed</span>
+                <span className="meter-value" key={points}>{points > 0 ? `−${points}` : '0'}</span>
+              </span>
               <button className={`icon-btn ${explain ? 'on' : ''}`} onClick={() => setExplain((e) => !e)} aria-label="Explain mode" aria-pressed={explain}>?</button>
-              <button className="icon-btn" onClick={endSession} aria-label="End session">✕</button>
+              <button className="icon-btn" onClick={endSession} aria-label="End session"><IconClose size={16} /></button>
             </div>
           )}
         </div>
