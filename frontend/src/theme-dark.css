@@ -367,3 +367,70 @@ html[data-theme="dark"] .welcome.leaving { animation: dk-welcome-out 0.42s cubic
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="dark"] .welcome-orbit-light { animation: none; transform: rotate(200deg); }
 }
+
+/* ===================================================================================
+   Session complete, minimal (Results.jsx ResultsMinimal): no boxes, no icons.
+   Hierarchy from size, colour and spacing only.
+   =================================================================================== */
+html[data-theme="dark"] {
+  --dk-rs-head: 15px;                 /* "Session complete" */
+  --dk-rs-head-color: #8e8e93;
+  --dk-rs-hero: 72px;                 /* the big number */
+  --dk-rs-hero-tracking: -0.03em;
+  --dk-rs-owed: #ff7a6b;              /* points owed (desaturated coral) */
+  --dk-rs-clear: #5cc092;             /* nothing owed (desaturated green) */
+  --dk-rs-unit: 14px;                 /* "points owed" */
+  --dk-rs-stats: 13px;                /* the one-line stats */
+  --dk-rs-label: 11px;                /* "WHAT HAPPENS NEXT" */
+  --dk-rs-label-color: #6b6b6b;
+  --dk-rs-label-tracking: 0.12em;
+  --dk-rs-title: 16px;
+  --dk-rs-sub: 14px;
+  --dk-rs-rule: #222222;              /* hairlines */
+  --dk-rs-item-pad: 20px;
+  --dk-rs-gap-stats: 48px;            /* hero -> stats line */
+  --dk-rs-gap-next: 40px;             /* rule -> "What happens next" */
+}
+html[data-theme="dark"] .results-min.is-owing { --dk-rs-accent: var(--dk-rs-owed); }
+html[data-theme="dark"] .results-min.is-clear { --dk-rs-accent: var(--dk-rs-clear); }
+
+html[data-theme="dark"] .results-min .screen-scroll { gap: 0; padding-top: 24px; }
+html[data-theme="dark"] .results-min p { margin: 0; }
+
+html[data-theme="dark"] .rs-head {
+  margin: 0; text-align: center; font-size: var(--dk-rs-head); line-height: 20px;
+  font-weight: 500; color: var(--dk-rs-head-color); letter-spacing: 0;
+}
+html[data-theme="dark"] .rs-hero { margin-top: 28px; display: grid; justify-items: center; gap: 6px; text-align: center; }
+html[data-theme="dark"] .rs-number {
+  font-size: var(--dk-rs-hero); line-height: 1; font-weight: 600; letter-spacing: var(--dk-rs-hero-tracking);
+  font-variant-numeric: tabular-nums; color: var(--dk-rs-accent);
+}
+html[data-theme="dark"] .rs-unit { font-size: var(--dk-rs-unit); line-height: 20px; color: var(--dk-muted); }
+
+html[data-theme="dark"] .rs-stats {
+  margin-top: var(--dk-rs-gap-stats) !important; text-align: center;
+  font-size: var(--dk-rs-stats); line-height: 20px; color: var(--dk-muted);
+}
+/* One line: borrow some side padding, never wrap, and shrink a little on narrow phones. */
+html[data-theme="dark"] .rs-stats { margin-inline: -12px; white-space: nowrap; font-size: min(var(--dk-rs-stats), 3.4vw); }
+html[data-theme="dark"] .rs-stats strong { color: var(--dk-text); font-weight: 600; font-variant-numeric: tabular-nums; }
+html[data-theme="dark"] .rs-stats > span:not(.rs-sep) { white-space: nowrap; }
+html[data-theme="dark"] .rs-rule { width: 100%; height: 0; margin: 20px 0 0; border: 0; border-top: 1px solid var(--dk-rs-rule); }
+
+html[data-theme="dark"] .rs-label {
+  margin-top: var(--dk-rs-gap-next) !important; font-size: var(--dk-rs-label); line-height: 16px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--dk-rs-label-tracking); color: var(--dk-rs-label-color);
+}
+html[data-theme="dark"] .rs-list { margin-top: 4px; text-align: left; }
+html[data-theme="dark"] .rs-item { padding: var(--dk-rs-item-pad) 0; display: grid; gap: 4px; }
+html[data-theme="dark"] .rs-item + .rs-item { border-top: 1px solid var(--dk-rs-rule); }
+html[data-theme="dark"] .rs-title { font-size: var(--dk-rs-title); line-height: 22px; font-weight: 500; color: var(--dk-text); }
+html[data-theme="dark"] .rs-accent { color: var(--dk-rs-accent); }
+html[data-theme="dark"] .rs-sub { font-size: var(--dk-rs-sub); line-height: 1.5; color: var(--dk-muted); }
+html[data-theme="dark"] .rs-foot { margin-top: 24px !important; font-size: 13px; color: var(--dk-rs-label-color); }
+
+/* Upload popup back arrows ("Slides ready" and "Where do you want to scroll?"): green hover/focus.
+   Uses the solid brand green (--green is the bright text green here; a white arrow needs the darker one). */
+html[data-theme="dark"] .dialog-back:hover,
+html[data-theme="dark"] .dialog-back:focus-visible { background: var(--dk-accent-strong); color: #fff; outline: none; }

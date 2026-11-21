@@ -13,6 +13,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
   const changeFiles = () => { setConfirmed(false); reset(); };
   const owed = guardStatus?.points || 0;
   const armed = !!guardStatus?.armed;
+  // Option subtitle (Reel Guard status). Kept, but no longer rendered under "Continue on other apps".
   const otherSub = !nativeApp
     ? 'Android app only · Instagram, 小红书 Xiaohongshu'
     : armed
@@ -59,7 +60,6 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
                   <div className="upload-file" key={f.name + i}>
                     <IconDoc size={16} />
                     <span className="upload-file-name">{f.name}</span>
-                    <span className="muted">{f.count} slides</span>
                   </div>
                 ))}
               </div>
@@ -78,16 +78,12 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
                 </button>
                 <h2 id="upload-title" className="upload-title">Where do you want to scroll?</h2>
               </div>
-              <p className="muted upload-sub">
-                Questions will come from your {status.slides.length} slides.
-              </p>
               <div className="card list-card">
                 {/* onThisApp must run inside this click so the browser allows video with sound. */}
                 <button className="list-row start-option" onClick={() => onThisApp(status.slides)}>
                   <span className="row-icon"><IconLayers size={18} /></span>
                   <span className="row-text">
-                    <span className="row-title">Continue in the app</span>
-                    <span className="row-sub">Scroll our reels with questions from your slides</span>
+                    <span className="row-title">Continue in this app</span>
                   </span>
                   <IconChevron size={18} className="row-chevron" />
                 </button>
@@ -95,7 +91,6 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
                   <span className={`row-icon ${armed ? 'on' : ''}`}><IconShare size={18} /></span>
                   <span className="row-text">
                     <span className="row-title">Continue on other apps</span>
-                    <span className="row-sub">{otherSub}</span>
                   </span>
                   <IconChevron size={18} className="row-chevron" />
                 </button>

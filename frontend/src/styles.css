@@ -384,3 +384,10 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .dialog-back { flex: none; width: 36px; height: 36px; margin-left: -8px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--text); }
 .dialog-back:hover { background: var(--bg); }
 .dialog-head .upload-title { flex: 1; min-width: 0; }
+
+/* Deck summary: two stat tiles now (the slide-count tile was removed) */
+.stat-row.two { grid-template-columns: repeat(2, 1fr); }
+/* "Where do you want to scroll?": single-line options (subtitles removed), so tighter rows */
+.start-option { padding-top: 13px; padding-bottom: 13px; }
+/* Upload popup back arrows: green hover/focus with a white arrow */
+.dialog-back:hover, .dialog-back:focus-visible { background: var(--green); color: #fff; }
