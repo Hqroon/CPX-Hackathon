@@ -1,0 +1,13 @@
+{
+  "appId": "com.cpx.doomscrolltax",
+  "appName": "Doomscroll Tax",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0b0b0f"
+  }
+}

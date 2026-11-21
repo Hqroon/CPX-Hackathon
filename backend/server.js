@@ -28,7 +28,8 @@ app.get('/api/health', (_req, res) => {
 // GET /api/reels -> reel list. `available` tells M3 which files are still missing.
 app.get('/api/reels', async (_req, res) => {
   try {
-    const reels = JSON.parse(await readFile(REELS_JSON, 'utf8'));
+    // Strip a UTF-8 BOM: Windows Notepad / PowerShell add one and JSON.parse rejects it.
+    const reels = JSON.parse((await readFile(REELS_JSON, 'utf8')).replace(/^﻿/, ''));
     const withStatus = reels.map((r) => {
       const local = r.src && r.src.startsWith('/media/') ? path.join(__dirname, r.src) : null;
       return { ...r, available: local ? existsSync(local) : Boolean(r.src) };

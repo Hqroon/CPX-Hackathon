@@ -5,44 +5,64 @@
 // so the sound permission unlocked by the slide-gate tap carries over.
 //
 // The TEAM_PLAN contract maps onto props like this:
-//   player.onReelChange   -> onRequestMove(delta); App changes `index`
-//   player.pause/resume   -> `paused`
-//   player.blockSwipe     -> `blocked`
-//   player.setTransitionMs-> `transitionMs`
-//   player.setMuted       -> `muted`
-//   (ref) unlockAudio()   -> call inside the slide-gate click handler
+//   player.onReelChange    -> onRequestMove(delta); App changes `index`
+//   player.pause/resume    -> `paused`
+//   player.blockSwipe      -> `blocked`
+//   player.setTransitionMs -> `transitionMs`
+//   player.setMuted        -> `muted`
+//   (ref) unlockAudio()    -> call inside the slide-gate click handler
 
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { CONFIG } from '../config.js';
 import { COPY } from '../copy.js';
 import Explain from './Explain.jsx';
 
-const formatLikes = (n) => (n >= 10000 ? (n / 1000).toFixed(0) + 'k' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n));
+const DOUBLE_TAP_MS = 300;
+const TAP_SLOP_PX = 10;
 
-function ReelOverlay({ reel, friend, explain }) {
-  const [liked, setLiked] = useState(false);
+const formatLikes = (n) =>
+  n >= 10000 ? (n / 1000).toFixed(0) + 'k' : n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+
+function ReelOverlay({ reel, item, freeReels, liked, onToggleLike, explain }) {
+  const [expanded, setExpanded] = useState(false);
   return (
     <div className="reel-overlay">
-      <div className="reel-side">
-        <button className={`like ${liked ? 'on' : ''}`} onClick={() => setLiked((l) => !l)} aria-label="Like" aria-pressed={liked}>
-          ♥
-        </button>
-        <span>{formatLikes((reel.likes || 0) + (liked ? 1 : 0))}</span>
-      </div>
       <div className="reel-meta">
         <div className="reel-author">
+          <span className="avatar" aria-hidden="true">{reel.author?.[0]?.toUpperCase() || '?'}</span>
           @{reel.author}
-          {friend && <span className="friend-chip">Friend · free</span>}
+          {item.free && <span className="free-chip">{COPY.freeChip(item.freeNumber, freeReels)}</span>}
         </div>
-        <p className="reel-caption">{reel.caption}</p>
-        {friend && <Explain show={explain} text={COPY.explain.friends} />}
+        <button
+          type="button"
+          className={`reel-caption ${expanded ? 'expanded' : ''}`}
+          onClick={() => setExpanded((e) => !e)}
+          aria-expanded={expanded}
+        >
+          {reel.caption}
+        </button>
+        {item.free && item.freeNumber === 1 && <Explain show={explain} text={COPY.explain.free} />}
+      </div>
+      <div className="reel-side">
+        <button
+          type="button"
+          className={`like ${liked ? 'on' : ''}`}
+          onClick={onToggleLike}
+          aria-label={liked ? 'Unlike' : 'Like'}
+          aria-pressed={liked}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.7 0 5.7 4.1 4.2 7.4C19.5 16.4 12 21 12 21z" />
+          </svg>
+        </button>
+        <span>{formatLikes((reel.likes || 0) + (liked ? 1 : 0))}</span>
       </div>
     </div>
   );
 }
 
 const Feed = forwardRef(function Feed(
-  { items, index, transitionMs, muted, paused, blocked, onRequestMove, renderCard, explain },
+  { items, index, transitionMs, muted, paused, blocked, onRequestMove, renderCard, explain, freeReels },
   ref
 ) {
   const v0 = useRef(null);
@@ -54,6 +74,10 @@ const Feed = forwardRef(function Feed(
   const prevIndex = useRef(index);
   const movingRef = useRef(false);
   const [moving, setMoving] = useState(false);
+  const [buffering, setBuffering] = useState([true, true, true]);
+  const [failed, setFailed] = useState([false, false, false]);
+  const [liked, setLiked] = useState(() => new Set());
+  const [burst, setBurst] = useState(null); // { id, key } big heart on double tap
 
   // Latest props for event handlers registered once.
   const moveRef = useRef(onRequestMove);
@@ -78,6 +102,9 @@ const Feed = forwardRef(function Feed(
   useEffect(() => {
     lastSlotItems.current = slots;
   });
+
+  const setSlotFlag = (setter, s, value) =>
+    setter((arr) => (arr[s] === value ? arr : arr.map((v, k) => (k === s ? value : v))));
 
   useImperativeHandle(ref, () => ({
     unlockAudio() {
@@ -170,16 +197,50 @@ const Feed = forwardRef(function Feed(
     return () => window.removeEventListener('keydown', onKey);
   }, [request]);
 
-  // Touch / mouse drag.
-  const startY = useRef(null);
+  function toggleLike(id) {
+    setLiked((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function likeWithBurst(id) {
+    setLiked((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+    setBurst({ id, key: Date.now() });
+  }
+
+  useEffect(() => {
+    if (!burst) return;
+    const t = setTimeout(() => setBurst(null), 800);
+    return () => clearTimeout(t);
+  }, [burst]);
+
+  // Touch / mouse: vertical swipe moves, double tap likes.
+  const start = useRef(null);
+  const lastTap = useRef(0);
   const onPointerDown = (e) => {
-    startY.current = e.clientY;
+    start.current = { x: e.clientX, y: e.clientY };
   };
   const onPointerUp = (e) => {
-    if (startY.current == null) return;
-    const dy = e.clientY - startY.current;
-    startY.current = null;
-    if (Math.abs(dy) > CONFIG.swipeThresholdPx) request(dy < 0 ? 1 : -1);
+    if (!start.current) return;
+    const dx = e.clientX - start.current.x;
+    const dy = e.clientY - start.current.y;
+    start.current = null;
+    if (Math.abs(dy) > CONFIG.swipeThresholdPx && Math.abs(dy) > Math.abs(dx)) {
+      request(dy < 0 ? 1 : -1);
+      return;
+    }
+    if (Math.abs(dx) > TAP_SLOP_PX || Math.abs(dy) > TAP_SLOP_PX) return;
+    if (e.target.closest('button')) return; // buttons handle their own taps
+    const now = Date.now();
+    const item = items[index];
+    if (now - lastTap.current < DOUBLE_TAP_MS && item?.type === 'reel' && !blockedRef.current) {
+      likeWithBurst(item.reel.id);
+      lastTap.current = 0;
+    } else {
+      lastTap.current = now;
+    }
   };
 
   return (
@@ -188,7 +249,7 @@ const Feed = forwardRef(function Feed(
       className="feed"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
-      onPointerCancel={() => (startY.current = null)}
+      onPointerCancel={() => (start.current = null)}
     >
       {slots.map((i, s) => {
         const item = i == null ? null : items[i];
@@ -199,6 +260,7 @@ const Feed = forwardRef(function Feed(
           transform: `translate3d(0, ${offset * 100}%, 0)`,
           transition: changed[s] ? 'none' : `transform ${transitionMs}ms ${easing}`,
         };
+        const showSkeleton = reel?.src && buffering[s] && !failed[s];
         return (
           <div key={s} className="slot" style={style} aria-hidden={i !== index}>
             <video
@@ -210,14 +272,53 @@ const Feed = forwardRef(function Feed(
               loop
               preload="auto"
               hidden={!reel?.src}
+              onLoadStart={() => {
+                setSlotFlag(setBuffering, s, true);
+                setSlotFlag(setFailed, s, false);
+              }}
+              onWaiting={() => setSlotFlag(setBuffering, s, true)}
+              onLoadedData={() => setSlotFlag(setBuffering, s, false)}
+              onPlaying={() => setSlotFlag(setBuffering, s, false)}
+              onError={() => {
+                setSlotFlag(setFailed, s, true);
+                setSlotFlag(setBuffering, s, false);
+              }}
             />
+            {showSkeleton && (
+              <div className="skeleton" aria-hidden="true">
+                <div className="skeleton-spinner" />
+              </div>
+            )}
+            {reel?.src && failed[s] && (
+              <div className="placeholder error">
+                <span>!</span>
+                <small>Couldn't load this reel. Swipe to the next one.</small>
+              </div>
+            )}
             {reel && !reel.src && (
               <div className="placeholder" style={{ background: reel.color || '#333' }}>
                 <span>{reel.id}</span>
                 <small>Mock reel. Put {reel.id}.mp4 in backend/media/reels and run npm run manifest.</small>
               </div>
             )}
-            {reel && <ReelOverlay key={reel.id} reel={reel} friend={item.friend} explain={explain} />}
+            {reel && burst?.id === reel.id && (
+              <div className="heart-burst" key={burst.key} aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.9 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.7 0 5.7 4.1 4.2 7.4C19.5 16.4 12 21 12 21z" />
+                </svg>
+              </div>
+            )}
+            {reel && (
+              <ReelOverlay
+                key={reel.id}
+                reel={reel}
+                item={item}
+                freeReels={freeReels}
+                liked={liked.has(reel.id)}
+                onToggleLike={() => toggleLike(reel.id)}
+                explain={explain && i === index}
+              />
+            )}
             {item && item.type !== 'reel' && renderCard(item, i === index)}
           </div>
         );

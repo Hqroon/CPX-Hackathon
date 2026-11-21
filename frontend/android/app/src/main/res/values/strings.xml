@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Doomscroll Tax</string>
+    <string name="title_activity_main">Doomscroll Tax</string>
+    <string name="package_name">com.cpx.doomscrolltax</string>
+    <string name="custom_url_scheme">com.cpx.doomscrolltax</string>
+</resources>

@@ -1,5 +1,9 @@
 # Same line endings on Windows and Mac, so nobody gets whole-file "conflicts".
 * text=auto eol=lf
+# Windows scripts must keep CRLF (gradlew.bat breaks with LF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.jar binary
 *.png binary
 *.jpg binary
 *.mp4 binary

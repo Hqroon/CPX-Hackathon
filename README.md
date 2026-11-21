@@ -4,17 +4,19 @@
 
 Repo: https://github.com/Hqroon/CPX-Hackathon
 
-A reel feed that's free while you catch up with friends, then charges you for everything after:
+A reel feed where the first 5 reels are free, then everything after costs you:
 
 | Mechanism | Rule | Why |
 |---|---|---|
 | Slide gate | Upload 5+ course slides (PDF) before every session | Commitment device |
-| Negative points | −1 per reel after the "caught up" line. 15 min away clears 1. | Loss aversion, cooling-off |
+| Negative points | −1 per reel after the 5 free reels. 15 min away clears 1. | Loss aversion, cooling-off |
 | Question toll | Every 5 reels the video pauses for a question from your slides | Testing effect |
 | Volume roulette | Full volume, muted, full, muted… | Broken flow |
 | Slow scroll | After 20 reels each swipe takes 3 s | Fogg Behavior Model (less ability) |
 
-Friends' reels are always free (golden path), so the task can always be completed.
+The first 5 reels of every session are always free (golden path), so the task can always be completed.
+
+**Android demo:** the app is wrapped as an APK with Capacitor, with the videos packed inside. See [docs/ANDROID_APK.md](docs/ANDROID_APK.md).
 
 ## Quick start
 
@@ -42,9 +44,7 @@ Open http://localhost:5173. To test on a phone on the same Wi-Fi, open `http://<
 ## Adding the 50 reels (M3)
 
 1. Install ffmpeg: `winget install Gyan.FFmpeg`
-2. Put converted clips in `backend/media/reels/`:
-   - `f01.mp4` … `f10.mp4` are **friend** reels (shown first, never charged)
-   - `r01.mp4` … `r40.mp4` are **recommended** reels
+2. Put the converted clips in `backend/media/reels/`, named `r01.mp4` … `r50.mp4`. The order is shuffled every session, and the first 5 shown are free.
 3. Run `npm run manifest` (placeholder captions) or `npm run manifest:captions` (LLM captions) in `backend/`.
 4. Restart nothing: the frontend reads `/api/reels` on load.
 

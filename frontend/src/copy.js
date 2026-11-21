@@ -8,18 +8,19 @@ export const COPY = {
     sample: 'Use sample slides',
     start: 'Start scrolling',
     reading: (n) => `Reading your slides… ${n} pages found.`,
-    ready: (n) => `${n} slides ready. Your friends' reels are free while we write your questions.`,
+    ready: (n) => `${n} slides ready. Your first 5 reels are free while we write your questions.`,
     tooFew: (n) =>
       `We could only read ${n} slides. Upload at least 5 slides with text. Image-only slides don't count.`,
     notPdf: 'Export your slides to PDF first, then upload them here.',
     failed: "We couldn't read that file. Try another PDF or use the sample slides.",
   },
-  caughtUp: {
-    title: "You're all caught up.",
-    body: "That's everything from your friends. Every reel after this costs 1 point. You get 1 point back for every 15 minutes away.",
+  allowance: {
+    title: (n) => `Your ${n} free reels are used up.`,
+    body: 'Every reel after this costs 1 point. You get 1 point back for every 15 minutes away.',
     close: 'Close the app (recommended)',
     keep: 'Keep scrolling anyway',
   },
+  freeChip: (k, n) => `Free · ${k} of ${n}`,
   points: {
     ten: (p, mins) => `${p} points. That's ${formatMinutes(mins)} away to clear.`,
     welcomeBack: (waived, left) => `Welcome back. ${waived} point${waived === 1 ? '' : 's'} cleared while you were away. ${left} left.`,
@@ -34,7 +35,7 @@ export const COPY = {
   slow: (n) => `You've watched ${n} reels. Each one now takes 3 seconds to load. On purpose.`,
   results: {
     title: 'Session receipt',
-    reels: (n) => `${n} reels after you were caught up`,
+    reels: (n) => `${n} reels after your free ones ran out`,
     owed: (p, mins) =>
       p > 0 ? `${p} points owed. Clear them by staying away for ${formatMinutes(mins)}.` : 'No points owed. Nice.',
     quiz: (r, t) =>
@@ -47,7 +48,7 @@ export const COPY = {
     quiz: 'Testing effect: recalling your own slides turns scrolling time into revision.',
     volume: 'Broken flow: unpredictable sound breaks the immersion that keeps you watching.',
     slow: 'Fogg Behavior Model: making the next reel harder to reach weakens the habit without banning it.',
-    friends: 'Golden path: you can always do what you came for. Only what comes after costs you.',
+    free: 'Golden path: your first 5 reels are always free, so you can always check what you came for. Only what comes after costs you.',
   },
 };
 

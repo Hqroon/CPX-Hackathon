@@ -1,9 +1,10 @@
 // Every tunable number lives here. M4 sets the final values from the interviews.
 
 export const CONFIG = {
+  freeReels: 5,              // golden path: the first N reels of a session are free
   minSlides: 5,              // slide gate: pages with text needed before scrolling
   questionCount: 12,         // questions requested from the backend
-  questionEvery: 5,          // a question after every N reels past the caught-up line
+  questionEvery: 5,          // a question after every N paid reels (after the free ones)
   wrongWaitSeconds: 10,      // lockout after a wrong answer
   slowAfterReels: 20,        // reels in a session before slow scroll starts
   slowAfterIfOwing: 10,      // ...earlier if the user starts a session still owing points
