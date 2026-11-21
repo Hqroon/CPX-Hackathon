@@ -10,9 +10,11 @@ A reel feed where the first 5 reels are free, then everything after costs you:
 |---|---|---|
 | Slide gate | Upload 5+ course slides (PDF) before every session | Commitment device |
 | Negative points | −1 per reel after the 5 free reels. 15 min away clears 1. | Loss aversion, cooling-off |
-| Question toll | Every 5 reels the video pauses for a question from your slides | Testing effect |
-| Volume roulette | Full volume, muted, full, muted… | Broken flow |
-| Slow scroll | After 20 reels each swipe takes 3 s | Fogg Behavior Model (less ability) |
+| Question toll | Reels 10, 15, 20…: the video pauses for a question. Right = next reel; wrong = 5 s, then a new question. | Testing effect |
+| Volume roulette | From reel 6: sound on, muted, on, muted… and each reel quietly 2% softer (no on-screen slider) | Broken flow |
+| Slow scroll + visual decay | From reel 11: each reel takes 3 s to arrive, and colours drain / blur a bit more each reel | Fogg Behavior Model, reward decay |
+
+All of these rules live in one tested module, `frontend/src/rules/frustration.js`, driven by the numbers in `frontend/src/config.js`. Run `npm test` in `frontend/` after changing either.
 
 The first 5 reels of every session are always free (golden path), so the task can always be completed.
 
@@ -43,12 +45,14 @@ Open http://localhost:5173. To test on a phone on the same Wi-Fi, open `http://<
 
 ## Adding the 50 reels (M3)
 
-1. Install ffmpeg: `winget install Gyan.FFmpeg`
-2. Put the converted clips in `backend/media/reels/`, named `r01.mp4` … `r50.mp4`. The order is shuffled every session, and the first 5 shown are free.
-3. Run `npm run manifest` (placeholder captions) or `npm run manifest:captions` (LLM captions) in `backend/`.
-4. Restart nothing: the frontend reads `/api/reels` on load.
+1. Install ffmpeg: `winget install Gyan.FFmpeg`, and convert the clips to vertical MP4 with sound (command in TEAM_PLAN.md).
+2. Put the videos in **one folder**. Any file names work (`.mp4`, `.webm`, `.mov`). Either:
+   - use the default `backend/media/reels/`, or
+   - point the backend at any other folder in `backend/.env`: `REELS_DIR=D:\videos\doomscroll` (optional `THUMBS_DIR` for `<name>.jpg` thumbnails).
+3. Restart the backend. **That's enough to get going:** if `data/reels.json` is empty, the backend scans the folder and serves every video with placeholder captions. `http://localhost:8787/api/health` shows how many videos it found.
+4. Optional: `npm run manifest` (or `npm run manifest:captions` for AI captions) writes `data/reels.json` so you can edit captions and authors. Re-running keeps your edits and adds new videos.
 
-Use free-licence clips only (Pexels, Pixabay, Mixkit). Videos are gitignored; keep them on the server.
+The order is shuffled every session, and the first 5 shown are free. Use free-licence clips only (Pexels, Pixabay, Mixkit). Videos are gitignored; share the folder by drive/USB. For the APK, `npm run bundle:media` in `frontend/` copies the same folder into the app.
 
 ## Question generation (M4, M5)
 
