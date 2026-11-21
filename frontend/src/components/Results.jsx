@@ -1,24 +1,20 @@
 import React from 'react';
 import { COPY, formatMinutes } from '../copy.js';
 import { minutesToClear } from '../rules/points.js';
-import { LogoMark } from './Illustrations.jsx';
+import Doodle from './Doodle.jsx';
 
 export default function Results({ stats, points, onRestart }) {
   const mins = minutesToClear(points);
   const tiles = [
     { label: 'Reels watched', value: stats.totalReels, tone: 'purple' },
-    { label: 'After caught up', value: stats.reelsAfterLine, tone: 'coral' },
+    { label: 'After free reels', value: stats.reelsAfterLine, tone: 'coral' },
     { label: 'Questions right', value: `${stats.right}/${stats.asked}`, tone: 'green' },
     { label: 'Time away to clear', value: points > 0 ? formatMinutes(mins) : '—', tone: 'yellow' },
   ];
   return (
     <div className="results">
       <div className="results-card">
-        <div className="brand" aria-hidden="true">
-          <span>Doomscroll</span>
-          <LogoMark size={26} />
-          <span>Tax</span>
-        </div>
+        <Doodle name="meditating" className="small" />
         <div className="results-hero">
           <span className="results-label">{COPY.results.title}</span>
           <span className={`results-big ${points > 0 ? 'owing' : ''}`}>{points > 0 ? `−${points}` : '0'}</span>

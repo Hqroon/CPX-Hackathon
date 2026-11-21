@@ -2,7 +2,7 @@
 import React from 'react';
 import { COPY } from '../copy.js';
 import Explain from './Explain.jsx';
-import { MoonArt } from './Illustrations.jsx';
+import Doodle from './Doodle.jsx';
 
 export default function AllowanceCard({ freeReels, onClose, onKeep, explain }) {
   return (
@@ -11,11 +11,11 @@ export default function AllowanceCard({ freeReels, onClose, onKeep, explain }) {
         <h2>{COPY.allowance.title(freeReels)}</h2>
         <p>{COPY.allowance.body}</p>
         <div className="zone-pills">
-          <span className="pill pill-free">First {freeReels} · free</span>
-          <span className="pill pill-paid">After this · −1 per reel</span>
+          <span className="pill pill-free">First {freeReels} were free</span>
+          <span className="pill pill-paid">Now −1 per reel</span>
         </div>
       </div>
-      <div className="caught-art"><MoonArt /></div>
+      <div className="caught-art"><Doodle name="zombieing" className="on-night" /></div>
       <div className="caught-actions">
         <button className="btn primary big" onClick={onClose}>
           {COPY.allowance.close}

@@ -5,10 +5,10 @@ import { COPY } from '../copy.js';
 import { extractSlides } from '../rules/slides.js';
 import Explain from './Explain.jsx';
 import { IconUpload, IconDoc, IconCheck } from './Icons.jsx';
-import { LogoMark, SlidesArt } from './Illustrations.jsx';
+import Doodle from './Doodle.jsx';
 import sample from '../mock/sample-slides.json';
 
-export default function SlideGate({ onStart, explain }) {
+export default function SlideGate({ onStart, explain, user, onLogout }) {
   // idle | reading { n } | ready { slides, name } | error { msg }
   const [status, setStatus] = useState({ kind: 'idle' });
   const inputRef = useRef(null);
@@ -38,17 +38,11 @@ export default function SlideGate({ onStart, explain }) {
 
   const reading = status.kind === 'reading';
   const ready = status.kind === 'ready';
-  const count = ready ? status.slides.length : reading ? status.n : 0;
 
   return (
     <div className="gate">
       <div className="gate-card">
-        <div className="brand" aria-hidden="true">
-          <span>Doomscroll</span>
-          <LogoMark size={26} />
-          <span>Tax</span>
-        </div>
-        <div className="gate-art"><SlidesArt /></div>
+        <Doodle name="sittingreading" />
         <h1>{COPY.gate.title}</h1>
         {COPY.gate.body && <p className="gate-body">{COPY.gate.body}</p>}
         <Explain show={explain} text={COPY.explain.gate} />
@@ -60,18 +54,6 @@ export default function SlideGate({ onStart, explain }) {
           hidden
           onChange={onFile}
         />
-
-        {/* Slide counter: five boxes to fill, like a form field. */}
-        <div className="slide-counter" aria-label={`${count} of ${CONFIG.minSlides} slides`}>
-          {Array.from({ length: CONFIG.minSlides }, (_, i) => (
-            <span key={i} className={`slide-box ${i < count ? 'filled' : ''}`}>
-              {i < count ? <IconCheck size={16} /> : i + 1}
-            </span>
-          ))}
-          <span className="slide-counter-label">
-            {count > CONFIG.minSlides ? `+${count - CONFIG.minSlides} more` : `min ${CONFIG.minSlides}`}
-          </span>
-        </div>
 
         {!ready && (
           <div className="gate-actions">
@@ -113,6 +95,12 @@ export default function SlideGate({ onStart, explain }) {
               Choose different slides
             </button>
           </>
+        )}
+        {user && onLogout && (
+          <p className="gate-user">
+            Not {user.name}?{' '}
+            <button type="button" className="text-link" onClick={onLogout}>Log out</button>
+          </p>
         )}
       </div>
     </div>
