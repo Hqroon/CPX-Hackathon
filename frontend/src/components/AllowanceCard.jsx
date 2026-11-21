@@ -1,29 +1,30 @@
+// Full-screen card shown after the free reels. Owner: M1.
 import React from 'react';
 import { COPY } from '../copy.js';
 import Explain from './Explain.jsx';
 import { MoonArt } from './Illustrations.jsx';
 
-// The caught-up line: the border between free friend reels and paid reels.
-export default function CaughtUpCard({ onClose, onKeep, explain }) {
+export default function AllowanceCard({ freeReels, onClose, onKeep, explain }) {
   return (
-    <div className="caught-up">
+    <div className="caught-up allowance">
       <div className="caught-text">
-        <h2>{COPY.caughtUp.title}</h2>
-        <p>{COPY.caughtUp.body}</p>
+        <h2>{COPY.allowance.title(freeReels)}</h2>
+        <p>{COPY.allowance.body}</p>
         <div className="zone-pills">
-          <span className="pill pill-free">Friends · free</span>
+          <span className="pill pill-free">First {freeReels} · free</span>
           <span className="pill pill-paid">After this · −1 per reel</span>
         </div>
       </div>
       <div className="caught-art"><MoonArt /></div>
       <div className="caught-actions">
         <button className="btn primary big" onClick={onClose}>
-          {COPY.caughtUp.close}
+          {COPY.allowance.close}
         </button>
         <button className="btn link light" onClick={onKeep}>
-          {COPY.caughtUp.keep}
+          {COPY.allowance.keep}
         </button>
-        <Explain show={explain} text={COPY.explain.friends} />
+        <p className="allowance-hint">Swipe up to keep scrolling</p>
+        <Explain show={explain} text={COPY.explain.free} />
       </div>
     </div>
   );

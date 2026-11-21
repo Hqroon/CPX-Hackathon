@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
 import QuizModal from './components/QuizModal.jsx';
-import CaughtUpCard from './components/CaughtUpCard.jsx';
+import AllowanceCard from './components/AllowanceCard.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
@@ -44,7 +44,7 @@ function Backdrop() {
       <div className="backdrop-caption">
         <LogoMark size={44} />
         <strong>Doomscroll Tax</strong>
-        <span>Friends are free. Everything after costs you.</span>
+        <span>Your first reels are free. Everything after costs you.</span>
         <span className="backdrop-meta">CrossPointX 2026 · Track 2 · Reverse UX</span>
       </div>
     </div>
@@ -113,18 +113,18 @@ export default function App() {
     };
   }, [showToast]);
 
-  // Friends first, then the caught-up card, then everything else shuffled.
+  // Shuffled reels: the first CONFIG.freeReels are free, then the allowance card, then paid reels.
   const { items, lineIndex } = useMemo(() => {
     if (!reels) return { items: [], lineIndex: 0 };
-    const friends = reels.filter((r) => r.isFriend);
-    const others = shuffle(reels.filter((r) => !r.isFriend));
+    const all = shuffle(reels);
+    const freeCount = Math.min(CONFIG.freeReels, all.length);
     return {
       items: [
-        ...friends.map((r) => ({ type: 'reel', reel: r, friend: true })),
-        { type: 'caughtUp', id: 'caught-up' },
-        ...others.map((r) => ({ type: 'reel', reel: r, friend: false })),
+        ...all.slice(0, freeCount).map((r, k) => ({ type: 'reel', reel: r, free: true, freeNumber: k + 1 })),
+        { type: 'allowance', id: 'allowance' },
+        ...all.slice(freeCount).map((r) => ({ type: 'reel', reel: r, free: false })),
       ],
-      lineIndex: friends.length,
+      lineIndex: freeCount,
     };
   }, [reels, sessionId]);
 
@@ -181,8 +181,8 @@ export default function App() {
     if (!item || item.type !== 'reel') return;
     const s = statsRef.current;
     s.totalReels += 1;
-    logEvent(sessionId, 'reel_view', { reelId: item.reel.id, friend: item.friend });
-    if (!item.friend) {
+    logEvent(sessionId, 'reel_view', { reelId: item.reel.id, free: item.free });
+    if (!item.free) {
       s.reelsAfterLine += 1;
       addPoint(1);
       if (s.reelsAfterLine % cfg.questionEvery === 0) openQuiz();
@@ -218,7 +218,8 @@ export default function App() {
     setProvider('generating…');
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
       setQuestions(r.questions);
-      setProvider(r.provider + (r.usedFallback ? ' (fallback)' : ''));
+      const label = r.provider || 'unknown';
+      setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);
     });
   }
 
@@ -269,7 +270,7 @@ export default function App() {
       if (phase !== 'feed' || quiz) return;
       const s = statsRef.current;
       const targetTotal = Math.max(s.totalReels, slowThreshold - 1);
-      // Reels in items[0..t]: t+1 before the caught-up card, t after it.
+      // Reels in items[0..t]: t+1 before the allowance card, t after it.
       let t = targetTotal <= lineIndex ? targetTotal - 1 : targetTotal;
       t = Math.min(items.length - 1, Math.max(t, index));
       const afterLine = Math.max(0, t - lineIndex);
@@ -315,7 +316,7 @@ export default function App() {
   const current = items[index];
   const afterLine = index > lineIndex;
   // Volume roulette: first paid reel loud, next muted, and so on.
-  const muted = current?.type === 'reel' && !current.friend ? (index - lineIndex) % 2 === 0 : false;
+  const muted = current?.type === 'reel' && !current.free ? (index - lineIndex) % 2 === 0 : false;
   const transitionMs = slow ? cfg.slowTransitionMs : cfg.normalTransitionMs;
 
   return (
@@ -332,9 +333,10 @@ export default function App() {
           blocked={phase !== 'feed' || !!quiz}
           onRequestMove={move}
           explain={explain}
+          freeReels={lineIndex}
           renderCard={(item) =>
-            item.type === 'caughtUp' ? (
-              <CaughtUpCard explain={explain} onClose={endSession} onKeep={() => move(1)} />
+            item.type === 'allowance' ? (
+              <AllowanceCard freeReels={lineIndex} explain={explain} onClose={endSession} onKeep={() => move(1)} />
             ) : null
           }
         />

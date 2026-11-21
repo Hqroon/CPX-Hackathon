@@ -73,7 +73,7 @@ export function validateQuestion(q, pagesByNumber) {
 }
 
 async function loadFallback() {
-  const raw = JSON.parse(await readFile(FALLBACK_PATH, 'utf8'));
+  const raw = JSON.parse((await readFile(FALLBACK_PATH, 'utf8')).replace(/^﻿/, ''));
   return raw.map((q) => ({ ...q, ...shuffleOptions(q.options, q.answerIndex) }));
 }
 

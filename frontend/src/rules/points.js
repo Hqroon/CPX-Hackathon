@@ -40,7 +40,10 @@ export function savePoints(points) {
 }
 
 export function markClosed(now = Date.now()) {
-  write({ ...read(), lastClosedAt: now });
+  const state = read();
+  // Keep the earliest close time: ending a session and then leaving the app
+  // must not restart the "time away" clock.
+  if (state.lastClosedAt == null) write({ ...state, lastClosedAt: now });
 }
 
 export function markOpened() {
