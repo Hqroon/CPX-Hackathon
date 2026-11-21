@@ -1,6 +1,6 @@
 {
   "appId": "com.cpx.doomscrolltax",
-  "appName": "Doomscroll Tax",
+  "appName": "看看",
   "webDir": "dist",
   "server": {
     "androidScheme": "http",
