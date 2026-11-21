@@ -38,7 +38,7 @@ export const COPY = {
     title: 'Session receipt',
     reels: (n) => `${n} reels after your free ones ran out`,
     owed: (p, mins) =>
-      p > 0 ? `${p} point${p === 1 ? '' : 's'} owed. Clear ${p === 1 ? 'it' : 'them'} by staying away for ${formatMinutes(mins)}.` : 'No points owed. Nice.',
+      p > 0 ? `${p} Loan Point${p === 1 ? '' : 's'}. Clear ${p === 1 ? 'it' : 'them'} by staying away for ${formatMinutes(mins)}.` : 'No Loan Points. Nice.',
     quiz: (r, t) =>
       t > 0 ? `${r} of ${t} question${t === 1 ? '' : 's'} right. That's revision you didn't plan to do.` : 'No questions this time.',
     again: 'Start a new session',

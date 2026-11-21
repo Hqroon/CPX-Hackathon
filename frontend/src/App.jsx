@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
-import GuardHome from './components/GuardHome.jsx';
+import GuardStart from './components/GuardStart.jsx';
+import InfoPage from './components/InfoPage.jsx';
 import { getGuardStatus, syncGuard, armGuard, minimizeApp } from './native/reelGuard.js';
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
@@ -118,13 +119,11 @@ export default function App() {
   const guardSlidesRef = useRef(null);
   const guardQuestionsRef = useRef({ slides: null, questions: [] });
 
+  // "Continue on other apps" always opens the one-button page (Start 看看); the phone is
+  // set up in advance, so there is no setup screen.
   async function continueWithOtherApps() {
-    const s = await refreshGuard();
-    if (s?.accessibilityEnabled && s.running !== false && !s.armed) {
-      await startBubble();
-    } else {
-      setPhase('guard'); // first-time setup, or bubble already running (back to it / stop it)
-    }
+    await refreshGuard();
+    setPhase('guard');
   }
 
   async function startBubble() {
@@ -144,12 +143,6 @@ export default function App() {
     setPhase('start');
     const ok = await minimizeApp();
     if (!ok) showToast('看看 is now a floating bubble. Open Instagram or Xiaohongshu.');
-  }
-
-  async function stopBubble() {
-    await armGuard(false);
-    await refreshGuard();
-    showToast('Bubble stopped. Instagram and Xiaohongshu are untaxed again.');
   }
 
   // Home page: slides were uploaded first, then "Continue on other apps" was chosen.
@@ -483,8 +476,8 @@ export default function App() {
                   {!audio.muted && <span className="vol-pct">{Math.round(audio.volume * 100)}%</span>}
                 </span>
               )}
-              <span className={`meter ${points > 0 ? 'owing' : ''}`} aria-label={`${points} points owed`}>
-                <span className="meter-label">Owed</span>
+              <span className={`meter ${points > 0 ? 'owing' : ''}`} aria-label={`${points} Loan Points`}>
+                <span className="meter-label">Loan Points</span>
                 <span className="meter-value" key={points}>{points > 0 ? `−${points}` : '0'}</span>
               </span>
               <button className="icon-btn" onClick={endSession} aria-label="End session"><IconClose size={16} /></button>
@@ -510,20 +503,21 @@ export default function App() {
             onOtherApps={otherAppsWithSlides}
             deck={deck}
             onDeckChange={setDeck}
+            onInfo={() => setPhase('info')}
           />
         )}
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} onBack={() => setPhase('start')} />}
         {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} onHome={() => setPhase('start')} />}
         {phase === 'guard' && (
-          <GuardHome
+          <GuardStart
             status={guardStatus}
             nativeApp={nativeApp}
-            onRefresh={refreshGuard}
             onStart={startBubble}
-            onStop={stopBubble}
             onBack={() => setPhase('start')}
+            onNote={showToast}
           />
         )}
+        {phase === 'info' && <InfoPage onBack={() => setPhase('start')} />}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}
         {toast && <div className="toast" key={toast.id} role="status">{toast.text}</div>}
         {panelOpen && (
