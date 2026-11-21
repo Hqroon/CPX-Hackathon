@@ -1,5 +1,5 @@
 // Session summary. Layout follows the template's "Session complete" screen.
-// Dark theme: minimal version (no boxes, no icons; same text, order and buttons).
+// Dark theme: minimal one-screen version (title, white total with green sheen, stats, buttons).
 // VITE_UI_THEME=original: the original markup below, unchanged.
 import React, { useEffect, useState } from 'react';
 import { COPY, formatMinutes } from '../copy.js';
@@ -94,46 +94,31 @@ function ResultsMinimal({ stats, points, onRestart, onHome }) {
   const mins = minutesToClear(points);
   const owing = points > 0;
   const shown = useCountUp(points);
-  const finalText = owing ? `−${points}` : '0';
 
   return (
-    <div className={`screen results results-min ${owing ? 'is-owing' : 'is-clear'}`}>
+    <div className="screen results">
       <div className="top-bar centered-brand">
         <div className="brand"><BrandMark size={26} /><Wordmark size="sm" /></div>
       </div>
-      <div className="screen-scroll">
-        <h1 className="rs-head">Session complete</h1>
+      <div className="screen-scroll results-min">
+        <h1 className="title results-title">Session Complete</h1>
 
-        <div className="rs-hero">
-          <span className="rs-number" aria-label={finalText}>
-            <span aria-hidden="true">{shown > 0 ? `−${shown}` : '0'}</span>
+        <div className="total">
+          {/* "−59" is centred as one unit; the minus is its own span so it can be styled.
+              White with a green sheen in the dark theme (styles.css); counts up on open. */}
+          <span className={`total-number ${owing ? 'owing' : ''}`} aria-label={owing ? `minus ${points}` : '0'}>
+            {owing && <span className="total-sign" aria-hidden="true">−</span>}
+            <span aria-hidden="true">{shown}</span>
           </span>
-          <p className="rs-unit">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
+          <p className="muted strong">{points === 1 ? 'Loan Point' : 'Loan Points'}</p>
+          {owing && <p className="muted clear-note">Clears after {formatMinutes(mins)} away</p>}
         </div>
 
-        <p className="rs-stats">
-          <span><strong>{stats.totalReels}</strong> Reels watched</span>
-          <span className="rs-sep" aria-hidden="true"> · </span>
-          <span><strong>{stats.reelsAfterLine}</strong> After free reels</span>
-          <span className="rs-sep" aria-hidden="true"> · </span>
-          <span><strong>{stats.right}/{stats.asked}</strong> Questions right</span>
-        </p>
-        <hr className="rs-rule" />
-
-        <p className="rs-label">What happens next</p>
-        <div className="rs-list">
-          <div className="rs-item">
-            <p className="rs-title">
-              {owing ? <>Stay away for <span className="rs-accent">{formatMinutes(mins)}</span></> : 'Nothing to pay back'}
-            </p>
-            <p className="rs-sub">{COPY.results.owed(points, mins)}</p>
-          </div>
-          <div className="rs-item">
-            <p className="rs-title">Revision done</p>
-            <p className="rs-sub">{COPY.results.quiz(stats.right, stats.asked)}</p>
-          </div>
+        <div className="card breakdown">
+          <div><strong>{stats.totalReels}</strong><span>Reels watched</span></div>
+          <div className="warn"><strong>{stats.reelsAfterLine}</strong><span>After free reels</span></div>
+          <div><strong>{stats.right}/{stats.asked}</strong><span>Questions right</span></div>
         </div>
-        <p className="footnote rs-foot">Points come back on their own: 1 for every {CONFIG.minutesPerPoint} minutes you spend away.</p>
       </div>
       <div className="bottom-actions">
         <button className="btn primary" onClick={onRestart}>{COPY.results.again}</button>
