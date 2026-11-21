@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import com.cpx.doomscrolltax.R;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,12 +39,15 @@ final class GuardOverlays {
     private static final int NAVY = Color.parseColor("#03174C");
     private static final int BAD = Color.parseColor("#F2566B");
     private static final int GOOD = Color.parseColor("#3DA56F");
+    private static final int LOGO_GREEN = Color.parseColor("#1F8A5B");
+    private static final int LOGO_GREEN_DARK = Color.parseColor("#14603F");
     private static final int INK = Color.parseColor("#3F414E");
 
     private final AccessibilityService service;
     private final WindowManager wm;
 
-    private TextView bubble;
+    private LinearLayout bubble;   // green circle: eye logo on top, points underneath
+    private TextView bubbleText;
     private WindowManager.LayoutParams bubbleParams;
     private View grey;
     private View blocker;
@@ -105,13 +110,26 @@ final class GuardOverlays {
             updateBubble(points);
             return;
         }
-        bubble = new TextView(service);
+        bubble = new LinearLayout(service);
+        bubble.setOrientation(LinearLayout.VERTICAL);
         bubble.setGravity(Gravity.CENTER);
-        bubble.setTextColor(Color.WHITE);
-        bubble.setTypeface(Typeface.DEFAULT_BOLD);
-        bubble.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        bubble.setElevation(dp(6));
-        int size = dp(58);
+        bubble.setElevation(dp(8));
+        ImageView eye = new ImageView(service);
+        eye.setImageResource(R.drawable.bubble_eye);
+        eye.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        eye.setAdjustViewBounds(true);
+        bubble.addView(eye, new LinearLayout.LayoutParams(dp(30), dp(25)));
+        bubbleText = new TextView(service);
+        bubbleText.setGravity(Gravity.CENTER);
+        bubbleText.setTextColor(Color.WHITE);
+        bubbleText.setTypeface(Typeface.DEFAULT_BOLD);
+        bubbleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        bubbleText.setIncludeFontPadding(false);
+        LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        tl.topMargin = dp(2);
+        bubble.addView(bubbleText, tl);
+        int size = dp(64);
         bubbleParams = params(size, size, true);
         int screenW = service.getResources().getDisplayMetrics().widthPixels;
         bubbleParams.x = screenW - size - dp(12);
@@ -168,11 +186,11 @@ final class GuardOverlays {
     void updateBubble(int points) {
         lastPoints = points;
         if (bubble == null) return;
-        bubble.setText(points > 0 ? "−" + points : "0");
+        bubbleText.setText(points > 0 ? "−" + points : "0");
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
-        d.setColor(points > 0 ? BAD : PRIMARY);
-        d.setStroke(dp(watching ? 4 : 3), watching ? GOOD : Color.WHITE);
+        d.setColor(points > 0 ? LOGO_GREEN_DARK : LOGO_GREEN); // logo green; darker once points are owed
+        d.setStroke(dp(watching ? 3 : 2), watching ? Color.WHITE : Color.argb(110, 255, 255, 255)); // bright ring = counting reels
         bubble.setBackground(d);
         bubble.setContentDescription(points + " points owed. Tap to open 看看.");
     }
@@ -180,6 +198,7 @@ final class GuardOverlays {
     void hideBubble() {
         safeRemove(bubble);
         bubble = null;
+        bubbleText = null;
     }
 
     private void openOurApp() {

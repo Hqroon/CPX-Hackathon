@@ -21,6 +21,11 @@ import { fetchReels, fetchQuestions, logEvent, SAMPLE_QUESTIONS } from './api.js
 import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
+import { Capacitor } from '@capacitor/core';
+
+// Demo rule: every launch of the Android app starts at 0 points, so each judge
+// gets a clean phone. (The browser keeps its saved points.)
+if (Capacitor.isNativePlatform()) resetPoints();
 import {
   pointsForReel, isFreeReel, paidNumber, asksQuestion, nextQuestion, audioForReel,
   transitionMsInto, isSlowFrom, visualDecay, decayFilter, indexOfReel,
@@ -61,7 +66,7 @@ export default function App() {
   const [reelSource, setReelSource] = useState('');
   // start -> (in the app) gate -> feed -> results, or start -> (other apps) guard / bubble
   // Dark theme opens on the welcome screen; VITE_UI_THEME=original opens on 'start' as before.
-  const [phase, setPhase] = useState(IS_DARK_THEME ? 'welcome' : 'start'); // welcome | start | gate | feed | results | guard | guard-slides
+  const [phase, setPhase] = useState(IS_DARK_THEME ? 'welcome' : 'start'); // welcome | start | gate | feed | results | guard
   // Android app (Reel Guard available)? null = still checking.
   const [nativeApp, setNativeApp] = useState(null);
   const [guardStatus, setGuardStatus] = useState(null);
@@ -72,6 +77,7 @@ export default function App() {
   const [stats, setStats] = useState(emptyStats());
   const [points, setPoints] = useState(0);
   const [questions, setQuestions] = useState([]);
+  const [deck, setDeck] = useState(null); // slides confirmed on the home popup, reused until the user changes them
   const [questionsReady, setQuestionsReady] = useState(false); // false while the backend writes them
   const [provider, setProvider] = useState('');
   const qPointerRef = useRef(0);
@@ -108,6 +114,10 @@ export default function App() {
 
   // "Continue on other apps": if Reel Guard is switched on, the app shrinks into the
   // floating bubble straight away; otherwise show the one-time setup screen.
+  // Slides chosen for Reel Guard, and the questions written from them (once, on start).
+  const guardSlidesRef = useRef(null);
+  const guardQuestionsRef = useRef({ slides: null, questions: [] });
+
   async function continueWithOtherApps() {
     const s = await refreshGuard();
     if (s?.accessibilityEnabled && s.running !== false && !s.armed) {
@@ -118,7 +128,17 @@ export default function App() {
   }
 
   async function startBubble() {
-    await syncGuard({ questions: questions.length ? questions : undefined });
+    // Questions for Reel Guard are written only now, when the user starts the bubble
+    // (not when they open "Continue on other apps"), and once per set of slides.
+    const slides = guardSlidesRef.current;
+    if (slides && guardQuestionsRef.current.slides !== slides) {
+      showToast('Writing questions from your slides…');
+      const r = await fetchQuestions(slides, CONFIG.questionCount);
+      guardQuestionsRef.current = { slides, questions: r.questions };
+      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
+    }
+    const guardQuestions = slides ? guardQuestionsRef.current.questions : (questions.length ? questions : undefined);
+    await syncGuard({ questions: guardQuestions });
     await armGuard(true);
     await refreshGuard();
     setPhase('start');
@@ -135,25 +155,10 @@ export default function App() {
   // Home page: slides were uploaded first, then "Continue on other apps" was chosen.
   // Write questions from those slides for Reel Guard, and open it straight away.
   function otherAppsWithSlides(slides) {
-    showToast('Writing questions from your slides…');
-    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
-      await syncGuard({ questions: r.questions }); // no-op outside the Android app
-      await refreshGuard();
-      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
-    });
+    guardSlidesRef.current = slides; // questions are written when the bubble starts
     continueWithOtherApps();
   }
 
-  // Reel Guard: slides chosen on the guard screen -> questions -> native service.
-  function chooseGuardSlides(slides) {
-    setPhase('guard');
-    showToast('Writing questions from your slides…');
-    fetchQuestions(slides, CONFIG.questionCount).then(async (r) => {
-      await syncGuard({ questions: r.questions });
-      await refreshGuard();
-      showToast(`${r.questions.length} questions ready for Instagram / Xiaohongshu.`);
-    });
-  }
 
   // Load reels once.
   useEffect(() => {
@@ -357,7 +362,8 @@ export default function App() {
     setQuestionsReady(false);
     setProvider('');
     setSessionId(newSessionId());
-    setPhase('gate'); // stay logged in: back to the slide screen
+    // Back to the home popup: it reopens on the choices with the files already uploaded.
+    setPhase(deck ? 'start' : 'gate');
   }
 
   // ---- Demo controls ---------------------------------------------------------
@@ -502,6 +508,8 @@ export default function App() {
             guardStatus={guardStatus}
             onThisApp={startSession}
             onOtherApps={otherAppsWithSlides}
+            deck={deck}
+            onDeckChange={setDeck}
           />
         )}
         {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} onBack={() => setPhase('start')} />}
@@ -511,18 +519,9 @@ export default function App() {
             status={guardStatus}
             nativeApp={nativeApp}
             onRefresh={refreshGuard}
-            onChooseSlides={() => setPhase('guard-slides')}
             onStart={startBubble}
             onStop={stopBubble}
             onBack={() => setPhase('start')}
-          />
-        )}
-        {phase === 'guard-slides' && (
-          <SlideGate
-            onStart={chooseGuardSlides}
-            explain={explain}
-            onBack={() => setPhase('guard')}
-            startLabel="Use these slides for questions"
           />
         )}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}

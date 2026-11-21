@@ -391,3 +391,6 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .start-option { padding-top: 13px; padding-bottom: 13px; }
 /* Upload popup back arrows: green hover/focus with a white arrow */
 .dialog-back:hover, .dialog-back:focus-visible { background: var(--green); color: #fff; }
+
+/* Upload popup: the file list can be long (8 preset decks) */
+.upload-files { max-height: 240px; overflow-y: auto; }

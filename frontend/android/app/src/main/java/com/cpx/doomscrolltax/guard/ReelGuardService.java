@@ -93,6 +93,17 @@ public class ReelGuardService extends AccessibilityService {
         });
     }
 
+    /**
+     * 看看 was closed (back out of it, or swiped away from recent apps): the bubble goes,
+     * the points and the reel count go back to 0, and the normal volume comes back.
+     */
+    public static void resetForExit(android.content.Context ctx) {
+        GuardStore st = new GuardStore(ctx);
+        st.setArmed(false);
+        st.resetAll();
+        reload();
+    }
+
     /** The tax and the bubble only run after the user started the bubble ("armed"). */
     private boolean active() {
         return store.isEnabled() && store.isArmed();
@@ -107,9 +118,9 @@ public class ReelGuardService extends AccessibilityService {
         ui = new GuardOverlays(this);
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
         log("service connected, armed=" + store.isArmed());
-        // The phone may restart this service (low memory, battery manager). Bring the
-        // bubble back so the user can see the guard is still on.
-        if (active()) ui.showBubble(store.points());
+        // A fresh start of the service means 看看 was closed or killed: start clean
+        // (demo rule: closing the app clears the bubble and the points).
+        resetForExit(this);
     }
 
     @Override

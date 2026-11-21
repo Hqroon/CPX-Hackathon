@@ -20,8 +20,10 @@ export function extractionMessage(error, diagnostics) {
  * status: idle | reading { fileIndex, fileCount, processedPages, totalPages }
  *       | ready { slides, name, files, skipped } | error { msg }
  */
-export function useSlideUpload() {
-  const [status, setStatus] = useState({ kind: 'idle' });
+export function useSlideUpload(savedDeck = null) {
+  // savedDeck: { slides, name, files, skipped } from an earlier upload, so the user
+  // isn't asked to upload the same files again when they come back to this screen.
+  const [status, setStatus] = useState(() => (savedDeck ? { kind: 'ready', ...savedDeck } : { kind: 'idle' }));
   const [diagnostics, setDiagnostics] = useState(null);
   const inputRef = useRef(null);
 
@@ -104,6 +106,24 @@ export function useSlideUpload() {
     reading: status.kind === 'reading',
     ready: status.kind === 'ready',
     choose: () => inputRef.current?.click(),
+    // Preset decks already in the app (mock/course-slides.json), merged like uploaded PDFs.
+    useDecks: (picked) => {
+      // Some preset titles were saved with a broken dash (U+FFFD); show a real one.
+      const decks = picked.map((d) => ({ ...d, title: String(d.title).replace(/�/g, '–') }));
+      const slides = [];
+      for (const deck of decks) {
+        for (const sl of deck.pages) {
+          if (String(sl.text || '').trim().length < 30) continue;
+          slides.push({ page: slides.length + 1, text: sl.text, file: deck.title, filePage: sl.page });
+        }
+      }
+      const files = decks.map((d) => ({ name: d.title, count: d.pages.length }));
+      const name = files.length === 1 ? files[0].name : `${files[0].name} + ${files.length - 1} more`;
+      const deck = { slides, name, files, skipped: [], preset: true };
+      setDiagnostics(null);
+      setStatus({ kind: 'ready', ...deck });
+      return deck;
+    },
     reset: () => { setStatus({ kind: 'idle' }); setDiagnostics(null); },
   };
 }
