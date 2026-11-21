@@ -10,6 +10,8 @@
 //   player.blockSwipe      -> `blocked`
 //   player.setTransitionMs -> `transitionMs`
 //   player.setMuted        -> `muted`
+//   (silent volume fade)   -> `volume` (0..1, applied to the current reel, nothing shown on screen)
+//   (visual decay)         -> `filterFor(item)` returns a CSS filter for that reel
 //   (ref) unlockAudio()    -> call inside the slide-gate click handler
 
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
@@ -68,7 +70,10 @@ function ReelOverlay({ reel, item, freeReels, liked, onToggleLike, explain }) {
 }
 
 const Feed = forwardRef(function Feed(
-  { items, index, transitionMs, muted, paused, blocked, onRequestMove, renderCard, explain, freeReels },
+  {
+    items, index, transitionMs, muted, volume = 1, filterFor = () => 'none',
+    paused, blocked, onRequestMove, renderCard, explain, freeReels,
+  },
   ref
 ) {
   const v0 = useRef(null);
@@ -153,6 +158,9 @@ const Feed = forwardRef(function Feed(
       const isCurrent = i === index && item?.type === 'reel' && item.reel.src;
       if (isCurrent && !paused) {
         v.muted = muted;
+        try {
+          v.volume = volume; // ignored on iPhone (read-only there); works on Android and desktop
+        } catch {}
         const p = v.play();
         if (p) {
           p.catch(() => {
@@ -267,6 +275,7 @@ const Feed = forwardRef(function Feed(
           transition: changed[s] ? 'none' : `transform ${transitionMs}ms ${easing}`,
         };
         const showSkeleton = reel?.src && buffering[s] && !failed[s];
+        const filter = item ? filterFor(item) : 'none';
         return (
           <div key={s} className="slot" style={style} aria-hidden={i !== index}>
             <video
@@ -278,6 +287,7 @@ const Feed = forwardRef(function Feed(
               loop
               preload="auto"
               hidden={!reel?.src}
+              style={{ filter }}
               onLoadStart={() => {
                 setSlotFlag(setBuffering, s, true);
                 setSlotFlag(setFailed, s, false);
@@ -302,7 +312,7 @@ const Feed = forwardRef(function Feed(
               </div>
             )}
             {reel && !reel.src && (
-              <div className="placeholder" style={{ background: reel.color || '#333' }}>
+              <div className="placeholder" style={{ background: reel.color || '#333', filter }}>
                 <span className="placeholder-id">{reel.id}</span>
                 <small>Mock reel · put {reel.id}.mp4 in backend/media/reels and run npm run manifest</small>
               </div>
