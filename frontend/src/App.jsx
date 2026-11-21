@@ -5,11 +5,12 @@ import Feed from './components/Feed.jsx';
 import SlideGate from './components/SlideGate.jsx';
 import QuizModal from './components/QuizModal.jsx';
 import AllowanceCard from './components/AllowanceCard.jsx';
+import Home, { loadUser, clearUser } from './components/Home.jsx';
 import DemoPanel from './components/DemoPanel.jsx';
 import Results from './components/Results.jsx';
 import Explain from './components/Explain.jsx';
 import { IconSound, IconMute, IconClose } from './components/Icons.jsx';
-import { LogoMark } from './components/Illustrations.jsx';
+import { BrandMark } from './components/Brand.jsx';
 import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent } from './api.js';
@@ -42,10 +43,10 @@ function Backdrop() {
       <span className="blob blob-b" />
       <span className="blob blob-c" />
       <div className="backdrop-caption">
-        <LogoMark size={44} />
+        <BrandMark size={40} />
         <strong>Doomscroll Tax</strong>
         <span>Your first reels are free. Everything after costs you.</span>
-        <span className="backdrop-meta">CrossPointX 2026 · Track 2 · Reverse UX</span>
+        <span className="backdrop-meta">CrossPointX 2026, Track 2: Reverse UX</span>
       </div>
     </div>
   );
@@ -55,7 +56,8 @@ export default function App() {
   const feedRef = useRef(null);
   const [reels, setReels] = useState(null);
   const [reelSource, setReelSource] = useState('');
-  const [phase, setPhase] = useState('gate'); // gate | feed | results
+  const [phase, setPhase] = useState('home'); // home | gate | feed | results
+  const [user, setUser] = useState(loadUser);
   const [sessionId, setSessionId] = useState(newSessionId);
   const [index, setIndex] = useState(0);
   const maxSeenRef = useRef(0);
@@ -335,7 +337,7 @@ export default function App() {
         <Backdrop />
         <div className="phone">
           <div className="loading">
-            <span className="loading-mark"><LogoMark size={64} /></span>
+            <span className="loading-mark"><BrandMark size={56} /></span>
             <span>Loading…</span>
           </div>
         </div>
@@ -354,7 +356,7 @@ export default function App() {
   return (
     <div className="app">
       <Backdrop />
-      <div className={`phone phase-${phase}`}>
+      <div className={`phone phase-${phase} ${current && current.type !== 'reel' ? 'on-card' : ''}`}>
         <Feed
           ref={feedRef}
           items={items}
@@ -377,7 +379,7 @@ export default function App() {
 
         <div className="topbar">
           <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label="Doomscroll Tax">
-            <LogoMark size={30} />
+            <BrandMark size={30} />
             <span className="wordmark">刷屏税</span>
           </button>
           {phase === 'feed' && (
@@ -412,8 +414,16 @@ export default function App() {
           </div>
         )}
 
-        {phase === 'gate' && <SlideGate onStart={startSession} explain={explain} />}
-        {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} />}
+        {phase === 'home' && <Home onLogin={(u) => { setUser(u); setPhase('gate'); }} />}
+        {phase === 'gate' && (
+          <SlideGate
+            onStart={startSession}
+            explain={explain}
+            user={user}
+            onLogout={() => { clearUser(); setUser(null); setPhase('home'); }}
+          />
+        )}
+        {phase === 'results' && <Results stats={stats} points={points} onRestart={newSession} user={user} />}
         {quiz && <QuizModal quiz={quiz} onAnswer={answer} explain={explain} />}
         {toast && <div className="toast" key={toast.id} role="status">{toast.text}</div>}
         {panelOpen && (

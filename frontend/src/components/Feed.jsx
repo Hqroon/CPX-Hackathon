@@ -199,6 +199,8 @@ const Feed = forwardRef(function Feed(
   // Keyboard.
   useEffect(() => {
     const onKey = (e) => {
+      // Never steal keys from text fields (login form, etc.).
+      if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
       if (['ArrowDown', 'PageDown', 'j'].includes(e.key)) {
         e.preventDefault();
         request(1);
@@ -343,7 +345,7 @@ const Feed = forwardRef(function Feed(
         <div className="slow-overlay" role="status">
           <div className="slow-card">
             <span className="slow-title">Loading next reel</span>
-            <span className="slow-note">Slow scroll · on purpose</span>
+            <span className="slow-note">Slow scroll, on purpose</span>
             <div className="slow-track">
               <div className="slow-fill" style={{ animationDuration: `${transitionMs}ms` }} />
             </div>

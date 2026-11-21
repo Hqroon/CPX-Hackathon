@@ -8,9 +8,14 @@ import {
   validatePdfFile,
 } from '../rules/slides.js';
 import Explain from './Explain.jsx';
-import { IconUpload, IconDoc, IconCheck } from './Icons.jsx';
+import {
+  IconUpload, IconDoc, IconCheck,
+  IconLayers, IconChevron, IconArrow,
+} from './Icons.jsx';
 import { LogoMark, SlidesArt } from './Illustrations.jsx';
+import TopBar from './Brand.jsx';
 import samples from '../mock/course-slides.json';
+import sample from '../mock/sample-slides.json';
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -56,7 +61,8 @@ function DevDiagnostics({ diagnostics, error }) {
   );
 }
 
-export default function SlideGate({ onStart, explain }) {
+export default function SlideGate({ onStart, explain, user, onLogout }) {
+  // idle | reading { processedPages, totalPages } | ready { slides, name } | error { msg }
   const [status, setStatus] = useState({ kind: 'idle' });
   const [diagnostics, setDiagnostics] = useState(null);
   const inputRef = useRef(null);
@@ -129,88 +135,96 @@ export default function SlideGate({ onStart, explain }) {
     : '';
   const reading = status.kind === 'reading';
   const ready = status.kind === 'ready';
-  const count = ready ? status.slides.length : reading ? status.processedPages : 0;
+  const deckTitle = ready ? status.name.replace(/\.pdf$/i, '').replace(/^Sample:\s*/, '') : '';
 
   return (
-    <div className="gate">
-      <div className="gate-card">
-        <div className="brand" aria-hidden="true">
-          <span>Doomscroll</span>
-          <LogoMark size={26} />
-          <span>Tax</span>
-        </div>
-        <div className="gate-art"><SlidesArt /></div>
-        <h1>{COPY.gate.title}</h1>
-        {COPY.gate.body && <p className="gate-body">{COPY.gate.body}</p>}
+    <div className="screen gate">
+      <TopBar user={user} />
+      <div className="screen-scroll">
+        <h1 className="title">{COPY.gate.title}</h1>
         <Explain show={explain} text={COPY.explain.gate} />
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept="application/pdf,.pdf"
-          hidden
-          onChange={onFile}
-        />
-
-        {/* Slide counter: five boxes to fill, like a form field. */}
-        <div className="slide-counter" aria-label={`${count} of ${CONFIG.minSlides} slides`}>
-          {Array.from({ length: CONFIG.minSlides }, (_, i) => (
-            <span key={i} className={`slide-box ${i < count ? 'filled' : ''}`}>
-              {i < count ? <IconCheck size={16} /> : i + 1}
-            </span>
-          ))}
-          <span className="slide-counter-label">
-            {count > CONFIG.minSlides ? `+${count - CONFIG.minSlides} more` : `min ${CONFIG.minSlides}`}
-          </span>
-        </div>
+        <input ref={inputRef} type="file" accept="application/pdf,.pdf" hidden onChange={onFile} />
 
         {!ready && (
-          <div className="gate-actions">
-            <button
-              className={`btn primary big ${reading ? 'busy' : ''}`}
-              onClick={() => inputRef.current?.click()}
-              disabled={reading}
-            >
-              <IconUpload size={20} />
-              <span>{reading ? readingLabel : status.kind === 'error' ? 'Choose another PDF' : COPY.gate.upload}</span>
+          <div className="card list-card">
+            <button className="list-row" onClick={() => inputRef.current?.click()} disabled={reading}>
+              <span className="row-icon"><IconUpload size={16} /></span>
+              <span className="row-text">
+                <span className="row-title" role={reading ? 'status' : undefined} aria-live="polite">
+                  {reading ? readingLabel : status.kind === 'error' ? 'Choose another PDF' : 'Upload a PDF'}
+                </span>
+                <span className="row-sub">At least {CONFIG.minSlides} slides with text</span>
+              </span>
+              <IconChevron size={18} className="row-chevron" />
             </button>
             <button
-              className="btn ghost"
+              className="list-row"
               onClick={useSample}
               disabled={reading}
             >
-              {COPY.gate.sample}
+              <span className="row-icon"><IconLayers size={16} /></span>
+              <span className="row-text">
+                <span className="row-title">{COPY.gate.sample}</span>
+                <span className="row-sub">Data Structures &amp; Algorithms, week 3</span>
+              </span>
+              <IconChevron size={18} className="row-chevron" />
             </button>
           </div>
         )}
 
-        {status.kind === 'reading' && (
-          <p className="gate-status" role="status" aria-live="polite">{readingLabel}</p>
-        )}
-        {status.kind === 'error' && <p className="gate-error" role="alert">{status.msg}</p>}
+        {status.kind === 'error' && <p className="form-error" role="alert">{status.msg}</p>}
 
         {ready && (
           <>
-            <div className="file-slip">
-              <IconDoc size={22} />
-              <div>
-                <strong>{status.name}</strong>
-                <span>{COPY.gate.ready(status.slides.length)}</span>
+            <div className="card deck-card">
+              <div className="deck-cover" aria-hidden="true">
+                <span>{deckTitle}</span>
               </div>
-              <span className="file-ok" aria-label="Accepted"><IconCheck size={16} /></span>
+              <div className="deck-info">
+                <p className="deck-title">{deckTitle}</p>
+                <p className="muted">Your slides</p>
+                <p className="muted deck-count"><IconDoc size={14} /> {status.slides.length} slides read</p>
+              </div>
             </div>
-            {/* onStart must run inside this click so the browser allows video with sound. */}
-            <button className="btn primary big" onClick={() => onStart(status.slides)}>
-              {COPY.gate.start}
-            </button>
-            <button className="btn link" onClick={() => setStatus({ kind: 'idle' })}>
-              Choose different slides
-            </button>
+
+            <div className="stat-row">
+              <div className="card stat"><strong>{status.slides.length}</strong><span>Slides</span></div>
+              <div className="card stat"><strong>{CONFIG.freeReels}</strong><span>Free reels</span></div>
+              <div className="card stat"><strong>{CONFIG.questionEvery}</strong><span>Reels per question</span></div>
+            </div>
+
+            <p className="group-label">Questions will come from</p>
+            <div className="card list-card">
+              {status.slides.slice(0, 3).map((sl) => (
+                <div className="list-row static" key={sl.page}>
+                  <span className="row-icon">{sl.page}</span>
+                  <span className="row-text"><span className="row-title clamp">{sl.text}</span></span>
+                </div>
+              ))}
+            </div>
+            <button className="text-link center" onClick={() => setStatus({ kind: 'idle' })}>Choose different slides</button>
           </>
         )}
 
+        {user && onLogout && (
+          <p className="switch-line">
+            Not {user.name}?{' '}
+            <button type="button" className="text-link" onClick={onLogout}>Log out</button>
+          </p>
+        )}
         <DevDiagnostics diagnostics={diagnostics} error={status.error} />
       </div>
+
+      {ready && (
+        <div className="bottom-actions">
+          {/* onStart must run inside this click so the browser allows video with sound. */}
+          <button className="btn primary" onClick={() => onStart(status.slides)}>
+            <span>{COPY.gate.start}</span>
+            <IconArrow size={18} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
