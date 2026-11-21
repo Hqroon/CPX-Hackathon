@@ -1,4 +1,6 @@
-# Doomscroll Tax (刷屏税)
+# 看看 See See
+
+*(project codename: Doomscroll Tax / 刷屏税)*
 
 **CrossPointX 2026 · Track 2: Reverse UX Challenge.** The brief: *an app users hate, but still have to use.*
 
@@ -19,6 +21,8 @@ All of these rules live in one tested module, `frontend/src/rules/frustration.js
 The first 5 reels of every session are always free (golden path), so the task can always be completed.
 
 **Android demo:** the app is wrapped as an APK with Capacitor, with the videos packed inside. See [docs/ANDROID_APK.md](docs/ANDROID_APK.md).
+
+**Two ways to scroll:** the start screen offers **Continue in the app** (slides → our reel feed) or **Continue on other apps**: on Android, See See shrinks into a **floating bubble** and runs the same rules **on top of Instagram / Xiaohongshu / Douyin** through an accessibility service (Reel Guard). See [docs/REEL_GUARD.md](docs/REEL_GUARD.md).
 
 ## Quick start
 
@@ -43,7 +47,11 @@ Open http://localhost:5173. To test on a phone on the same Wi-Fi, open `http://<
 
 **Demo panel:** tap the 刷屏税 logo 5 times. Controls: skip 15 minutes, jump to just before slow scroll, trigger a question, demo speed ×3, explain mode, reset.
 
-## Adding the 50 reels (M3)
+## The reels (M3)
+
+**The 35 videos live on the `media` branch, not on `main`** (so pulling `main` stays fast). How to get them and point the app at them: [docs/VIDEOS.md](docs/VIDEOS.md).
+
+### Adding reels
 
 1. Install ffmpeg: `winget install Gyan.FFmpeg`, and convert the clips to vertical MP4 with sound (command in TEAM_PLAN.md).
 2. Put the videos in **one folder**. Any file names work (`.mp4`, `.webm`, `.mov`). Either:
