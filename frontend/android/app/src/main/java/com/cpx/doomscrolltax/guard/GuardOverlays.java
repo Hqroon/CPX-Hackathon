@@ -1,9 +1,13 @@
 package com.cpx.doomscrolltax.guard;
 
 import android.accessibilityservice.AccessibilityService;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -13,54 +17,94 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import com.cpx.doomscrolltax.R;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.core.content.res.ResourcesCompat;
+
+import com.cpx.doomscrolltax.R;
+
+import java.util.Random;
 
 /**
  * Draws the Reel Guard's windows on top of other apps. Uses TYPE_ACCESSIBILITY_OVERLAY,
  * which an accessibility service may add without the "display over other apps" permission.
  *
- *  - bubble:  small draggable circle showing points owed; tap opens our app
+ *  - bubble:  draggable pair: the green logo bubble with Loan Points, and a "free reels"
+ *             bubble under it counting 5 → 0 (red at 0); tap opens our app
  *  - grey:    see-through grey layer that grows with visual decay (touches pass through)
- *  - blocker: 3-second "loading next reel" cover that swallows touches
- *  - quiz:    full-screen question card that swallows touches until answered
+ *  - blocker: "Loading next reel" cover with a loading bar and our logo riding across it
+ *  - quiz:    full-screen question card that swallows touches until answered; confetti and
+ *             a cheer when the answer is right
+ *
+ * Colours and font (Inter) follow the app's dark theme (frontend/src/theme-dark.css).
  */
 final class GuardOverlays {
     interface QuizListener {
         void onAnswer(int index);
     }
 
-    private static final int PRIMARY = Color.parseColor("#8E97FD");
-    private static final int NAVY = Color.parseColor("#03174C");
-    private static final int BAD = Color.parseColor("#F2566B");
-    private static final int GOOD = Color.parseColor("#3DA56F");
+    /** How many free reels are left in this session (5 → 0). */
+    interface FreeLeft {
+        int get();
+    }
+
+    // Dark theme tokens (src/theme-dark.css)
+    private static final int SURFACE = Color.parseColor("#1C1C1E");       // --dk-surface
+    private static final int SURFACE_PRESS = Color.parseColor("#2C2C2E"); // --dk-surface-press
+    private static final int TEXT = Color.WHITE;                          // --dk-text
+    private static final int MUTED = Color.parseColor("#8E8E93");         // --dk-muted
+    private static final int ACCENT = Color.parseColor("#3DBB83");        // --dk-accent
+    private static final int ACCENT_STRONG = Color.parseColor("#166C47"); // --dk-accent-strong
+    private static final int ACCENT_SOFT = Color.argb(36, 61, 187, 131);  // --dk-accent-soft
+    private static final int WARN = Color.parseColor("#FF8F7A");          // --dk-warn
+    private static final int WARN_SOFT = Color.argb(33, 255, 143, 122);   // --dk-warn-soft
+    private static final int HAIRLINE = Color.argb(41, 255, 255, 255);    // --dk-dash
+    private static final int RED = Color.parseColor("#E5484D");           // free reels used up
     private static final int LOGO_GREEN = Color.parseColor("#1F8A5B");
     private static final int LOGO_GREEN_DARK = Color.parseColor("#14603F");
-    private static final int INK = Color.parseColor("#3F414E");
 
     private final AccessibilityService service;
     private final WindowManager wm;
+    private final FreeLeft freeLeft;
+    private final Random random = new Random();
+    private Typeface fontMedium;
+    private Typeface fontBold;
 
-    private LinearLayout bubble;   // green circle: eye logo on top, points underneath
+    private LinearLayout bubble;      // the draggable pair
+    private LinearLayout loanBubble;  // green circle: eye logo + Loan Points
     private TextView bubbleText;
+    private LinearLayout freeBubble;  // smaller circle: "FREE" + reels left
+    private TextView freeText;
     private WindowManager.LayoutParams bubbleParams;
     private View grey;
     private View blocker;
-    private View quizRoot;
-    private TextView quizHeader;
+    private ValueAnimator blockerAnim;
+    private FrameLayout quizRoot;
     private TextView quizQuestion;
     private TextView quizFeedback;
-    private final Button[] quizButtons = new Button[4];
+    private final LinearLayout[] quizOptions = new LinearLayout[4];
+    private final TextView[] quizOptionText = new TextView[4];
     private QuizListener quizListener;
 
-    GuardOverlays(AccessibilityService service) {
+    GuardOverlays(AccessibilityService service, FreeLeft freeLeft) {
         this.service = service;
+        this.freeLeft = freeLeft;
         this.wm = (WindowManager) service.getSystemService(AccessibilityService.WINDOW_SERVICE);
+        try {
+            fontMedium = ResourcesCompat.getFont(service, R.font.inter_medium);
+            fontBold = ResourcesCompat.getFont(service, R.font.inter_bold);
+        } catch (Exception e) {
+            fontMedium = null;
+            fontBold = null;
+        }
+        if (fontMedium == null) fontMedium = Typeface.DEFAULT;
+        if (fontBold == null) fontBold = Typeface.DEFAULT_BOLD;
     }
 
     private int dp(float v) {
@@ -95,14 +139,55 @@ final class GuardOverlays {
         }
     }
 
-    private static GradientDrawable rounded(int color, float radiusPx) {
+    private TextView text(float sp, Typeface face, int color) {
+        TextView t = new TextView(service);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
+        t.setTypeface(face);
+        t.setTextColor(color);
+        t.setIncludeFontPadding(false);
+        return t;
+    }
+
+    private static GradientDrawable circle(int fill, int strokePx, int stroke) {
         GradientDrawable d = new GradientDrawable();
-        d.setColor(color);
-        d.setCornerRadius(radiusPx);
+        d.setShape(GradientDrawable.OVAL);
+        d.setColor(fill);
+        if (strokePx > 0) d.setStroke(strokePx, stroke);
         return d;
     }
 
-    // ---- bubble ---------------------------------------------------------------------
+    private static GradientDrawable rounded(int fill, float radiusPx, int strokePx, int stroke) {
+        GradientDrawable d = new GradientDrawable();
+        d.setColor(fill);
+        d.setCornerRadius(radiusPx);
+        if (strokePx > 0) d.setStroke(strokePx, stroke);
+        return d;
+    }
+
+    /** Quick "pop" when a number changes. */
+    private static void pop(View v, float to) {
+        if (v == null) return;
+        v.animate().cancel();
+        v.setScaleX(1f);
+        v.setScaleY(1f);
+        v.animate().scaleX(to).scaleY(to).setDuration(140).setInterpolator(new DecelerateInterpolator())
+                .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(280)
+                        .setInterpolator(new OvershootInterpolator(3f)).start())
+                .start();
+    }
+
+    /** Small left-right shake (a new Loan Point, a wrong answer). */
+    private static void shake(View v) {
+        if (v == null) return;
+        v.setRotation(0f);
+        v.animate().rotation(-10f).setDuration(70).withEndAction(() ->
+                v.animate().rotation(8f).setDuration(90).withEndAction(() ->
+                        v.animate().rotation(0f).setDuration(120)
+                                .setInterpolator(new OvershootInterpolator()).start()
+                ).start()).start();
+    }
+
+    // ---- bubble pair --------------------------------------------------------------------
 
     @SuppressLint("ClickableViewAccessibility")
     void showBubble(int points) {
@@ -112,28 +197,53 @@ final class GuardOverlays {
         }
         bubble = new LinearLayout(service);
         bubble.setOrientation(LinearLayout.VERTICAL);
-        bubble.setGravity(Gravity.CENTER);
-        bubble.setElevation(dp(8));
+        bubble.setGravity(Gravity.CENTER_HORIZONTAL);
+        bubble.setPadding(dp(8), dp(8), dp(8), dp(8)); // room for the pop animation
+        bubble.setClipChildren(false);
+        bubble.setClipToPadding(false);
+
+        // Loan Points: the green logo bubble
+        loanBubble = new LinearLayout(service);
+        loanBubble.setOrientation(LinearLayout.VERTICAL);
+        loanBubble.setGravity(Gravity.CENTER);
+        loanBubble.setElevation(dp(8));
         ImageView eye = new ImageView(service);
         eye.setImageResource(R.drawable.bubble_eye);
         eye.setScaleType(ImageView.ScaleType.FIT_CENTER);
         eye.setAdjustViewBounds(true);
-        bubble.addView(eye, new LinearLayout.LayoutParams(dp(30), dp(25)));
-        bubbleText = new TextView(service);
+        loanBubble.addView(eye, new LinearLayout.LayoutParams(dp(30), dp(25)));
+        bubbleText = text(14, fontBold, Color.WHITE);
         bubbleText.setGravity(Gravity.CENTER);
-        bubbleText.setTextColor(Color.WHITE);
-        bubbleText.setTypeface(Typeface.DEFAULT_BOLD);
-        bubbleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-        bubbleText.setIncludeFontPadding(false);
         LinearLayout.LayoutParams tl = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         tl.topMargin = dp(2);
-        bubble.addView(bubbleText, tl);
-        int size = dp(64);
-        bubbleParams = params(size, size, true);
+        loanBubble.addView(bubbleText, tl);
+        bubble.addView(loanBubble, new LinearLayout.LayoutParams(dp(64), dp(64)));
+
+        // Free reels: a smaller bubble underneath, 5 → 0
+        freeBubble = new LinearLayout(service);
+        freeBubble.setOrientation(LinearLayout.VERTICAL);
+        freeBubble.setGravity(Gravity.CENTER);
+        freeBubble.setElevation(dp(6));
+        TextView freeLabel = text(8, fontBold, Color.WHITE);
+        freeLabel.setText("FREE");
+        freeLabel.setLetterSpacing(0.12f);
+        freeLabel.setAlpha(0.85f);
+        freeBubble.addView(freeLabel);
+        freeText = text(16, fontBold, Color.WHITE);
+        freeText.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams ftl = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ftl.topMargin = dp(1);
+        freeBubble.addView(freeText, ftl);
+        LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(dp(46), dp(46));
+        fl.topMargin = dp(8);
+        bubble.addView(freeBubble, fl);
+
+        bubbleParams = params(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         int screenW = service.getResources().getDisplayMetrics().widthPixels;
-        bubbleParams.x = screenW - size - dp(12);
-        bubbleParams.y = dp(140);
+        bubbleParams.x = screenW - dp(64 + 16) - dp(4);
+        bubbleParams.y = dp(130);
 
         bubble.setOnTouchListener(new View.OnTouchListener() {
             private float downX, downY;
@@ -169,36 +279,62 @@ final class GuardOverlays {
                 }
             }
         });
+        shownPoints = -1;
+        shownFree = -1;
         updateBubble(points);
         safeAdd(bubble, bubbleParams);
+        bubble.setScaleX(0.4f);
+        bubble.setScaleY(0.4f);
+        bubble.setAlpha(0f);
+        bubble.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(320)
+                .setInterpolator(new OvershootInterpolator(2f)).start();
     }
 
     private boolean watching = false;
 
-    /** Green ring = Reel Guard is attached to Instagram / Xiaohongshu and counting reels. */
+    /** Bright ring = Reel Guard is attached to Instagram / Xiaohongshu and counting reels. */
     void setWatching(boolean on) {
         watching = on;
         if (bubble != null) updateBubble(lastPoints);
     }
 
     private int lastPoints = 0;
+    private int shownPoints = -1;
+    private int shownFree = -1;
 
     void updateBubble(int points) {
         lastPoints = points;
         if (bubble == null) return;
+        int free = Math.max(0, freeLeft.get());
+
+        // Loan Points: 0 while free reels last, then −1, −2…
         bubbleText.setText(points > 0 ? "−" + points : "0");
-        GradientDrawable d = new GradientDrawable();
-        d.setShape(GradientDrawable.OVAL);
-        d.setColor(points > 0 ? LOGO_GREEN_DARK : LOGO_GREEN); // logo green; darker once points are owed
-        d.setStroke(dp(watching ? 3 : 2), watching ? Color.WHITE : Color.argb(110, 255, 255, 255)); // bright ring = counting reels
-        bubble.setBackground(d);
-        bubble.setContentDescription(points + " points owed. Tap to open 看看.");
+        int ring = watching ? Color.WHITE : Color.argb(110, 255, 255, 255);
+        loanBubble.setBackground(circle(points > 0 ? LOGO_GREEN_DARK : LOGO_GREEN, dp(watching ? 3 : 2), ring));
+        loanBubble.setContentDescription(points + " Loan Points. Tap to open 看看.");
+        if (shownPoints >= 0 && points != shownPoints) {
+            pop(loanBubble, 1.22f);
+            if (points > shownPoints) shake(loanBubble);
+        }
+        shownPoints = points;
+
+        // Free reels: 5, 4, 3, 2, 1, then a red 0
+        freeText.setText(String.valueOf(free));
+        freeBubble.setBackground(free > 0
+                ? circle(SURFACE, dp(2), ACCENT)
+                : circle(RED, dp(2), Color.WHITE));
+        freeBubble.setContentDescription(free + " free reels left");
+        if (shownFree >= 0 && free != shownFree) pop(freeBubble, free == 0 ? 1.35f : 1.25f);
+        shownFree = free;
     }
 
     void hideBubble() {
         safeRemove(bubble);
         bubble = null;
+        loanBubble = null;
         bubbleText = null;
+        freeBubble = null;
+        freeText = null;
     }
 
     private void openOurApp() {
@@ -235,43 +371,83 @@ final class GuardOverlays {
         grey = null;
     }
 
-    // ---- 3-second blocker --------------------------------------------------------------
+    // ---- 3-second blocker: loading bar with our logo -----------------------------------
 
-    void showBlocker() {
+    void showBlocker(int durationMs) {
         if (blocker != null) return;
         FrameLayout root = new FrameLayout(service);
-        root.setBackgroundColor(Color.argb(150, 0, 0, 0));
+        root.setBackgroundColor(Color.argb(170, 0, 0, 0));
         root.setClickable(true); // swallow touches
 
         LinearLayout box = new LinearLayout(service);
         box.setOrientation(LinearLayout.VERTICAL);
-        box.setGravity(Gravity.CENTER_HORIZONTAL);
-        box.setPadding(dp(28), dp(22), dp(28), dp(22));
-        box.setMinimumWidth(dp(220)); // room for the whole "Loading next reel…" line
-        box.setBackground(rounded(Color.argb(235, 20, 96, 63), dp(20))); // logo green
+        box.setPadding(dp(22), dp(20), dp(22), dp(22));
+        box.setBackground(rounded(SURFACE, dp(18), dp(1), HAIRLINE));
 
-        ProgressBar spinner = new ProgressBar(service);
-        box.addView(spinner, new LinearLayout.LayoutParams(dp(44), dp(44)));
+        LinearLayout head = new LinearLayout(service);
+        head.setOrientation(LinearLayout.HORIZONTAL);
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        TextView label = text(15, fontBold, TEXT);
+        label.setText("Loading next reel");
+        head.addView(label, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        final TextView pct = text(14, fontBold, ACCENT);
+        pct.setText("0%");
+        head.addView(pct);
+        box.addView(head, new LinearLayout.LayoutParams(dp(240), ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        TextView label = new TextView(service);
-        label.setText("Loading next reel…");
-        label.setTextColor(Color.WHITE);
-        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        label.setTypeface(Typeface.DEFAULT_BOLD);
-        label.setGravity(Gravity.CENTER);
-        label.setSingleLine(true);
-        label.setPadding(0, dp(12), 0, 0);
-        box.addView(label, new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        // Track with a green fill; the logo rides on the front of the fill.
+        final int trackW = dp(240);
+        final int logoW = dp(34);
+        FrameLayout track = new FrameLayout(service);
+        track.setClipChildren(false);
+        View rail = new View(service);
+        rail.setBackground(rounded(SURFACE_PRESS, dp(6), 0, 0));
+        track.addView(rail, new FrameLayout.LayoutParams(trackW, dp(10), Gravity.CENTER_VERTICAL));
+        final View fill = new View(service);
+        GradientDrawable fillD = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
+                new int[]{ACCENT_STRONG, ACCENT});
+        fillD.setCornerRadius(dp(6));
+        fill.setBackground(fillD);
+        final FrameLayout.LayoutParams fillLp = new FrameLayout.LayoutParams(0, dp(10), Gravity.CENTER_VERTICAL);
+        track.addView(fill, fillLp);
+        final ImageView logo = new ImageView(service);
+        logo.setImageResource(R.drawable.logo_eye);
+        logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        track.addView(logo, new FrameLayout.LayoutParams(logoW, logoW, Gravity.CENTER_VERTICAL));
+        LinearLayout.LayoutParams trackLp = new LinearLayout.LayoutParams(trackW, dp(40));
+        trackLp.topMargin = dp(12);
+        box.addView(track, trackLp);
 
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        root.addView(box, lp);
+        TextView sub = text(12, fontMedium, MUTED);
+        sub.setText("看看 is slowing your scroll down");
+        LinearLayout.LayoutParams subLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        subLp.topMargin = dp(6);
+        box.addView(sub, subLp);
+
+        root.addView(box, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         blocker = root;
         safeAdd(blocker, params(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true));
+
+        blockerAnim = ValueAnimator.ofFloat(0f, 1f);
+        blockerAnim.setDuration(Math.max(300, durationMs - 150));
+        blockerAnim.setInterpolator(new LinearInterpolator());
+        blockerAnim.addUpdateListener(a -> {
+            float f = (float) a.getAnimatedValue();
+            int w = Math.round(trackW * f);
+            fillLp.width = w;
+            fill.setLayoutParams(fillLp);
+            logo.setTranslationX(Math.max(0, Math.min(trackW - logoW, w - logoW / 2f)));
+            logo.setRotation((float) Math.sin(f * Math.PI * 6) * 8f); // a little wobble as it travels
+            pct.setText(Math.round(f * 100) + "%");
+        });
+        blockerAnim.start();
     }
 
     void hideBlocker() {
+        if (blockerAnim != null) blockerAnim.cancel();
+        blockerAnim = null;
         safeRemove(blocker);
         blocker = null;
     }
@@ -286,113 +462,238 @@ final class GuardOverlays {
         quizListener = listener;
         if (quizRoot == null) buildQuiz();
         setQuestion(q, number);
-        setQuizFeedback("", INK);
+        setQuizFeedback("", MUTED);
         setQuizEnabled(true);
     }
 
     private void buildQuiz() {
         FrameLayout root = new FrameLayout(service);
-        root.setBackgroundColor(Color.argb(215, 3, 23, 76));
+        root.setBackgroundColor(Color.argb(225, 0, 0, 0));
         root.setClickable(true); // swallow touches so the reel can't be swiped
 
         LinearLayout card = new LinearLayout(service);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(20), dp(22), dp(20), dp(20));
-        card.setBackground(rounded(Color.WHITE, dp(24)));
+        card.setBackground(rounded(SURFACE, dp(18), dp(1), HAIRLINE));
 
-        quizHeader = new TextView(service);
-        quizHeader.setTextColor(PRIMARY);
-        quizHeader.setTypeface(Typeface.DEFAULT_BOLD);
-        quizHeader.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        quizHeader.setLetterSpacing(0.08f);
-        card.addView(quizHeader);
+        TextView heading = text(13, fontBold, ACCENT);
+        heading.setText("Question");
+        heading.setLetterSpacing(0.04f);
+        card.addView(heading);
 
-        TextView sub = new TextView(service);
-        sub.setText("Answer to keep scrolling. Your reel is silenced.");
-        sub.setTextColor(Color.parseColor("#A1A4B2"));
-        sub.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-        sub.setPadding(0, dp(4), 0, dp(10));
-        card.addView(sub);
+        quizQuestion = text(20, fontBold, TEXT);
+        quizQuestion.setLineSpacing(dp(3), 1f);
+        LinearLayout.LayoutParams ql = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ql.topMargin = dp(10);
+        ql.bottomMargin = dp(8);
+        card.addView(quizQuestion, ql);
 
-        quizQuestion = new TextView(service);
-        quizQuestion.setTextColor(INK);
-        quizQuestion.setTypeface(Typeface.DEFAULT_BOLD);
-        quizQuestion.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-        quizQuestion.setPadding(0, 0, 0, dp(12));
-        card.addView(quizQuestion);
-
-        for (int i = 0; i < quizButtons.length; i++) {
+        for (int i = 0; i < quizOptions.length; i++) {
             final int index = i;
-            Button b = new Button(service);
-            b.setAllCaps(false);
-            b.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-            b.setTextColor(INK);
-            b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-            b.setBackground(rounded(Color.parseColor("#F2F3F7"), dp(14)));
-            b.setPadding(dp(14), dp(10), dp(14), dp(10));
-            b.setOnClickListener(v -> {
+            LinearLayout row = new LinearLayout(service);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(14), dp(13), dp(14), dp(13));
+            row.setMinimumHeight(dp(52));
+            row.setBackground(rounded(SURFACE_PRESS, dp(12), 0, 0));
+
+            TextView letter = text(15, fontBold, ACCENT);
+            letter.setText(String.valueOf((char) ('A' + i)));
+            letter.setGravity(Gravity.CENTER);
+            row.addView(letter, new LinearLayout.LayoutParams(dp(18), ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            View divider = new View(service); // the small vertical line between letter and answer
+            divider.setBackgroundColor(HAIRLINE);
+            LinearLayout.LayoutParams dl = new LinearLayout.LayoutParams(dp(1), dp(22));
+            dl.leftMargin = dp(12);
+            dl.rightMargin = dp(12);
+            row.addView(divider, dl);
+
+            TextView answer = text(15, fontMedium, TEXT);
+            answer.setLineSpacing(dp(2), 1f);
+            row.addView(answer, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+            row.setOnClickListener(v -> {
                 if (quizListener != null) quizListener.onAnswer(index);
             });
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lp.topMargin = dp(8);
-            card.addView(b, lp);
-            quizButtons[i] = b;
+            card.addView(row, lp);
+            quizOptions[i] = row;
+            quizOptionText[i] = answer;
         }
 
-        quizFeedback = new TextView(service);
-        quizFeedback.setTypeface(Typeface.DEFAULT_BOLD);
-        quizFeedback.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        quizFeedback.setPadding(0, dp(12), 0, 0);
-        card.addView(quizFeedback);
+        quizFeedback = text(14, fontMedium, MUTED);
+        quizFeedback.setLineSpacing(dp(2), 1f);
+        LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        fl.topMargin = dp(12);
+        card.addView(quizFeedback, fl);
 
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-        lp.leftMargin = dp(18);
-        lp.rightMargin = dp(18);
+        lp.leftMargin = dp(16);
+        lp.rightMargin = dp(16);
         root.addView(card, lp);
         quizRoot = root;
         safeAdd(quizRoot, params(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true));
+        card.setTranslationY(dp(40));
+        card.setAlpha(0f);
+        card.animate().translationY(0).alpha(1f).setDuration(260)
+                .setInterpolator(new DecelerateInterpolator()).start();
     }
 
     void setQuestion(GuardQuestion q, int number) {
         if (quizRoot == null) return;
-        quizHeader.setText("TOLL BOOTH · QUESTION " + number);
         quizQuestion.setText(q.question);
-        for (int i = 0; i < quizButtons.length; i++) {
-            Button b = quizButtons[i];
+        for (int i = 0; i < quizOptions.length; i++) {
+            LinearLayout row = quizOptions[i];
             if (i < q.options.length) {
-                b.setText((char) ('A' + i) + "   " + q.options[i]);
-                b.setVisibility(View.VISIBLE);
-                b.setBackground(rounded(Color.parseColor("#F2F3F7"), dp(14)));
+                quizOptionText[i].setText(q.options[i]);
+                row.setVisibility(View.VISIBLE);
+                row.setBackground(rounded(SURFACE_PRESS, dp(12), 0, 0));
             } else {
-                b.setVisibility(View.GONE);
+                row.setVisibility(View.GONE);
             }
         }
     }
 
     void markAnswer(int index, boolean right) {
-        if (quizRoot == null || index < 0 || index >= quizButtons.length) return;
-        quizButtons[index].setBackground(rounded(right ? Color.parseColor("#DDF3E6") : Color.parseColor("#FFE3E7"), dp(14)));
+        if (quizRoot == null || index < 0 || index >= quizOptions.length) return;
+        quizOptions[index].setBackground(right
+                ? rounded(ACCENT_SOFT, dp(12), dp(2), ACCENT)
+                : rounded(WARN_SOFT, dp(12), dp(2), WARN));
+        if (right) pop(quizOptions[index], 1.04f);
+        else shake(quizOptions[index]);
     }
 
     void setQuizFeedback(String text, int color) {
         if (quizFeedback == null) return;
         quizFeedback.setText(text);
         quizFeedback.setTextColor(color);
+        quizFeedback.setVisibility(text.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     void setQuizEnabled(boolean enabled) {
-        for (Button b : quizButtons) {
-            if (b != null) {
-                b.setEnabled(enabled);
-                b.setAlpha(enabled ? 1f : 0.7f);
+        for (LinearLayout row : quizOptions) {
+            if (row != null) {
+                row.setEnabled(enabled);
+                row.setAlpha(enabled ? 1f : 0.85f);
             }
         }
     }
 
-    static int goodColor() { return GOOD; }
-    static int badColor() { return BAD; }
+    private static final String[] CHEERS = {
+            "Brain 1, Reels 0!", "Nailed it!", "Big brain energy!", "You earned this reel!",
+            "Look at you studying!", "That's the one!",
+    };
+
+    /** Right answer: confetti over the screen and a cheer that pops in. */
+    void celebrate() {
+        if (quizRoot == null) return;
+        ConfettiView confetti = new ConfettiView(service, random);
+        quizRoot.addView(confetti, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout badge = new LinearLayout(service);
+        badge.setOrientation(LinearLayout.VERTICAL);
+        badge.setGravity(Gravity.CENTER);
+        badge.setPadding(dp(24), dp(16), dp(24), dp(18));
+        badge.setBackground(rounded(ACCENT_STRONG, dp(20), dp(2), ACCENT));
+        badge.setElevation(dp(12));
+        TextView emoji = text(40, Typeface.DEFAULT, Color.WHITE);
+        emoji.setText("🎉");
+        emoji.setGravity(Gravity.CENTER);
+        badge.addView(emoji);
+        TextView cheer = text(18, fontBold, Color.WHITE);
+        cheer.setText(CHEERS[random.nextInt(CHEERS.length)]);
+        cheer.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams cl = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cl.topMargin = dp(8);
+        badge.addView(cheer, cl);
+        FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        bl.topMargin = dp(80);
+        quizRoot.addView(badge, bl);
+        badge.setScaleX(0.3f);
+        badge.setScaleY(0.3f);
+        badge.setAlpha(0f);
+        badge.animate().scaleX(1f).scaleY(1f).alpha(1f).setDuration(380)
+                .setInterpolator(new OvershootInterpolator(2.5f)).start();
+        emoji.animate().rotationBy(360f).setDuration(700).setStartDelay(150).start();
+        confetti.start();
+    }
+
+    /** Falling confetti in the app's colours. */
+    private static final class ConfettiView extends View {
+        private static final int[] COLORS = {
+                Color.parseColor("#3DBB83"), Color.parseColor("#2AA56C"), Color.parseColor("#FFFFFF"),
+                Color.parseColor("#FFD166"), Color.parseColor("#7BE0B0"), Color.parseColor("#FF8F7A"),
+        };
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final float[] x, y, vx, vy, rot, vr, size;
+        private final int[] color;
+        private float t = 0f;
+
+        ConfettiView(Context c, Random r) {
+            super(c);
+            float density = c.getResources().getDisplayMetrics().density;
+            int n = 90;
+            x = new float[n];
+            y = new float[n];
+            vx = new float[n];
+            vy = new float[n];
+            rot = new float[n];
+            vr = new float[n];
+            size = new float[n];
+            color = new int[n];
+            for (int i = 0; i < n; i++) {
+                x[i] = r.nextFloat();                  // fraction of the width
+                y[i] = -0.1f - r.nextFloat() * 0.35f;  // start above the top
+                vx[i] = (r.nextFloat() - 0.5f) * 0.25f;
+                vy[i] = 0.45f + r.nextFloat() * 0.55f; // screens per second
+                rot[i] = r.nextFloat() * 360f;
+                vr[i] = (r.nextFloat() - 0.5f) * 720f;
+                size[i] = (6 + r.nextFloat() * 6) * density;
+                color[i] = COLORS[r.nextInt(COLORS.length)];
+            }
+        }
+
+        void start() {
+            ValueAnimator a = ValueAnimator.ofFloat(0f, 1.8f);
+            a.setDuration(1800);
+            a.setInterpolator(new LinearInterpolator());
+            a.addUpdateListener(v -> {
+                t = (float) v.getAnimatedValue();
+                invalidate();
+            });
+            a.start();
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            int w = getWidth(), h = getHeight();
+            float fade = t > 1.3f ? Math.max(0f, 1f - (t - 1.3f) / 0.5f) : 1f;
+            for (int i = 0; i < x.length; i++) {
+                float px = (x[i] + vx[i] * t) * w;
+                float py = (y[i] + vy[i] * t + 0.25f * t * t) * h;
+                paint.setColor(color[i]);
+                paint.setAlpha(Math.round(255 * fade));
+                canvas.save();
+                canvas.translate(px, py);
+                canvas.rotate(rot[i] + vr[i] * t);
+                canvas.drawRect(-size[i] / 2, -size[i] / 4, size[i] / 2, size[i] / 4, paint);
+                canvas.restore();
+            }
+        }
+    }
+
+    static int goodColor() { return ACCENT; }
+    static int badColor() { return WARN; }
 
     void hideQuiz() {
         safeRemove(quizRoot);

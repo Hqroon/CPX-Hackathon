@@ -119,7 +119,8 @@ public class ReelGuardService extends AccessibilityService {
         instance = this;
         store = new GuardStore(this);
         cfg = store.config();
-        ui = new GuardOverlays(this);
+        // The bubble pair shows free reels left (5 → 0) under the Loan Points.
+        ui = new GuardOverlays(this, () -> Math.max(0, cfg.freeReels - store.sessionReels()));
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
         log("service connected, armed=" + store.isArmed());
         // The bubble was started in the last 2 minutes, before Android (re)started this
@@ -459,11 +460,9 @@ public class ReelGuardService extends AccessibilityService {
     private void applyReel(int n, boolean charge) {
         if (charge) {
             int p = GuardRules.pointsFor(n, cfg);
-            if (p > 0) {
-                store.addPoints(p);
-                ui.updateBubble(store.points());
-            }
+            if (p > 0) store.addPoints(p);
         }
+        ui.updateBubble(store.points()); // free reels count down, then Loan Points go up
         applySound(n);
         ui.showGrey(GuardRules.decay(n, cfg) * cfg.maxGreyAlpha);
 
@@ -537,7 +536,7 @@ public class ReelGuardService extends AccessibilityService {
 
     private void block(int ms) {
         blocking = true;
-        ui.showBlocker();
+        ui.showBlocker(ms);
         handler.postDelayed(() -> {
             blocking = false;
             ui.hideBlocker();
@@ -575,9 +574,9 @@ public class ReelGuardService extends AccessibilityService {
         ui.setQuizEnabled(false);
         if (index == currentQuestion.answerIndex) {
             ui.markAnswer(index, true);
-            String explain = currentQuestion.explanation.isEmpty() ? "" : " " + currentQuestion.explanation;
-            ui.setQuizFeedback("Correct. Reel unlocked." + explain, GuardOverlays.goodColor());
-            handler.postDelayed(this::closeQuiz, 1400);
+            ui.setQuizFeedback(currentQuestion.explanation, GuardOverlays.goodColor());
+            ui.celebrate(); // confetti + a cheer
+            handler.postDelayed(this::closeQuiz, 2200);
         } else {
             ui.markAnswer(index, false);
             countdown = cfg.wrongWaitSeconds;
