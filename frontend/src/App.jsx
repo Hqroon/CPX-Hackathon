@@ -244,8 +244,14 @@ export default function App() {
     setQuestions([]);
     setQuestionsReady(false);
     setProvider('generating…');
+    // With several PDFs, remember which file (and its own page number) each deck page came from.
+    const bySlide = new Map(slides.map((s) => [Number(s.page), s]));
+    const multiFile = new Set(slides.map((s) => s.file).filter(Boolean)).size > 1;
     fetchQuestions(slides, CONFIG.questionCount).then((r) => {
-      setQuestions(r.questions);
+      setQuestions(r.questions.map((q) => {
+        const src = multiFile && bySlide.get(Number(q.sourcePage));
+        return src ? { ...q, sourceFile: src.file, sourceFilePage: src.filePage } : q;
+      }));
       setQuestionsReady(true);
       const label = r.provider || 'unknown';
       setProvider(r.usedFallback && !/fallback|mock/.test(label) ? `${label} + fallback` : label);

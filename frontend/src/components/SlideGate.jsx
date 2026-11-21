@@ -62,50 +62,70 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
   const [diagnostics, setDiagnostics] = useState(null);
   const inputRef = useRef(null);
 
+  // Up to CONFIG.maxPdfFiles PDFs are read one after another and merged into one deck.
+  // Pages are renumbered 1..N across the deck (so the backend sees unique page numbers);
+  // each slide keeps `file` and `filePage` so the quiz can say which file it came from.
   async function onFile(event) {
-    const file = event.target.files?.[0];
-    // Allows choosing the same file again after an error.
+    const files = Array.from(event.target.files || []);
+    // Allows choosing the same files again after an error.
     event.target.value = '';
-    if (!file) return;
-
-    const initialDiagnostics = {
-      fileName: file.name, totalPages: null, usablePages: 0, pageErrors: [], slides: [],
-    };
-    setDiagnostics(initialDiagnostics);
-    try {
-      validatePdfFile(file);
-    } catch (error) {
-      setStatus({ kind: 'error', msg: extractionMessage(error), error: error.message });
+    if (files.length === 0) return;
+    if (files.length > CONFIG.maxPdfFiles) {
+      setStatus({ kind: 'error', msg: COPY.gate.tooManyFiles(CONFIG.maxPdfFiles, files.length) });
       return;
     }
 
-    setStatus({ kind: 'reading', processedPages: 0, totalPages: null });
-    try {
-      const result = await extractSlidesWithDiagnostics(file, (progress) => {
-        setStatus({
-          kind: 'reading',
-          processedPages: progress.processedPages,
-          totalPages: progress.totalPages,
-        });
-      });
-      setDiagnostics({ ...result.diagnostics, slides: result.slides });
-
-      if (result.slides.length < CONFIG.minSlides) {
-        const msg = result.diagnostics.pagesWithText === 0
-          ? extractionMessage(null, result.diagnostics)
-          : COPY.gate.tooFew(result.slides.length);
-        setStatus({
-          kind: 'error',
-          msg,
-          error: result.diagnostics.pageErrors.length ? 'Some pages could not be read.' : null,
-        });
-      } else {
-        setStatus({ kind: 'ready', slides: result.slides, name: file.name });
+    for (const file of files) {
+      try {
+        validatePdfFile(file);
+      } catch (error) {
+        const msg = files.length > 1 ? `${file.name}: ${extractionMessage(error)}` : extractionMessage(error);
+        setStatus({ kind: 'error', msg, error: error.message });
+        return;
       }
-    } catch (error) {
-      console.error('[slides] extraction failed', error);
-      setStatus({ kind: 'error', msg: extractionMessage(error, initialDiagnostics), error: error.message });
     }
+
+    const slides = [];
+    const skipped = [];
+    const perFile = [];
+    let lastDiagnostics = null;
+    for (let f = 0; f < files.length; f += 1) {
+      const file = files[f];
+      setStatus({ kind: 'reading', fileIndex: f + 1, fileCount: files.length, processedPages: 0, totalPages: null });
+      try {
+        const result = await extractSlidesWithDiagnostics(file, (progress) => {
+          setStatus({
+            kind: 'reading', fileIndex: f + 1, fileCount: files.length,
+            processedPages: progress.processedPages, totalPages: progress.totalPages,
+          });
+        });
+        lastDiagnostics = { ...result.diagnostics, slides: result.slides };
+        if (result.slides.length === 0) {
+          skipped.push(`${file.name} (no readable text)`);
+          continue;
+        }
+        perFile.push({ name: file.name, count: result.slides.length });
+        for (const sl of result.slides) {
+          slides.push({ page: slides.length + 1, text: sl.text, file: file.name, filePage: sl.page });
+        }
+      } catch (error) {
+        console.error('[slides] extraction failed', file.name, error);
+        const cause = error?.details?.cause ? ` Details: ${error.details.cause}` : '';
+        skipped.push(`${file.name} (${extractionMessage(error)}${cause})`);
+      }
+    }
+    setDiagnostics(lastDiagnostics);
+
+    if (slides.length < CONFIG.minSlides) {
+      const base = slides.length === 0 && lastDiagnostics?.pagesWithText === 0
+        ? extractionMessage(null, lastDiagnostics)
+        : COPY.gate.tooFew(slides.length);
+      const note = skipped.length ? ` Skipped: ${skipped.join('; ')}.` : '';
+      setStatus({ kind: 'error', msg: base + note });
+      return;
+    }
+    const name = perFile.length === 1 ? perFile[0].name : `${perFile[0].name.replace(/\.pdf$/i, '')} + ${perFile.length - 1} more`;
+    setStatus({ kind: 'ready', slides, name, files: perFile, skipped });
   }
 
   function useSample() {
@@ -113,10 +133,11 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
     setStatus({ kind: 'ready', slides: sample.pages, name: sample.title });
   }
 
+  const fileNote = status.fileCount > 1 ? `File ${status.fileIndex} of ${status.fileCount}: ` : '';
   const readingLabel = status.kind === 'reading'
     ? status.totalPages
-      ? `Reading page ${status.processedPages} of ${status.totalPages}…`
-      : 'Opening PDF…'
+      ? `${fileNote}reading page ${status.processedPages} of ${status.totalPages}…`
+      : `${fileNote}opening PDF…`
     : '';
   const reading = status.kind === 'reading';
   const ready = status.kind === 'ready';
@@ -129,7 +150,7 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
         <h1 className="title">{COPY.gate.title}</h1>
         <Explain show={explain} text={COPY.explain.gate} />
 
-        <input ref={inputRef} type="file" accept="application/pdf,.pdf" hidden onChange={onFile} />
+        <input ref={inputRef} type="file" accept="application/pdf,.pdf" multiple hidden onChange={onFile} />
 
         {!ready && (
           <div className="card list-card">
@@ -137,9 +158,9 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
               <span className="row-icon"><IconUpload size={16} /></span>
               <span className="row-text">
                 <span className="row-title" role={reading ? 'status' : undefined} aria-live="polite">
-                  {reading ? readingLabel : status.kind === 'error' ? 'Choose another PDF' : 'Upload a PDF'}
+                  {reading ? readingLabel : status.kind === 'error' ? 'Choose other PDFs' : 'Upload PDFs'}
                 </span>
-                <span className="row-sub">At least {CONFIG.minSlides} slides with text</span>
+                <span className="row-sub">1 to {CONFIG.maxPdfFiles} PDFs with selectable text</span>
               </span>
               <IconChevron size={18} className="row-chevron" />
             </button>
@@ -168,7 +189,7 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
               </div>
               <div className="deck-info">
                 <p className="deck-title">{deckTitle}</p>
-                <p className="muted">Your slides</p>
+                <p className="muted">{status.files?.length > 1 ? `${status.files.length} PDFs combined` : 'Your slides'}</p>
                 <p className="muted deck-count"><IconDoc size={14} /> {status.slides.length} slides read</p>
               </div>
             </div>
@@ -181,13 +202,26 @@ export default function SlideGate({ onStart, explain, user, onLogout }) {
 
             <p className="group-label">Questions will come from</p>
             <div className="card list-card">
-              {status.slides.slice(0, 3).map((sl) => (
-                <div className="list-row static" key={sl.page}>
-                  <span className="row-icon">{sl.page}</span>
-                  <span className="row-text"><span className="row-title clamp">{sl.text}</span></span>
-                </div>
-              ))}
+              {status.files?.length > 1
+                ? status.files.map((f, i) => (
+                  <div className="list-row static" key={f.name + i}>
+                    <span className="row-icon">{i + 1}</span>
+                    <span className="row-text">
+                      <span className="row-title">{f.name}</span>
+                      <span className="row-sub">{f.count} slides</span>
+                    </span>
+                  </div>
+                ))
+                : status.slides.slice(0, 3).map((sl) => (
+                  <div className="list-row static" key={sl.page}>
+                    <span className="row-icon">{sl.page}</span>
+                    <span className="row-text"><span className="row-title clamp">{sl.text}</span></span>
+                  </div>
+                ))}
             </div>
+            {status.skipped?.length > 0 && (
+              <p className="form-error" role="status">Skipped: {status.skipped.join('; ')}.</p>
+            )}
             <button className="text-link center" onClick={() => setStatus({ kind: 'idle' })}>Choose different slides</button>
           </>
         )}

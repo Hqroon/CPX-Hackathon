@@ -293,3 +293,5 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .quiz-spinner { width: 28px; height: 28px; margin-top: 18px; border-radius: 50%; border: 3px solid var(--green-soft); border-top-color: var(--green); animation: spin 0.8s linear infinite; }
 .sample-pill { margin-bottom: 14px; padding: 4px 10px; border-radius: 999px; background: var(--rust-soft); color: var(--rust); font-size: 13px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .quiz-progress.indeterminate span { animation: none; width: 100%; opacity: 0.4; } }
+
+.card-label.keep-case { text-transform: none; letter-spacing: 0; } /* file names keep their own case */

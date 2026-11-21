@@ -42,7 +42,11 @@ export default function QuizModal({ quiz, onAnswer, explain }) {
               {q.sample ? (
                 <span className="sample-pill">Sample question</span>
               ) : (
-                <span className="card-label">{q.sourcePage ? `From your slides, page ${q.sourcePage}` : 'From your slides'}</span>
+                <span className={`card-label ${q.sourceFile ? 'keep-case' : ''}`}>
+                  {q.sourceFile
+                    ? `From ${q.sourceFile}, page ${q.sourceFilePage}`
+                    : q.sourcePage ? `From your slides, page ${q.sourcePage}` : 'From your slides'}
+                </span>
               )}
               <h2 id="quiz-question">{q.question}</h2>
               {phase === 'right' && q.explanation && (
