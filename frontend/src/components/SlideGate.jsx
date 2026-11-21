@@ -12,10 +12,8 @@ import {
   IconUpload, IconDoc, IconCheck,
   IconLayers, IconChevron, IconArrow,
 } from './Icons.jsx';
-import { LogoMark, SlidesArt } from './Illustrations.jsx';
 import TopBar from './Brand.jsx';
 import samples from '../mock/course-slides.json';
-import sample from '../mock/sample-slides.json';
 
 const IS_DEV = import.meta.env.DEV;
 
@@ -168,7 +166,7 @@ export default function SlideGate({ onStart, explain, onBack, startLabel }) {
               <span className="row-icon"><IconLayers size={16} /></span>
               <span className="row-text">
                 <span className="row-title">{COPY.gate.sample}</span>
-                <span className="row-sub">Data Structures &amp; Algorithms, week 3</span>
+                <span className="row-sub">Mixed lecture samples from several courses</span>
               </span>
               <IconChevron size={18} className="row-chevron" />
             </button>

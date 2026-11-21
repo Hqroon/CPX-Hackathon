@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">看看 See See</string>
-    <string name="title_activity_main">看看 See See</string>
+    <string name="app_name">看看</string>
+    <string name="title_activity_main">看看</string>
     <string name="package_name">com.cpx.doomscrolltax</string>
     <string name="custom_url_scheme">com.cpx.doomscrolltax</string>
     <!-- One app: our own 50-video feed + Reel Guard (rules on top of other apps). -->
     <string name="app_mode">combined</string>
-    <string name="guard_service_label">看看 See See</string>
+    <string name="guard_service_label">看看</string>
     <string name="guard_service_description">Watches when you open Instagram, Xiaohongshu or Douyin and counts how many reels you swipe. It shows your points, silences reels, asks questions from your course slides and slows scrolling after your free reels. It does not read or store what is on your screen.</string>
 </resources>

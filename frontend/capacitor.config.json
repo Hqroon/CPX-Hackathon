@@ -1,6 +1,6 @@
 {
   "appId": "com.cpx.doomscrolltax",
-  "appName": "看看 See See",
+  "appName": "看看",
   "webDir": "dist",
   "server": {
     "androidScheme": "http",

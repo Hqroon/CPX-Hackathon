@@ -1,27 +1,31 @@
-// 看看 See See: brand mark, stacked wordmark and the top bar for the light screens.
 import React from 'react';
+import logo from '../assets/see-see-logo.png';
 
 export const BRAND = { cn: '看看', en: 'See See', full: '看看 See See' };
 
-/** Square mark with 看 (kàn, "to look"). */
+// Frame the original artwork. The icon viewport excludes the English lettering.
 export function BrandMark({ size = 28 }) {
   return (
-    <span
-      className="brand-mark"
-      style={{ width: size, height: size, fontSize: Math.round(size * 0.56) }}
-      aria-hidden="true"
-    >
-      看
-    </span>
+    <svg className="brand-mark" width={size} height={size}
+      viewBox="190 240 510 510" aria-hidden="true" focusable="false">
+      <image href={logo} width="1536" height="1024" />
+    </svg>
   );
 }
 
-/** 看看 on top, See See underneath. tone: 'dark' (light screens) or 'light' (on video). */
+export function HomeLogo() {
+  return (
+    <svg className="home-logo" viewBox="190 280 1100 430"
+      role="img" aria-label={BRAND.full}>
+      <image href={logo} width="1536" height="1024" />
+    </svg>
+  );
+}
+
 export function Wordmark({ tone = 'dark', size = 'md' }) {
   return (
-    <span className={`wordmark-stack ${tone} ${size}`} aria-label={BRAND.full}>
+    <span className={'wordmark-stack ' + tone + ' ' + size} lang="zh" aria-label={BRAND.cn}>
       <span className="wm-cn" aria-hidden="true">{BRAND.cn}</span>
-      <span className="wm-en" aria-hidden="true">{BRAND.en}</span>
     </span>
   );
 }
@@ -29,10 +33,7 @@ export function Wordmark({ tone = 'dark', size = 'md' }) {
 export default function TopBar({ right = null }) {
   return (
     <div className="top-bar">
-      <div className="brand">
-        <BrandMark size={32} />
-        <Wordmark />
-      </div>
+      <div className="brand"><BrandMark size={32} /><Wordmark /></div>
       {right}
     </div>
   );

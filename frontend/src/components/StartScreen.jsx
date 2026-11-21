@@ -1,7 +1,7 @@
 // First screen: 看看 See See, then two ways to scroll. Owner: M1.
 import React from 'react';
 import { CONFIG } from '../config.js';
-import { BrandMark, Wordmark } from './Brand.jsx';
+import { HomeLogo } from './Brand.jsx';
 import { IconLayers, IconShare, IconChevron } from './Icons.jsx';
 
 export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativeApp }) {
@@ -17,8 +17,7 @@ export default function StartScreen({ onThisApp, onOtherApps, guardStatus, nativ
     <div className="screen start">
       <div className="screen-scroll start-scroll">
         <div className="start-hero">
-          <BrandMark size={76} />
-          <Wordmark size="xl" />
+          <HomeLogo />
           <p className="lede start-lede">
             Your first {CONFIG.freeReels} reels are free. Every reel after that costs you.
           </p>

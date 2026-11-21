@@ -107,7 +107,7 @@ export default function App() {
   // floating bubble straight away; otherwise show the one-time setup screen.
   async function continueWithOtherApps() {
     const s = await refreshGuard();
-    if (s?.accessibilityEnabled && !s.armed) {
+    if (s?.accessibilityEnabled && s.running !== false && !s.armed) {
       await startBubble();
     } else {
       setPhase('guard'); // first-time setup, or bubble already running (back to it / stop it)
@@ -120,7 +120,7 @@ export default function App() {
     await refreshGuard();
     setPhase('start');
     const ok = await minimizeApp();
-    if (!ok) showToast('See See is now a floating bubble. Open Instagram or Xiaohongshu.');
+    if (!ok) showToast('看看 is now a floating bubble. Open Instagram or Xiaohongshu.');
   }
 
   async function stopBubble() {
@@ -435,7 +435,7 @@ export default function App() {
         />
 
         <div className="topbar">
-          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label={BRAND.full}>
+          <button className="logo" onClick={(e) => { e.currentTarget.blur(); onLogoTap(); }} aria-label={BRAND.cn}>
             <BrandMark size={30} />
             <Wordmark tone="light" size="sm" />
           </button>

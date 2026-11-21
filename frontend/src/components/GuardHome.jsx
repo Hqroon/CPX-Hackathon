@@ -1,4 +1,4 @@
-// "Continue on other apps" (Android): one-time setup, then See See shrinks into a
+// "Continue on other apps" (Android): one-time setup, then 看看 shrinks into a
 // floating bubble that taxes Instagram / Xiaohongshu / Douyin. Owner: M1.
 import React, { useEffect, useState } from 'react';
 import { CONFIG } from '../config.js';
@@ -49,12 +49,12 @@ export default function GuardHome({ status, nativeApp, onRefresh, onChooseSlides
         <p className="eyebrow">Continue on other apps</p>
         <h1 className="title">Tax the reels you already watch</h1>
         <p className="lede">
-          See See shrinks into a floating bubble. Open Instagram or Xiaohongshu: your first {CONFIG.freeReels} reels are free, then every reel costs a point.
+          看看 shrinks into a floating bubble. Open Instagram or Xiaohongshu: your first {CONFIG.freeReels} reels are free, then every reel costs a point.
         </p>
 
         {!nativeApp && (
           <p className="form-error" role="note">
-            This works in the See See Android app. In the browser, use “Continue in the app”.
+            This works in the 看看 Android app. In the browser, use “Continue in the app”.
           </p>
         )}
 
@@ -63,16 +63,28 @@ export default function GuardHome({ status, nativeApp, onRefresh, onChooseSlides
           <div><span>Bubble</span><strong>{armed ? 'On' : 'Off'}</strong></div>
         </div>
 
-        <Step n={1} done={enabled} title={enabled ? 'See See is allowed to watch reels' : 'Allow See See (once)'}>
+        <Step n={1} done={enabled} title={enabled ? '看看 is allowed to watch reels' : 'Allow 看看 (once)'}>
           {!enabled && (
             <>
               <p>
-                Settings → Accessibility → <b>看看 See See</b> → turn on.
+                Settings → Accessibility → <b>看看</b> → turn on.
                 Greyed out (Android 13+)? App info → ⋮ → <b>Allow restricted settings</b>, then try again.
               </p>
               <div className="guard-row">
                 <button className="btn primary" onClick={openGuardSettings} disabled={!nativeApp}>Open Accessibility</button>
                 <button className="btn secondary" onClick={openGuardAppInfo} disabled={!nativeApp}>App info</button>
+              </div>
+            </>
+          )}
+          {enabled && status?.running === false && (
+            <>
+              <p className="form-error" role="alert">
+                Your phone has paused 看看 in the background. Open Accessibility, turn <b>看看</b> off and on again,
+                and set its battery use to <b>No restrictions</b> so it isn't paused again.
+              </p>
+              <div className="guard-row">
+                <button className="btn primary" onClick={openGuardSettings}>Open Accessibility</button>
+                <button className="btn secondary" onClick={openGuardAppInfo}>App info</button>
               </div>
             </>
           )}
@@ -111,7 +123,7 @@ export default function GuardHome({ status, nativeApp, onRefresh, onChooseSlides
             <button className="btn secondary" disabled={busy} onClick={() => run(onStop)}>Stop the bubble</button>
           </>
         ) : (
-          <button className="btn primary" disabled={!enabled || busy} onClick={() => run(onStart)}>
+          <button className="btn primary" disabled={!enabled || status?.running === false || busy} onClick={() => run(onStart)}>
             {enabled ? 'Start: shrink into a bubble' : 'Finish step 1 to start'}
           </button>
         )}

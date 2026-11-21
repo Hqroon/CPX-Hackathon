@@ -55,7 +55,7 @@ h1, h2 { text-wrap: balance; }
 .screen { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--bg); color: var(--text); }
 .top-bar { flex: none; display: flex; align-items: center; justify-content: space-between; padding: calc(20px + env(safe-area-inset-top)) 24px 8px; min-height: 64px; }
 .brand { display: flex; align-items: center; gap: 8px; }
-.brand-mark { flex: none; display: inline-grid; place-items: center; border-radius: 8px; background: var(--green); color: #fff; }
+.brand-mark { flex: none; display: block; overflow: hidden; border-radius: 22%; background: #f7f9f6; }
 .brand-name { font-family: var(--serif); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
 .avatar-initial { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--green-soft); color: var(--green); font-weight: 700; font-size: 15px; }
 .screen-scroll { flex: 1; overflow-y: auto; padding: 8px 24px 16px; display: flex; flex-direction: column; gap: 20px; }
@@ -306,7 +306,7 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .guard-rules ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; line-height: 1.45; }
 
 /* ---------- 看看 See See brand ---------- */
-.brand-mark { font-family: 'Songti SC', 'Noto Serif SC', 'SimSun', var(--serif); font-weight: 700; line-height: 1; border-radius: 30%; }
+
 .wordmark-stack { display: inline-grid; line-height: 1; gap: 2px; text-align: left; }
 .wordmark-stack .wm-cn { font-family: 'Songti SC', 'Noto Serif SC', 'SimSun', var(--serif); font-weight: 700; letter-spacing: 0.08em; }
 .wordmark-stack .wm-en { font-family: var(--serif); font-weight: 600; letter-spacing: 0.02em; }
@@ -325,7 +325,7 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 /* ---------- Start screen ---------- */
 .start-scroll { justify-content: space-between; padding-top: calc(56px + env(safe-area-inset-top)); padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
 .start-hero { display: grid; justify-items: center; gap: 18px; text-align: center; margin-top: 4vh; }
-.start-hero .brand-mark { border-radius: 26%; box-shadow: 0 12px 30px rgba(6, 76, 55, 0.25); }
+
 .start-lede { text-align: center; margin: 0 auto; }
 .start-options { display: grid; gap: 10px; }
 .start-options .group-label + * { margin-top: 0; }
@@ -340,3 +340,6 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 .quiz .quiz-feedback, .quiz .note { position: sticky; bottom: 0; z-index: 2; box-shadow: 0 -8px 20px rgba(247, 244, 238, 0.95); }
 .quiz .note { background: var(--bg); }
 .deck-cover span { text-wrap: balance; }
+
+/* Original ribbon-eye artwork, framed for the welcome screen. */
+.home-logo { display: block; width: 100%; max-width: 340px; height: auto; aspect-ratio: 1100 / 430; border-radius: 18px; background: #f7f9f6; }

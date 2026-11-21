@@ -1,6 +1,11 @@
 package com.cpx.doomscrolltax.guard;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
+import android.util.Log;
+import java.util.HashMap;
+import java.util.Map;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -17,7 +22,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Reel Guard: applies the 看看 See See rules on top of Instagram, Xiaohongshu, Douyin…
+ * Reel Guard: applies the 看看 rules on top of Instagram, Xiaohongshu, Douyin…
  *
  * How it works:
  *  - TYPE_WINDOW_STATE_CHANGED tells us which app is on screen. Entering a guarded app
@@ -60,7 +65,7 @@ public class ReelGuardService extends AccessibilityService {
 
     private String foreground = "";
     private boolean inTarget = false;
-    private boolean ownAppForeground = false; // See See's own screen is open
+    private boolean ownAppForeground = false; // 看看's own screen is open
     private long lastCountAt = 0;
     private boolean blocking = false;
     private boolean quizOpen = false;
@@ -101,6 +106,10 @@ public class ReelGuardService extends AccessibilityService {
         cfg = store.config();
         ui = new GuardOverlays(this);
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
+        log("service connected, armed=" + store.isArmed());
+        // The phone may restart this service (low memory, battery manager). Bring the
+        // bubble back so the user can see the guard is still on.
+        if (active()) ui.showBubble(store.points());
     }
 
     @Override
@@ -123,7 +132,7 @@ public class ReelGuardService extends AccessibilityService {
         if (event == null || event.getPackageName() == null || store == null) return;
         String pkg = event.getPackageName().toString();
 
-        // Track whether See See's own screen is open, even before the bubble is started.
+        // Track whether 看看's own screen is open, even before the bubble is started.
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !IGNORED.contains(pkg)) {
             if (!pkg.equals(getPackageName())) {
                 ownAppForeground = false;
@@ -142,7 +151,7 @@ public class ReelGuardService extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 if (IGNORED.contains(pkg)) return;
                 if (pkg.equals(getPackageName())) {
-                    // Only See See's own screen counts, not our overlay windows.
+                    // Only 看看's own screen counts, not our overlay windows.
                     CharSequence cls = event.getClassName();
                     if (cls != null && cls.toString().endsWith("MainActivity")) {
                         ownAppForeground = true;
@@ -152,26 +161,83 @@ public class ReelGuardService extends AccessibilityService {
                     }
                     return;
                 }
-                ownAppForeground = false;
                 boolean target = store.targets().contains(pkg);
-                if (target && (!inTarget || !pkg.equals(foreground))) {
-                    foreground = pkg;
-                    if (!inTarget) enterTarget();
-                } else if (!target) {
+                if (target) {
+                    ownAppForeground = false;
+                    if (!inTarget || !pkg.equals(foreground)) {
+                        if (inTarget) leaveTarget(); // switched from one guarded app to another
+                        foreground = pkg;
+                        enterTarget();
+                    }
+                } else if (isAppScreen(pkg, event.getClassName())) {
+                    // A real screen of another app (home screen, WeChat…): the user left.
+                    // Toasts, popups and dialogs from other apps are NOT a real screen, so they
+                    // no longer kick the guard off while the user stays in Instagram.
+                    ownAppForeground = false;
+                    log("left " + foreground + " for " + pkg + "/" + event.getClassName());
                     foreground = pkg;
                     if (inTarget) leaveTarget();
                     ui.showBubble(store.points()); // armed: the bubble floats over any app
+                } else {
+                    log("ignored window " + pkg + "/" + event.getClassName());
                 }
                 break;
             case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-                if (inTarget && pkg.equals(foreground)) onSwipe();
+                if (!store.targets().contains(pkg)) break;
+                if (!inTarget || !pkg.equals(foreground)) {
+                    // Self-repair: a swipe inside a guarded app proves the user is in it,
+                    // even if we missed its window event or a stray window made us leave.
+                    log("re-attached to " + pkg + " on scroll");
+                    if (inTarget) leaveTarget();
+                    foreground = pkg;
+                    ownAppForeground = false;
+                    enterTarget();
+                }
+                onSwipe();
                 break;
             default:
                 break;
         }
     }
 
+    /** Known answers to "is this class a real screen (Activity) of that app?" */
+    private final Map<String, Boolean> screenCache = new HashMap<>();
+
+    /**
+     * True when (pkg, cls) is an Activity, i.e. the user really switched apps. Toasts,
+     * popup menus, dialogs and floating windows of other apps return false.
+     */
+    private boolean isAppScreen(String pkg, CharSequence clsSeq) {
+        if (clsSeq == null) return false;
+        String cls = clsSeq.toString();
+        if (cls.isEmpty()) return false;
+        String key = pkg + "/" + cls;
+        Boolean known = screenCache.get(key);
+        if (known != null) return known;
+        boolean result;
+        try {
+            getPackageManager().getActivityInfo(new ComponentName(pkg, cls), 0);
+            result = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            // Not an Activity of that app, or the app is hidden from us: fall back to the name.
+            result = !(cls.startsWith("android.widget.") || cls.startsWith("android.view.")
+                    || cls.startsWith("android.app.Dialog") || cls.startsWith("android.app.AlertDialog")
+                    || cls.contains("Toast") || cls.contains("Popup") || cls.contains("Dialog")
+                    || cls.contains("FloatWindow") || cls.contains("Overlay"));
+        } catch (Exception e) {
+            result = false;
+        }
+        screenCache.put(key, result);
+        return result;
+    }
+
+    private static void log(String msg) {
+        Log.d("ReelGuard", msg);
+    }
+
     private void enterTarget() {
+        ui.setWatching(true);
+        log("enter " + foreground + " reels=" + store.sessionReels() + " points=" + store.points());
         inTarget = true;
         cfg = store.config();
         long now = System.currentTimeMillis();
@@ -195,13 +261,14 @@ public class ReelGuardService extends AccessibilityService {
             toast("Welcome back. " + cleared + " point" + (cleared == 1 ? "" : "s")
                     + " cleared while you were away.");
         } else if (newSession) {
-            toast("See See is watching: your first " + cfg.freeReels + " reels are free.");
+            toast("看看 is watching: your first " + cfg.freeReels + " reels are free.");
         }
         if (store.pendingQuestion()) openQuiz(); // can't dodge a question by leaving
     }
 
     private void leaveTarget() {
         inTarget = false;
+        ui.setWatching(false);
         long now = System.currentTimeMillis();
         store.setLastSeenAt(now);
         if (store.awaySince() <= 0) store.setAwaySince(now);
@@ -224,6 +291,7 @@ public class ReelGuardService extends AccessibilityService {
         lastCountAt = now;
         store.setLastSeenAt(now);
         int n = store.sessionReels() + 1;
+        log("reel " + n);
         store.setSessionReels(n);
         applyReel(n, true);
     }

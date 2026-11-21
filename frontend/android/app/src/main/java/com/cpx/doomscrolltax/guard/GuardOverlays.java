@@ -155,15 +155,26 @@ final class GuardOverlays {
         safeAdd(bubble, bubbleParams);
     }
 
+    private boolean watching = false;
+
+    /** Green ring = Reel Guard is attached to Instagram / Xiaohongshu and counting reels. */
+    void setWatching(boolean on) {
+        watching = on;
+        if (bubble != null) updateBubble(lastPoints);
+    }
+
+    private int lastPoints = 0;
+
     void updateBubble(int points) {
+        lastPoints = points;
         if (bubble == null) return;
         bubble.setText(points > 0 ? "−" + points : "0");
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
         d.setColor(points > 0 ? BAD : PRIMARY);
-        d.setStroke(dp(3), Color.WHITE);
+        d.setStroke(dp(watching ? 4 : 3), watching ? GOOD : Color.WHITE);
         bubble.setBackground(d);
-        bubble.setContentDescription(points + " points owed. Tap to open See See.");
+        bubble.setContentDescription(points + " points owed. Tap to open 看看.");
     }
 
     void hideBubble() {
