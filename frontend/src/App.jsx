@@ -21,6 +21,11 @@ import { fetchReels, fetchQuestions, logEvent, SAMPLE_QUESTIONS } from './api.js
 import {
   loadPoints, savePoints, markClosed, markOpened, simulateAway, resetPoints, minutesToClear,
 } from './rules/points.js';
+import { Capacitor } from '@capacitor/core';
+
+// Demo rule: every launch of the Android app starts at 0 points, so each judge
+// gets a clean phone. (The browser keeps its saved points.)
+if (Capacitor.isNativePlatform()) resetPoints();
 import {
   pointsForReel, isFreeReel, paidNumber, asksQuestion, nextQuestion, audioForReel,
   transitionMsInto, isSlowFrom, visualDecay, decayFilter, indexOfReel,
