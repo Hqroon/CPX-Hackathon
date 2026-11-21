@@ -387,3 +387,52 @@ button.list-row:active:not(:disabled) { background: var(--bg); }
 
 /* Upload popup: the file list can be long (8 preset decks) */
 .upload-files { max-height: 240px; overflow-y: auto; }
+
+/* Results: minimal, centred, one screen */
+.results-min { justify-content: center; align-items: stretch; text-align: center; gap: 28px; }
+.results-min .title { text-align: center; }
+.results-min .total-number { font-size: 56px; line-height: 60px; }
+.clear-note { margin-top: 6px; font-size: 13px; }
+.results-min .breakdown strong { margin-top: 0; }
+
+/* Results (dark theme): white points total with the same green sheen as the welcome Start
+   button (3.6 s sweep, 1.4 s delay), drawn through the digits with background-clip. */
+html[data-theme="dark"] .results-min .total-number,
+html[data-theme="dark"] .results-min .total-number.owing {
+  color: #ffffff;
+  background: linear-gradient(105deg, #ffffff 40%, #3dbb83 50%, #ffffff 60%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: total-sheen 3.6s 1.4s ease-in-out infinite;
+}
+@keyframes total-sheen { 0% { background-position: 100% 0; } 45%, 100% { background-position: 0% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="dark"] .results-min .total-number { animation: none; -webkit-text-fill-color: #ffffff; background: none; }
+}
+
+/* Results typography: one clear focal point (the total), quieter heading and supporting text. */
+.screen.results .results-min { gap: 32px; }
+.screen.results .results-title {
+  font-size: 20px; line-height: 26px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); opacity: 0.88;
+}
+.screen.results .results-min .total { gap: 0; }
+.screen.results .results-min .total-number {
+  position: relative; display: inline-block; align-self: center;
+  font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: 0; padding: 0;
+}
+.screen.results .results-min .total-sign { margin-right: 0.04em; }
+.screen.results .results-min .total .strong {
+  margin-top: 10px; font-size: 15px; line-height: 20px; font-weight: 500; color: var(--text); opacity: 0.7;
+}
+.screen.results .results-min .clear-note {
+  margin-top: 14px; font-size: 13px; line-height: 18px; font-weight: 400; color: var(--muted);
+}
+/* The minus sits outside the digits' box, so the text-clipped sheen can't paint it: keep it solid white. */
+html[data-theme="dark"] .screen.results .results-min .total-sign { -webkit-text-fill-color: #ffffff; color: #ffffff; }
+/* Results heading: exact centring (no trailing negative tracking), and keep the column
+   centred even when a scrollbar appears on short screens. */
+.screen.results .results-title { letter-spacing: 0; width: 100%; text-align: center; }
+.screen.results .results-min { scrollbar-gutter: stable both-edges; }
