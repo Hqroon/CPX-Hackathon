@@ -17,7 +17,7 @@ function Step({ done, n, title, children }) {
   );
 }
 
-export default function GuardHome({ status, nativeApp, onRefresh, onChooseSlides, onStart, onStop, onBack }) {
+export default function GuardHome({ status, nativeApp, onRefresh, onStart, onStop, onBack }) {
   const [busy, setBusy] = useState(false);
   const enabled = !!status?.accessibilityEnabled;
   const armed = !!status?.armed;
@@ -90,19 +90,12 @@ export default function GuardHome({ status, nativeApp, onRefresh, onChooseSlides
           )}
         </Step>
 
-        <Step n={2} done={!!status?.hasQuestions} title="Questions from your slides (optional)">
-          <p>{status?.hasQuestions ? 'Loaded from your slides.' : 'Without slides, general questions are used.'}</p>
-          <button className="btn secondary" onClick={onChooseSlides}>
-            {status?.hasQuestions ? 'Change slides' : 'Choose slides'}
-          </button>
-        </Step>
-
         <details className="guard-rules">
           <summary>What happens inside Instagram / Xiaohongshu</summary>
           <ul>
             <li>Reels 1–{CONFIG.freeReels}: free. The bubble shows your points; tap it to come back here.</li>
             <li>After that: −{CONFIG.pointsPerReel} per reel.</li>
-            <li>Every {CONFIG.questionEvery} paid reels: a question card covers the reel. Wrong = {CONFIG.wrongWaitSeconds} s, then a new question.</li>
+            <li>Right after the free reels, then every {CONFIG.questionEvery} reels: a question from your slides covers the reel. Wrong = {CONFIG.wrongWaitSeconds} s, then a new question.</li>
             <li>Sound switches on / off every reel and quietly gets {Math.round(CONFIG.volumeStepDown * 100)}% softer.</li>
             <li>After reel {CONFIG.slowAfterReels}: a {CONFIG.slowTransitionMs / 1000} s pause after every swipe, and the screen greys out.</li>
             <li>{CONFIG.minutesPerPoint} minutes away clears 1 point.</li>
