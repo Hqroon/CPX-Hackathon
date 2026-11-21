@@ -13,7 +13,7 @@ export const CONFIG = {
   minutesPerPoint: 15,       // minutes away from the app that clear 1 point
 
   // --- Question toll ---------------------------------------------------------
-  questionEvery: 5,          // a question after every N paid reels (reels 10, 15, 20…)
+  questionEvery: 5,          // a question as the free reels end, then every N reels (reels 6, 11, 16…)
   wrongWaitSeconds: 5,       // wrong answer: wait this long, then a NEW question appears
   questionCount: 12,         // questions requested from the backend per session
   maxPdfFiles: 5,            // slide gate: PDFs that can be uploaded together
