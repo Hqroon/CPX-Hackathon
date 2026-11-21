@@ -2,7 +2,7 @@
 // Accounts are local to this device (no server auth): we only keep a name and email.
 import React, { useState } from 'react';
 import { CONFIG } from '../config.js';
-import Doodle from './Doodle.jsx';
+import TopBar from './Brand.jsx';
 
 const KEY = 'doomscroll-tax.user';
 
@@ -49,52 +49,48 @@ export default function Home({ onLogin }) {
     onLogin(user);
   }
 
-  return (
-    <div className="home">
-      <div className="home-inner">
-        <Doodle name="laying" />
-        <h1 className="home-title">
-          Doomscroll Tax
-          <svg className="scribble" viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M4 12c40-8 90-9 140-6s100 4 152-4" />
-          </svg>
-        </h1>
-        <p className="home-lede">
-          Your first {CONFIG.freeReels} reels are free. After that, every reel costs a point.
-        </p>
+  const clear = (set) => (e) => { set(e.target.value); setError(''); };
 
-        <form className="login" onSubmit={submit} noValidate>
+  return (
+    <div className="screen home">
+      <TopBar />
+      <div className="screen-scroll">
+        <p className="eyebrow">{signup ? 'Create your account' : 'Welcome back'}</p>
+        <h1 className="title">{signup ? 'Start your first session' : 'Log in to keep scrolling'}</h1>
+        <p className="lede">Your first {CONFIG.freeReels} reels are free. After that, every reel costs a point.</p>
+
+        <form id="login-form" className="card form-card" onSubmit={submit} noValidate>
           {signup && (
             <label className="field">
               <span>Name</span>
-              <input value={name} onChange={(e) => { setName(e.target.value); setError(''); }} autoComplete="name" placeholder="Afsar" />
+              <input value={name} onChange={clear(setName)} autoComplete="name" placeholder="Afsar" />
             </label>
           )}
           <label className="field">
             <span>Student email</span>
-            <input
-              type="email" value={email} onChange={(e) => { setEmail(e.target.value); setError(''); }}
-              autoComplete="email" inputMode="email" placeholder="name@student.xjtlu.edu.cn"
-            />
+            <input type="email" value={email} onChange={clear(setEmail)} autoComplete="email" inputMode="email" placeholder="name@student.xjtlu.edu.cn" />
           </label>
           <label className="field">
             <span>Password</span>
             <input
-              type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(''); }}
+              type="password" value={password} onChange={clear(setPassword)}
               autoComplete={signup ? 'new-password' : 'current-password'} placeholder="At least 4 characters"
             />
           </label>
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button className="btn primary big" type="submit">{signup ? 'Create account' : 'Log in'}</button>
         </form>
 
-        <button className="btn ghost" type="button" onClick={guest}>Try it as a guest</button>
-        <p className="home-switch">
+        <p className="switch-line">
           {signup ? 'Already have an account?' : 'New here?'}{' '}
           <button type="button" className="text-link" onClick={() => { setMode(signup ? 'login' : 'signup'); setError(''); }}>
             {signup ? 'Log in' : 'Create an account'}
           </button>
         </p>
+      </div>
+
+      <div className="bottom-actions">
+        <button className="btn primary" type="submit" form="login-form">{signup ? 'Create account' : 'Log in'}</button>
+        <button className="btn secondary" type="button" onClick={guest}>Try it as a guest</button>
       </div>
     </div>
   );

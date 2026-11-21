@@ -37,3 +37,21 @@ export const IconDoc = (p) => (
 export const IconCheck = (p) => (
   <Svg {...p}><path d="m5 12.5 4.5 4.5L19 7.5" /></Svg>
 );
+export const IconBook = (p) => (
+  <Svg {...p}><path d="M2 5.5C4.5 4 8 4 12 6c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5z" /><path d="M12 6v13.5" /></Svg>
+);
+export const IconLayers = (p) => (
+  <Svg {...p}><path d="m12 3 9 5-9 5-9-5 9-5z" /><path d="m3 13 9 5 9-5" /></Svg>
+);
+export const IconChevron = (p) => (
+  <Svg {...p}><path d="m9 6 6 6-6 6" /></Svg>
+);
+export const IconArrow = (p) => (
+  <Svg {...p}><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></Svg>
+);
+export const IconCircleCheck = (p) => (
+  <Svg {...p}><circle cx="12" cy="12" r="9" /><path d="m8.5 12.5 2.5 2.5 4.5-5" /></Svg>
+);
+export const IconRotate = (p) => (
+  <Svg {...p}><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></Svg>
+);
