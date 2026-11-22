@@ -14,6 +14,12 @@ public class MainActivity extends BridgeActivity {
         // Local (in-app) plugins must be registered before super.onCreate.
         registerPlugin(ReelGuardPlugin.class);
         super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            // Fresh start (the app was closed, or cleared from recent apps, which on Tecno /
+            // Xiaomi force-stops it without running any exit code): start clean, with
+            // 5 free reels and 0 Loan Points. Coming back via the bubble is not a fresh start.
+            ReelGuardService.resetForExit(getApplicationContext());
+        }
         watchForExit();
     }
 
