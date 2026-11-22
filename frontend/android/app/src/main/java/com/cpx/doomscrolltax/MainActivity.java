@@ -21,6 +21,13 @@ public class MainActivity extends BridgeActivity {
     public void onResume() {
         super.onResume();
         watchForExit();
+        ReelGuardService.setOwnAppVisible(true); // our screen is showing: no bubble needed
+    }
+
+    @Override
+    public void onPause() {
+        ReelGuardService.setOwnAppVisible(false); // going to the background: bubble (if started)
+        super.onPause();
     }
 
     /** Start the tiny service that resets everything when 看看 is swiped away from recents. */

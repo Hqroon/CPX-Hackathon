@@ -122,11 +122,12 @@ public class ReelGuardService extends AccessibilityService {
         // The bubble pair shows free reels left (5 → 0) under the Loan Points.
         ui = new GuardOverlays(this, () -> Math.max(0, cfg.freeReels - store.sessionReels()));
         audio = (AudioManager) getSystemService(AUDIO_SERVICE);
-        log("service connected, armed=" + store.isArmed());
+        ownAppForeground = appVisible; // whatever the activity last reported
+        log("service connected, armed=" + store.isArmed() + ", app visible=" + appVisible);
         // The bubble was started in the last 2 minutes, before Android (re)started this
         // service (e.g. right after an app update): keep it and show it now.
         if (store.isArmed() && System.currentTimeMillis() - store.armedAt() < 120000L) {
-            ui.showBubble(store.points());
+            if (!ownAppForeground) ui.showBubble(store.points());
             return;
         }
         // Otherwise a fresh start of the service means 看看 was closed or killed: start
@@ -156,19 +157,11 @@ public class ReelGuardService extends AccessibilityService {
 
         // Track whether 看看's own screen is open, even before the bubble is started.
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !IGNORED.contains(pkg)) {
-            if (!pkg.equals(getPackageName())) {
-                ownAppForeground = false;
-            } else if (event.getClassName() != null && event.getClassName().toString().endsWith("MainActivity")) {
-                ownAppForeground = true;
-            }
             // Swiped away from recent apps? Then 看看 has no task left: switch everything off.
             // (On many phones the app's process survives the swipe because of this service,
-            // so the activity's own exit hooks never run.)
-            if (store.isArmed() && appWasClosed()) {
-                log("看看 was closed: bubble off, Loan Points reset");
-                resetForExit(this);
-                return;
-            }
+            // so the activity's own exit hooks never run.) Confirmed twice, 1.5 s apart, so a
+            // brief glitch while the app moves to the background can't switch the bubble off.
+            if (store.isArmed() && !ownAppForeground && appWasClosed()) confirmClosedLater();
         }
 
         if (!active()) {
@@ -183,17 +176,17 @@ public class ReelGuardService extends AccessibilityService {
                 if (pkg.equals(getPackageName())) {
                     // Only 看看's own screen counts, not our overlay windows.
                     CharSequence cls = event.getClassName();
-                    if (cls != null && cls.toString().endsWith("MainActivity")) {
-                        ownAppForeground = true;
+                    // 看看's own screen: the activity itself reports shown / hidden
+                    // (setOwnAppVisible), which is reliable. A late window event here must
+                    // not hide the bubble that Start 看看 just showed.
+                    if (cls != null && cls.toString().endsWith("MainActivity") && ownAppForeground) {
                         foreground = pkg;
                         if (inTarget) leaveTarget();
-                        ui.hideBubble(); // the app itself is open: no bubble needed
                     }
                     return;
                 }
                 boolean target = store.targets().contains(pkg);
                 if (target) {
-                    ownAppForeground = false;
                     if (!inTarget || !pkg.equals(foreground)) {
                         if (inTarget) leaveTarget(); // switched from one guarded app to another
                         foreground = pkg;
@@ -203,7 +196,6 @@ public class ReelGuardService extends AccessibilityService {
                     // A real screen of another app (home screen, WeChat…): the user left.
                     // Toasts, popups and dialogs from other apps are NOT a real screen, so they
                     // no longer kick the guard off while the user stays in Instagram.
-                    ownAppForeground = false;
                     log("left " + foreground + " for " + pkg + "/" + event.getClassName());
                     foreground = pkg;
                     if (inTarget) leaveTarget();
@@ -220,7 +212,6 @@ public class ReelGuardService extends AccessibilityService {
                     log("re-attached to " + pkg + " on scroll");
                     if (inTarget) leaveTarget();
                     foreground = pkg;
-                    ownAppForeground = false;
                     enterTarget();
                 }
                 if (isReelScroll(event, pkg)) onReelScroll(event);
@@ -287,14 +278,57 @@ public class ReelGuardService extends AccessibilityService {
 
     /** Called right after 看看 goes to the background with the bubble on: show it now. */
     public static void onMinimized() {
+        setOwnAppVisible(false);
+    }
+
+    /**
+     * Called by MainActivity: onResume → true (the app's own screen is showing, no bubble
+     * needed), onPause → false (the app went to the background: show the bubble if armed).
+     * The activity lifecycle is the reliable signal; window events can arrive late.
+     */
+    /** Last state the activity reported, kept even while the service isn't connected. */
+    private static volatile boolean appVisible = false;
+
+    public static void setOwnAppVisible(boolean visible) {
+        appVisible = visible;
         ReelGuardService s = instance;
-        if (s != null) s.handler.post(() -> {
+        if (s == null) return;
+        s.handler.post(() -> {
+            s.ownAppForeground = visible;
+            if (visible) {
+                if (s.inTarget) s.leaveTarget();
+                s.ui.hideBubble();
+                return;
+            }
             if (!s.active()) return;
-            s.ownAppForeground = false;
             s.appWasClosed(); // remember that our task exists
             s.ui.showBubble(s.store.points());
-            s.log("minimized: bubble shown");
+            s.log("app in background: bubble shown");
+            // Safety net: if anything removed it in the next moments, put it back.
+            for (long delay : new long[]{600, 1500, 3000}) {
+                s.handler.postDelayed(() -> {
+                    if (s.active() && !s.ownAppForeground && !s.ui.isBubbleShowing()) {
+                        s.ui.showBubble(s.store.points());
+                        s.log("bubble re-shown by safety net");
+                    }
+                }, delay);
+            }
         });
+    }
+
+    private boolean closeCheckPending = false;
+
+    /** Second look 1.5 s later; only then is 看看 treated as swiped away. */
+    private void confirmClosedLater() {
+        if (closeCheckPending) return;
+        closeCheckPending = true;
+        handler.postDelayed(() -> {
+            closeCheckPending = false;
+            if (store.isArmed() && !ownAppForeground && appWasClosed()) {
+                log("看看 was closed: bubble off, Loan Points reset");
+                resetForExit(this);
+            }
+        }, 1500);
     }
 
     // Apps where every vertical swipe is a new short video.
