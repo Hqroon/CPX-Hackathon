@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { HomeLogo } from './Brand.jsx';
 import { IconBack, IconShare } from './Icons.jsx';
-import { openGuardSettings } from '../native/reelGuard.js';
+import { openGuardSettings, restartGuardService, waitForGuardRunning } from '../native/reelGuard.js';
 import BackgroundLogo from './BackgroundLogo.jsx';
 
 export default function GuardStart({ status, nativeApp, onStart, onBack, onNote, onRefresh = async () => status }) {
@@ -15,21 +15,26 @@ export default function GuardStart({ status, nativeApp, onStart, onBack, onNote,
       onNote('The bubble runs in the 看看 Android app. In the browser, use “Continue in this app”.');
       return;
     }
-    // Ask the phone again now: the page's status may be from before Settings was changed.
-    const now = (await onRefresh()) || status;
-    if (!now?.accessibilityEnabled) {
-      // Safety net only: on the demo phone this is already switched on.
-      onNote('Turn on 看看 in Accessibility first, then come back and tap Start.');
-      openGuardSettings();
-      return;
-    }
-    if (now.running === false) {
-      // On in Settings but not running yet (e.g. right after an app update). Start anyway:
-      // the bubble appears as soon as Android restarts the service. Just say what to do if not.
-      onNote('If the bubble doesn’t appear, turn 看看 off and on in Accessibility.');
-    }
     setBusy(true);
     try {
+      // Ask the phone again now: the page's status may be from before Settings was changed.
+      let now = (await onRefresh()) || status;
+      // Phones like Tecno / Xiaomi force-stop 看看 when recent apps are cleared. Settings
+      // still says "On", but the service isn't running, so no bubble could appear.
+      // Restart it ourselves and wait until it runs.
+      if (!now?.accessibilityEnabled || now.running === false) {
+        const r = await restartGuardService();
+        // Restarted: give Android up to 4 s to run it. Not allowed to restart: still give it
+        // 2 s, in case the phone brings it back by itself.
+        now = (await waitForGuardRunning(r?.restarted ? 4000 : 2000)) || now;
+      }
+      if (!now?.accessibilityEnabled || !now?.running) {
+        onNote(now?.accessibilityEnabled
+          ? 'The phone stopped 看看. In Accessibility, turn 看看 off and on, then tap Start again.'
+          : 'Turn on 看看 in Accessibility first, then come back and tap Start.');
+        openGuardSettings();
+        return;
+      }
       await onStart();
     } finally {
       setBusy(false);

@@ -52,6 +52,7 @@ public class ReelGuardPlugin extends Plugin {
         r.put("mode", mode());
         r.put("accessibilityEnabled", accessibilityEnabled());
         r.put("running", ReelGuardService.isRunning());
+        r.put("canSelfRestart", canWriteSecureSettings());
         r.put("enabled", s.isEnabled());
         r.put("armed", s.isArmed());
         r.put("points", s.points());
@@ -78,6 +79,53 @@ public class ReelGuardPlugin extends Plugin {
     @PluginMethod
     public void getStatus(PluginCall call) {
         call.resolve(status());
+    }
+
+    private boolean canWriteSecureSettings() {
+        return getContext().checkCallingOrSelfPermission("android.permission.WRITE_SECURE_SETTINGS")
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Switch our Accessibility service off and on again (or on, if it was off) so Android
+     * binds it again. Needed after the phone force-stops 看看 (Xiaomi "clear recents"):
+     * Settings still says "On" but the service isn't running. Only works once
+     * WRITE_SECURE_SETTINGS was granted from a laptop (see AndroidManifest.xml).
+     */
+    @PluginMethod
+    public void restartService(PluginCall call) {
+        JSObject r = new JSObject();
+        if (!canWriteSecureSettings()) {
+            r.put("restarted", false);
+            r.put("reason", "permission");
+            call.resolve(r);
+            return;
+        }
+        try {
+            android.content.ContentResolver cr = getContext().getContentResolver();
+            String me = new ComponentName(getContext(), ReelGuardService.class).flattenToString();
+            String meShort = new ComponentName(getContext(), ReelGuardService.class).flattenToShortString();
+            String current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            StringBuilder others = new StringBuilder();
+            if (current != null) {
+                for (String s : current.split(":")) {
+                    if (s.isEmpty() || s.equalsIgnoreCase(me) || s.equalsIgnoreCase(meShort)) continue;
+                    if (others.length() > 0) others.append(':');
+                    others.append(s);
+                }
+            }
+            String without = others.toString();
+            String with = without.isEmpty() ? me : without + ":" + me;
+            Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, without);
+            Thread.sleep(250);
+            Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, with);
+            Settings.Secure.putInt(cr, Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+            r.put("restarted", true);
+        } catch (Exception e) {
+            r.put("restarted", false);
+            r.put("reason", String.valueOf(e.getMessage()));
+        }
+        call.resolve(r);
     }
 
     /** Opens Settings → Accessibility, where the user switches the Reel Guard on. */

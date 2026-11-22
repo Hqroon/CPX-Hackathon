@@ -83,6 +83,28 @@ export async function minimizeApp() {
   }
 }
 
+/** Switch the Accessibility service off/on so Android runs it again (needs a one-time
+ *  permission from a laptop; see AndroidManifest.xml). Resolves { restarted, reason }. */
+export async function restartGuardService() {
+  if (!onAndroid()) return { restarted: false, reason: 'browser' };
+  try {
+    return await ReelGuard.restartService();
+  } catch (err) {
+    return { restarted: false, reason: String(err) };
+  }
+}
+
+/** Ask the phone until the service is running (or give up after timeoutMs). */
+export async function waitForGuardRunning(timeoutMs = 4000) {
+  const end = Date.now() + timeoutMs;
+  while (Date.now() < end) {
+    const s = await getGuardStatus();
+    if (s?.running) return s;
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  return getGuardStatus();
+}
+
 export const openGuardSettings = () => ReelGuard.openAccessibilitySettings().catch(() => {});
 export const openGuardAppInfo = () => ReelGuard.openAppDetails().catch(() => {});
 export const resetGuard = () => ReelGuard.resetPoints().catch(() => null);
