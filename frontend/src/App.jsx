@@ -20,10 +20,16 @@ import { CONFIG, DEMO_OVERRIDES } from './config.js';
 import { COPY } from './copy.js';
 import { fetchReels, fetchQuestions, logEvent, SAMPLE_QUESTIONS } from './api.js';
 import presetQuestionFile from './mock/preset-questions.json';
+import demoQuestionFile from './mock/demo-questions.json';
 
 // "Choose existing slides": questions were written in advance (mock/preset-questions.json),
 // so starting is instant and needs no AI call. Shuffled for every session.
+// The first 4 are fixed demo questions (mock/demo-questions.json), always in the same
+// order with the answer as option A, so a live demo never stalls on a hard question.
 function presetQuestions() {
+  return [...demoQuestionFile.questions, ...shuffledPresets()];
+}
+function shuffledPresets() {
   const qs = presetQuestionFile.questions.slice();
   for (let i = qs.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

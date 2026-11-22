@@ -1,0 +1,58 @@
+{
+  "note": "Fixed questions asked first in every demo session, always in this order, answer always A.",
+  "questions": [
+    {
+      "id": "demo-1",
+      "question": "According to Newton's law of gravitation, the force between two particles always points in which direction?",
+      "options": [
+        "From one particle to the other",
+        "Perpendicular to the line joining them",
+        "Away from both particles",
+        "Toward the larger particle only"
+      ],
+      "answerIndex": 0,
+      "explanation": "The slide states the force always points from one particle to the other.",
+      "sourceFile": "Gravitation",
+      "sourceFilePage": 6
+    },
+    {
+      "id": "demo-2",
+      "question": "Does the center of mass location depend on the coordinate system used?",
+      "options": [
+        "No, it is a property of the particles",
+        "Yes, it changes with the origin",
+        "Yes, but only in three dimensions",
+        "No, but only for two particles"
+      ],
+      "answerIndex": 0,
+      "explanation": "The centre of mass is a property of the particles, not of the coordinates.",
+      "sourceFile": "Linear Momentum"
+    },
+    {
+      "id": "demo-3",
+      "question": "According to the slides, what makes climate change a \"diabolical\" policy problem?",
+      "options": [
+        "It is not linear, local, or short-term",
+        "It is simple, local, and short-term",
+        "It is only about carbon markets",
+        "It is purely scientific with no politics"
+      ],
+      "answerIndex": 0,
+      "explanation": "Steffen's point: the problem is not linear, local, or short-term.",
+      "sourceFile": "Global Challenges"
+    },
+    {
+      "id": "demo-4",
+      "question": "In photosynthesis as a redox process, which molecule is oxidized and which is reduced?",
+      "options": [
+        "H2O is oxidized and CO2 is reduced",
+        "CO2 is oxidized and H2O is reduced",
+        "O2 is oxidized and glucose is reduced",
+        "Both H2O and CO2 are reduced"
+      ],
+      "answerIndex": 0,
+      "explanation": "Water loses electrons (oxidized); CO2 gains them (reduced).",
+      "sourceFile": "Biology · Lecture 18 · Photosynthesis"
+    }
+  ]
+}

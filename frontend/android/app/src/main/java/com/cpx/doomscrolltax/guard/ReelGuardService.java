@@ -591,7 +591,8 @@ public class ReelGuardService extends AccessibilityService {
         }
         store.setQuestionPointer(p + 1);
         store.setQuestionsAsked(store.questionsAsked() + 1);
-        return q.shuffled(random);
+        // Fixed demo questions keep their order (answer A); all others are shuffled.
+        return q.id != null && q.id.startsWith("demo-") ? q : q.shuffled(random);
     }
 
     private void openQuiz() {
