@@ -29,7 +29,16 @@ if (existsSync(envFile)) {
 const media = await import(pathToFileURL(path.join(backend, 'src', 'media.js')).href);
 
 const manifest = media.readManifest();
-const reels = (manifest.length > 0 ? manifest : media.scanReels()).filter((r) => media.mediaExists(r.src));
+let reels = (manifest.length > 0 ? manifest : media.scanReels()).filter((r) => media.mediaExists(r.src));
+
+// Optional: --limit N keeps only the N smallest videos (smaller APK; the feed loops them).
+const limitArg = process.argv.indexOf('--limit');
+const limit = limitArg > -1 ? Number(process.argv[limitArg + 1]) : 0;
+if (limit > 0 && reels.length > limit) {
+  const { statSync } = await import('node:fs');
+  const sizeOf = (r) => statSync(path.join(media.reelsDir(), decodeURIComponent(r.src.replace('/media/reels/', '')))).size;
+  reels = reels.map((r) => [sizeOf(r), r]).sort((a, b) => a[0] - b[0]).slice(0, limit).map(([, r]) => r);
+}
 if (reels.length === 0) {
   console.error(`No videos found in ${media.reelsDir()}. Add videos there (or set REELS_DIR in backend/.env).`);
   process.exit(1);

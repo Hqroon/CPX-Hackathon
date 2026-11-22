@@ -199,7 +199,12 @@ export default function App() {
   //   [reel 1 … reel 5] [free-reels-used-up card] [reel 6 …]
   const { items, lineIndex } = useMemo(() => {
     if (!reels) return { items: [], lineIndex: 0 };
-    const all = shuffle(reels);
+    let all = shuffle(reels);
+    // Only a few videos (the APK carries 10): keep cycling through them, reshuffled each
+    // round, so the feed never runs out. Repeats get their own ids for React keys.
+    for (let round = 1; reels.length > 0 && all.length < 120; round++) {
+      all = all.concat(shuffle(reels).map((r) => ({ ...r, id: `${r.id}~${round}` })));
+    }
     const freeCount = Math.min(CONFIG.freeReels, all.length);
     return {
       items: [

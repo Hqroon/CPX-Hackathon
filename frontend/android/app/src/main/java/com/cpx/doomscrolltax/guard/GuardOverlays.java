@@ -225,18 +225,14 @@ final class GuardOverlays {
         freeBubble.setOrientation(LinearLayout.VERTICAL);
         freeBubble.setGravity(Gravity.CENTER);
         freeBubble.setElevation(dp(6));
-        TextView freeLabel = text(8, fontBold, Color.WHITE);
-        freeLabel.setText("FREE");
-        freeLabel.setLetterSpacing(0.12f);
-        freeLabel.setAlpha(0.85f);
-        freeBubble.addView(freeLabel);
-        freeText = text(16, fontBold, Color.WHITE);
+        // One centred text block ("FREE" small on top, the number big underneath), so the
+        // label always sits inside the circle.
+        freeText = text(17, fontBold, Color.WHITE);
         freeText.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams ftl = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ftl.topMargin = dp(1);
-        freeBubble.addView(freeText, ftl);
-        LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(dp(46), dp(46));
+        freeText.setIncludeFontPadding(false);
+        freeBubble.addView(freeText, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams fl = new LinearLayout.LayoutParams(dp(52), dp(52));
         fl.topMargin = dp(8);
         bubble.addView(freeBubble, fl);
 
@@ -319,7 +315,10 @@ final class GuardOverlays {
         shownPoints = points;
 
         // Free reels: 5, 4, 3, 2, 1, then a red 0
-        freeText.setText(String.valueOf(free));
+        android.text.SpannableString label = new android.text.SpannableString("FREE\n" + free);
+        label.setSpan(new android.text.style.RelativeSizeSpan(0.5f), 0, 4, 0);
+        label.setSpan(new android.text.style.ForegroundColorSpan(Color.argb(220, 255, 255, 255)), 0, 4, 0);
+        freeText.setText(label);
         freeBubble.setBackground(free > 0
                 ? circle(SURFACE, dp(2), ACCENT)
                 : circle(RED, dp(2), Color.WHITE));
