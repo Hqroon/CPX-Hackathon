@@ -121,6 +121,7 @@ public final class GuardStore {
                 .putLong("lastSeenAt", 0L)
                 .putBoolean("pendingQuestion", false)
                 .putInt("qAsked", 0)
+                .putInt("qPointer", 0) // start with the fixed demo questions again
                 .apply();
     }
 }
