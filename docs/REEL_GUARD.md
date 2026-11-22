@@ -46,6 +46,20 @@ After any web change: `npm run build` → `npx cap sync android` → Run again.
 5. Step 2 → choose slides (or the sample slides), so the questions come from the course. The backend must be reachable (see `VITE_API_BASE` in ANDROID_APK.md). Without it, built-in questions are used.
 6. Step 3 → **Instagram** or **小红书 Xiaohongshu**. Go to Reels / the video feed and swipe.
 
+### Once per phone: let 看看 restart itself (Tecno, Xiaomi…)
+Clearing recent apps on Tecno (HiOS) and Xiaomi (HyperOS) **force-stops** 看看: Android unbinds the
+Accessibility service and removes it from the enabled list, so the bubble would only work once.
+With one permission, **Start 看看** switches the service back on by itself. Grant it once from a laptop:
+
+1. Phone: Settings → About phone → tap **Build number** 7 times → Developer options → **USB debugging** on
+   (Xiaomi: also **USB debugging (Security settings)**). Plug in, tap **Allow**.
+2. Laptop (Android SDK platform-tools):
+   ```
+   adb shell pm grant com.cpx.doomscrolltax android.permission.WRITE_SECURE_SETTINGS
+   adb shell appops set com.cpx.doomscrolltax ACCESS_RESTRICTED_SETTINGS allow
+   ```
+   The second line replaces "Allow restricted settings". Both stay until the app is uninstalled.
+
 ### Xiaomi, Huawei, Oppo, Vivo phones
 These kill background services aggressively. On the demo phone:
 - App info → **Autostart: on**
