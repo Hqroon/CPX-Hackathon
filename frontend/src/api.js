@@ -21,7 +21,11 @@ export async function fetchReels() {
     }
   }
   try {
-    const res = await fetch(`${API_BASE}/api/reels`);
+    // Short limit: without the laptop (e.g. on a phone hotspot) the app must not hang on
+    // "Loading…". The bubble on Instagram doesn't need these videos at all.
+    const res = await fetch(`${API_BASE}/api/reels`, {
+      signal: AbortSignal.timeout ? AbortSignal.timeout(3000) : undefined,
+    });
     if (!res.ok) throw new Error(res.statusText);
     const reels = await res.json();
     const playable = reels.filter((r) => r.available !== false);
